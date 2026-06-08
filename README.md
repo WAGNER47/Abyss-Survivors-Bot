@@ -51,5 +51,29 @@ Enemy design pulls from **Victorian 1880s** crossed with **Art Deco 1960s** — 
 | 🎬 Creative Director | Ramtin |
 | 🎨 Lead 3D & Environment Artist | Arshia |
 
+---
 
-## 📁 Project Structure
+## 🗺️ Roadmap
+
+| Milestone | Target | Status |
+|-----------|--------|--------|
+| Pre-Production | Month 1–2 | 🔵 In Progress |
+| Prototype | Month 2–3 | ⚪ Pending |
+| Vertical Slice | Month 3–6 | ⚪ Pending |
+| Alpha | Month 6–12 | ⚪ Pending |
+| Beta | Month 12–18 | ⚪ Pending |
+| Gold / Release | Month 18–24 | ⚪ Pending |
+
+---
+
+## 📜 Legal
+
+This is a **private repository**. All content, code, and assets are the intellectual property of Veil & Wire Studio. Unauthorized use, distribution, or reproduction is strictly prohibited.
+
+---
+
+<div align="center">
+
+*Veil & Wire Studio © 2025 — Built with intention. Shipped with discipline.*
+
+</div>
