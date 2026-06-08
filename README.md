@@ -49,7 +49,7 @@ Enemy design pulls from **Victorian 1880s** crossed with **Art Deco 1960s** — 
 | Role | Member |
 |------|--------|
 | 🎬 Creative Director | Ramtin |
-| 🎨 Lead 3D & Environment Artist | Arshia (Reza) |
+| 🎨 Lead 3D & Environment Artist | Arshia |
 
 ---
 
