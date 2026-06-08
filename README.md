@@ -51,19 +51,5 @@ Enemy design pulls from **Victorian 1880s** crossed with **Art Deco 1960s** — 
 | 🎬 Creative Director | Ramtin |
 | 🎨 Lead 3D & Environment Artist | Arshia |
 
----
-
-## 🛠️ Tech Stack
-
-| Tool | Purpose |
-|------|---------|
-| Unreal Engine 5 | Game engine — primary development environment |
-| Blueprints | All scripting — no C++ |
-| Blender | 3D modelling, rigging, animation |
-| FMOD Studio | Audio middleware |
-| Git + Git LFS | Source control |
-| Notion | Project management & documentation |
-
----
 
 ## 📁 Project Structure
