@@ -10,10 +10,11 @@
 ![Scripting](https://img.shields.io/badge/Scripting-Blueprints%20Only-orange?style=flat-square)
 ![Repo](https://img.shields.io/badge/Repo-Private-red?style=flat-square)
 
+[![Discord](https://img.shields.io/badge/Discord-Join%20the%20Studio-5865F2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/U2KCwpQHSv)
+
 </div>
 
 ---
-
 ## 🕹️ About the Game
 
 > A first-person psychological horror game set in a brutalist futuristic ruin, where the player unravels a mystery through environmental storytelling and trap-based puzzles — while being silently watched by something that never quite acts.
