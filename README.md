@@ -193,7 +193,7 @@ Every patch ships in under 60 seconds.
 
 Ramtin · Creator, Designer, Developer
 
-> *Two people. One file. 18,000 meters of dark.*
+> *One guy. One file. 18,000 meters of dark.*
 
 ---
 
