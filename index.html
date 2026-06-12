@@ -1936,7 +1936,7 @@ try{
  }
 }catch(e){}
 // TELEGRAM MINI APP: share text + button visibility helpers
-function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
+function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORSv3 \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 function tgHideShare(){try{if(TG)TG.MainButton.hide();}catch(e){}}
 let profName='SURVIVOR',profColor='',profShape='orb',profLogo='⌖';
