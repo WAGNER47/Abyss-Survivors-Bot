@@ -192,7 +192,6 @@ Every patch ships in under 60 seconds.
 **Veil & Wire Studio**
 
 Ramtin · Creator, Designer, Developer
-Arshia · Lead 3D and Environment Artist
 
 > *Two people. One file. 18,000 meters of dark.*
 
