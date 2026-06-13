@@ -39,7 +39,7 @@ Survive infinite geometric horrors across 100 levels. Build your diver with weap
 
 > *"Let me see the real you. Level your way to 100, then surprise me with your final decision."*
 
-Built by **Veil & Wire Studio** — a two person indie team — entirely in vanilla HTML, CSS and Canvas. No engine. No dependencies. One file.
+Built by **Veil & Wire Studio**
 
 ---
 
@@ -53,17 +53,6 @@ Built by **Veil & Wire Studio** — a two person indie team — entirely in vani
 | 🎯 | **Sniper** | Precision · XP engine | Rifle kills feed resonance instantly. 2 companion drones. |
 | 🌀 | **Vyper** | Hybrid · Shield plus blink | Permanent shield and dodge combined. |
 | 👊 | **Yujin** | Parry · Read everything | Zero cooldown parry. Rapid tap survives anything. |
-
----
-
-## ◈ The Threats
-
-```
-  L20  ·  HELIOS, THE DROWNED SUN        ·  r280  ·  radial rings + aimed bursts
-  L50  ·  THE MONOLITH                   ·  r300  ·  rotating fortress square + drones  
-  L80  ·  THE SPEAR OF THE DEEP          ·  r240  ·  fast triangle · fires from its tip · lunges
-  L90  ·  THE LEVIATHAN                  ·  r480  ·  leveling freezes · horde stops · births suns every 60s
-  L70+ ·  MEGA CYCLE                     ·  2x hp each time · every 5 levels · randomized sun type
 ```
 
 **Named Wardens** rotate every 5 levels. Learn their faces.
@@ -96,36 +85,13 @@ Eight damage types. Mix two on the same enemy and the deep answers.
   PLAGUEFIRE  +  VOID  →  ABYSSAL COLLAPSE  ·  the big one
 ```
 
----
-
-## ◈ How the Pacing Works
-
-A full descent to level 100 takes **15 to 20 minutes**. The deep meters what it feeds you.
-
-```
-  0:00  →  3:00   ·  Levels 1 to 20    ·  early grind · one choice per level
-  3:00  →  9:00   ·  Levels 20 to 60   ·  mid game pressure · choices every 5 levels
-  9:00  →  15:00  ·  Levels 60 to 95   ·  late game · Suns walk with you
-  15:00 →  18:00  ·  Levels 95 to 100  ·  the final push
-  18:00           ·  VICTORY            ·  then choose whether to go deeper
-```
-
-At level 40 the Seal breaks. The floor feeds you directly. No orbs. Just kills.
-
----
-
 ## ◈ The Corruption
-
 Beat level 100. Then keep going.
-
-Each corruption tier adds a modifier, breaks the level counter, and sends something new after you. The text starts lying to you.
 
 ```
   YOU CANT  ·  OXYGEN WARNING  ·  TURN BACK  ·  IT SEES YOU
   NO SURFACE  ·  DEPTH ERR0R  ·  SIGNAL EATEN  ·  DO NOT BLINK
 ```
-
-Draft opens every 10 corrupted levels. Boon every 20. Hard floor at C100. Nothing descends further. Nothing needs to.
 
 ---
 
@@ -136,36 +102,6 @@ Draft opens every 10 corrupted levels. Boon every 20. Hard floor at C100. Nothin
 **Telegram** — find `@AbyssSurvivorsbot`, tap Play ABYSS, or type `/game` in any group the bot is in
 
 **Mobile** — drag to move, tap the dive button to dodge, parry or guard, guns auto fire
-
----
-
-## ◈ Tech
-
-```
-Language    Vanilla HTML + CSS + Canvas API
-Size        Single self-contained file · ~215KB
-Engine      None
-Backend     Vercel serverless function (Telegram webhook)
-Hosting     Vercel · auto-deploys from this repo on every push
-Platform    Browser · Telegram Mini App
-```
-
-No build step. No framework. No dependencies. Drop the file anywhere and it runs.
-
----
-
-## ◈ Update Workflow
-
-Every patch ships in under 60 seconds.
-
-```
-1. Edit index.html in this repo
-2. Commit
-3. Vercel auto-deploys
-4. Everyone playing gets the update instantly
-5. Telegram link never changes
-```
-
 ---
 
 ## ◈ Roadmap
