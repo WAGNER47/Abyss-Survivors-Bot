@@ -934,7 +934,7 @@ function nearestEnemy(x,y,maxR,exclude){const R=maxR||Math.max(W,H)*0.75;let bes
 /* ===== INPUT ===== */
 window.addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k==='tab'){e.preventDefault();if(state==='playing'||state==='paused')toggleBuild();return;}if(k===' '&&!keys[' ']&&state==='playing')dodgeReq=true;keys[k]=true;if(k==='p'){if(state==='playing')doPause();else if(state==='paused')doResume();}if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();});
 window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
-let touchActive=false,touchOrigin={x:0,y:0},touchVec={x:0,y:0},dodgeReq=false;
+let touchActive=false,touchOrigin={x:0,y:0},touchVec={x:0,y:0},dodgeReq=false,_aimX=0,_aimY=0;
 function touchPt(t){const r=cv.getBoundingClientRect();return{x:t.clientX-r.left,y:t.clientY-r.top};}
 cv.addEventListener('touchstart',e=>{e.preventDefault();const p=touchPt(e.touches[0]);touchActive=true;touchOrigin={x:p.x,y:p.y};touchVec={x:0,y:0};if(!AC)initAudio();},{passive:false});
 cv.addEventListener('touchmove',e=>{e.preventDefault();if(!touchActive)return;const p=touchPt(e.touches[0]);let dx=p.x-touchOrigin.x,dy=p.y-touchOrigin.y;const m=Math.hypot(dx,dy)||1,cl=Math.min(m,60)/60;touchVec={x:dx/m*cl,y:dy/m*cl};},{passive:false});
@@ -952,7 +952,7 @@ function makePlayer(charDef){
    regen:0,armor:0,crit:0,critMult:2,extraProj:0,projSpeed:1,projLife:1,pierceBonus:0,
    thorns:0,killHeal:0,enemySlow:1,companionCount:0,companions:[],
    es:0,esMax:0,esDelay:0,esRecMul:1,hasBarrier:false,hasRegen:false,barrier:{ready:true,cd:0},barrierRecharge:BAL.barrierRecharge,
-   relics:{},_deflectR:0,_halo:null,permShield:(charDef.id==='sentinel'||charDef.id==='vyper'),fieldHaste:1,boonNames:[],dodgeCd:0,dodgeT:0,slowT:0,color:(profColor||charDef.color),pshape:profShape,parryActive:false,parryT:0,parryCdT:0,parryFlash:0,bulwarkT:0,
+   relics:{},_deflectR:0,_halo:null,permShield:(charDef.id==='sentinel'||charDef.id==='vyper'),fieldHaste:1,boonNames:[],dodgeCd:0,dodgeT:0,_slideT:0,slowT:0,color:(profColor||charDef.color),pshape:profShape,parryActive:false,parryT:0,parryCdT:0,parryFlash:0,bulwarkT:0,
    perm:{dmg:0,maxhp:0,speed:0,crit:0,area:0,attackspeed:0,extraProj:0,killHeal:0,enemySlow:1,critMult:2,es:0,lootMul:1,glassHpMult:1,critBoom:false,hazardRes:0,titanMul:1},
    mods:m};
   recalc(p,true);p.hp=p.maxHp;p.es=p.esMax;return p;
@@ -1232,7 +1232,7 @@ function update(dt){
  let mx=0,my=0;
  if(keys['w']||keys['arrowup'])my-=1;if(keys['s']||keys['arrowdown'])my+=1;
  if(keys['a']||keys['arrowleft'])mx-=1;if(keys['d']||keys['arrowright'])mx+=1;
- if(touchActive){mx+=touchVec.x;my+=touchVec.y;}
+ let touchMag=0;if(touchActive){mx+=touchVec.x;my+=touchVec.y;touchMag=Math.min(1,Math.hypot(touchVec.x,touchVec.y));}
  if(player.dodgeCd>0)player.dodgeCd-=dt;
  if(player.dodgeT>0)player.dodgeT-=dt;
  if(player.parryT>0)player.parryT-=dt;else player.parryActive=false;
@@ -1255,12 +1255,20 @@ function update(dt){
  dodgeReq=false;
  if(mx!==0)player._face=mx>0?1:-1;
  const ml=Math.hypot(mx,my);if(ml>0){mx/=ml;my/=ml;}
+ _aimX=ml>0?mx:0;_aimY=ml>0?my:0;
  if(player.slowT>0)player.slowT-=dt;
  const sp=player.speed*(player.onRoad?1.35:1)*(player.slowT>0?(0.35+0.65*(player.slowRes||0)):1);
  const acc=Math.min(1,dt*9*(player.mods.accelMul||1));
- player.pvx+=(mx*sp-player.pvx)*acc;player.pvy+=(my*sp-player.pvy)*acc;
- if(player.dodgeT>0){const dfr=Math.pow(0.45,dt);player.pvx*=dfr;player.pvy*=dfr;}
- else if(ml===0){const coasting=Math.hypot(player.pvx,player.pvy)>player.speed*1.1;const fr=Math.pow(coasting?0.12:0.02,dt);player.pvx*=fr;player.pvy*=fr;}
+ var _kbd=(keys['w']||keys['a']||keys['s']||keys['d']||keys['arrowup']||keys['arrowdown']||keys['arrowleft']||keys['arrowright']);
+ var _throttle=1;if(touchActive&&!_kbd&&ml>0)_throttle=Math.max(0.2,Math.min(1,touchMag/0.92));
+ player.pvx+=(mx*sp*_throttle-player.pvx)*acc;player.pvy+=(my*sp*_throttle-player.pvy)*acc;
+ if(player.dodgeT>0){const dfr=Math.pow(0.45,dt);player.pvx*=dfr;player.pvy*=dfr;player._slideT=0.6;}
+ else if(ml===0){
+  var spd=Math.hypot(player.pvx,player.pvy);
+  if(player._slideT>0&&spd>player.speed*0.5){player._slideT-=dt;var fr1=Math.pow(0.35,dt);player.pvx*=fr1;player.pvy*=fr1;}
+  else{player._slideT=0;var coasting=spd>player.speed*1.1;var fr=Math.pow(coasting?0.12:0.02,dt);player.pvx*=fr;player.pvy*=fr;}
+ }
+ else{player._slideT=0;}
  player.x+=player.pvx*dt;player.y+=player.pvy*dt;
  const pv=Math.hypot(player.pvx,player.pvy);player.moving=pv>24;
  if(player.onRoad&&pv>sp*0.5&&Math.random()<dt*30&&particles.length<500)particles.push({x:player.x-player.pvx*0.05,y:player.y-player.pvy*0.05,vx:-player.pvx*0.2,vy:-player.pvy*0.2,life:0.3,color:'#00e5d4',r:2});
@@ -1683,7 +1691,50 @@ function drawEnemy(e){ctx.save();const big=e.elite||e.mage||isBig(e);
  if(e.stunT>0){ctx.save();ctx.globalAlpha=0.9;ctx.strokeStyle='#bfeaff';ctx.shadowColor='#bfeaff';ctx.shadowBlur=10;ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,TAU);ctx.stroke();ctx.restore();}
  if(e.st){let i=0;for(const k in e.st){if(i>=4)break;ctx.save();ctx.globalAlpha=0.95;if(!STATUS[k])continue;ctx.fillStyle=STATUS[k].color;ctx.beginPath();ctx.arc(e.x-9+i*6,e.y-e.r-5,2.4,0,TAU);ctx.fill();ctx.restore();i++;}}
  if((e.elite||isBig(e))&&e.hp<e.maxhp){ctx.save();ctx.strokeStyle=e.color;ctx.lineWidth=6;ctx.beginPath();ctx.arc(e.x,e.y,e.r+10,-Math.PI/2,-Math.PI/2+TAU*(e.hp/e.maxhp));ctx.stroke();ctx.restore();}}
+function predictDodgeLanding(dirx,diry){
+ // mirrors the EXACT dodge+slide integration in update() so the landing dot is accurate.
+ const cid=player.char.id,dc=DODGE[cid]||DODGE.vanguard;if(!(dc.d>0))return null;
+ const dl=Math.hypot(dirx,diry)||1;dirx/=dl;diry/=dl;
+ // Mark the END OF THE IFRAME DASH: the safe landing spot where invulnerability ends.
+ // Frame-identical to update()'s dodge burst, so the O is always accurate.
+ let pvx=dirx*dc.d*7,pvy=diry*dc.d*7,x=0,y=0;
+ const dt=1/60;let dodgeT=Math.min(0.5,dc.d/900);
+ const sp=(player.speed||130)*(player.onRoad?1.35:1);const acc=Math.min(1,dt*9*((player.mods&&player.mods.accelMul)||1));
+ // replicate update() EXACTLY: decrement dodgeT, accel-lerp toward zero (no input), dodge friction, move.
+ while(dodgeT>0){dodgeT-=dt;pvx+=(0-pvx)*acc;pvy+=(0-pvy)*acc;if(dodgeT>0){const f=Math.pow(0.45,dt);pvx*=f;pvy*=f;}x+=pvx*dt;y+=pvy*dt;}
+ return {x:x,y:y};
+}
+function drawMoveLine(){const p=player;if(!IS_TOUCH)return;
+ let ax=_aimX||0,ay=_aimY||0;const pv=Math.hypot(p.pvx,p.pvy);
+ if(!ax&&!ay){if(pv>14){ax=p.pvx/pv;ay=p.pvy/pv;}else{ax=(p._face||1);ay=0;}}
+ const al=Math.hypot(ax,ay)||1;ax/=al;ay/=al;
+ const cid=p.char.id,dc=DODGE[cid]||{d:0},canDodge=(dc.d>0&&p.dodgeCd<=0);
+ ctx.save();
+ // direction line: dashed, grows with speed, soft glowing grey, fits the deep-sea light theme
+ const speedFrac=Math.min(1,pv/Math.max(80,p.speed*1.15));
+ const lineLen=(p.r+16)+speedFrac*72;
+ const sx=p.x+ax*(p.r+8),sy=p.y+ay*(p.r+8),ex=p.x+ax*lineLen,ey=p.y+ay*lineLen;
+ ctx.globalAlpha=0.42;ctx.strokeStyle='#aec6dd';ctx.lineWidth=2.3;ctx.lineCap='round';
+ ctx.setLineDash([5,8]);ctx.lineDashOffset=-(time*60)%13;
+ if(QX&&QX.glow){ctx.shadowColor='#aec6dd';ctx.shadowBlur=6;}
+ ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();ctx.setLineDash([]);ctx.shadowBlur=0;
+ // landing indicator: the 'O' where a dodge lands RIGHT NOW, in the diver's light
+ if(canDodge){const land=predictDodgeLanding(ax,ay);if(land){const lx=p.x+land.x,ly=p.y+land.y;
+  const lc=p.color||p.char.color;const pulse=0.5+0.5*Math.sin(time*6);
+  ctx.globalAlpha=0.3;ctx.strokeStyle=lc;ctx.lineWidth=1.8;ctx.setLineDash([4,9]);ctx.lineDashOffset=-(time*60)%13;
+  ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(lx,ly);ctx.stroke();ctx.setLineDash([]);
+  if(QX&&QX.glow){ctx.shadowColor=lc;ctx.shadowBlur=14;}
+  ctx.globalAlpha=0.55+0.33*pulse;ctx.strokeStyle=lc;ctx.lineWidth=2.6;
+  ctx.beginPath();ctx.arc(lx,ly,p.r*0.9,0,TAU);ctx.stroke();
+  ctx.globalAlpha=0.2+0.16*pulse;ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.arc(lx,ly,p.r*0.9+4+pulse*3,0,TAU);ctx.stroke();
+  ctx.shadowBlur=0;ctx.globalAlpha=0.5+0.3*pulse;ctx.fillStyle=lc;
+  ctx.beginPath();ctx.arc(lx,ly,2.4,0,TAU);ctx.fill();
+ }}
+ ctx.restore();
+}
 function drawPlayer(){const p=player;
+ drawMoveLine();
  if(time<BAL.instantXpTime){ctx.save();ctx.globalAlpha=0.10+0.06*Math.sin(time*6);ctx.fillStyle='#6cffb0';ctx.beginPath();ctx.arc(p.x,p.y,p.r+26,0,TAU);ctx.fill();ctx.restore();}
  ctx.save();const col=p.hurtFlash>0?'#ff5a6e':(p.color||'#00e5d4');ctx.shadowColor=col;ctx.shadowBlur=24;ctx.fillStyle=p.hurtFlash>0?'#ffd0d6':col;
  ctx.beginPath();
