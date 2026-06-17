@@ -751,7 +751,7 @@ function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs
  'fire|void':()=>{const s=eSt(e),o=s.burn||(s.burn={n:0,t:4});o.n=Math.min(600,o.n*1.6+10);o.t=5;spawnText(e.x,e.y-e.r-16,'ENTROPY','#b8a3ff',true);},
  'radiation|toxic':()=>{if(!e.mut){e.mut=true;e.hp=Math.min(e.maxhp*1.3,e.hp*1.3);e.maxhp*=1.3;e.dmg*=1.2;e.speed*=1.1;spawnText(e.x,e.y-e.r-16,'MUTATION','#b6ff3c',true);}},
  'ice|lightning':()=>{e.vulnT=5;spawnText(e.x,e.y-e.r-16,'SUPERCONDUCT','#7fdfff',true);},
- 'ice|void':()=>{e.stunT=Math.max(e.stunT||0,isBig(e)?0.7:2.2);spawnText(e.x,e.y-e.r-16,'ABSOLUTE ZERO','#bfeaff',true);}}[key];
+ 'ice|void':()=>{if(isBig(e)){e.stunT=Math.max(e.stunT||0,0.7);}else{e.frozenT=Math.max(e.frozenT||0,1.1);e.stunT=Math.max(e.stunT||0,1.1);ring(e.x,e.y,e.r+18,'#bfeaff');}spawnText(e.x,e.y-e.r-16,'ABSOLUTE ZERO','#bfeaff',true);}}[key];
  if(!R)return false;e.reactCd=1.2;R();partner.n-=used;if(partner.n<1)delete eSt(e)[bKey];return true;}
 /* legacy wrappers used inside weapon defs */
 function applyBurn(e,dps,t){addSt(e,'burn',Math.max(1,dps/4));}
@@ -1349,8 +1349,12 @@ function update(dt){
  else if((abilityReq)&&player.dodgeCd<=0&&dcfg.d>0){dodgeReq=false;
   let dx=mx,dy=my;if(dx===0&&dy===0){const pv2=Math.hypot(player.pvx,player.pvy);if(pv2>10){dx=player.pvx/pv2;dy=player.pvy/pv2;}else{dx=player._face||1;dy=0;}}
   const dl=Math.hypot(dx,dy)||1;dx/=dl;dy/=dl;
-  player.pvx=dx*dcfg.d*7;player.pvy=dy*dcfg.d*7;
-  if(rs)rs.dodges=(rs.dodges||0)+1;hap('impact','soft');player.dodgeCd=dcfg.cd;player.dodgeT=Math.min(0.5,dcfg.d/900);player.iframes=Math.max(player.iframes,player.dodgeT);
+  // DODGE DISTANCE scales with joystick push depth: light tap = short hop, full push = max range.
+  // Keyboard / no-touch always full. Read live so the move line predicts it accurately.
+  const press=(touchActive&&touchMag>0)?Math.max(0.45,Math.min(1,touchMag/0.92)):1;
+  player._dodgePress=press;
+  player.pvx=dx*dcfg.d*7*press;player.pvy=dy*dcfg.d*7*press;
+  if(rs)rs.dodges=(rs.dodges||0)+1;hap('impact','soft');player.dodgeCd=dcfg.cd;player.dodgeT=Math.min(0.5,(dcfg.d*press)/900);player.iframes=Math.max(player.iframes,player.dodgeT);
   ring(player.x,player.y,player.r+22,player.color||player.char.color);for(let i=0;i<8;i++)particles.push({x:player.x,y:player.y,vx:-dx*220+rand(-60,60),vy:-dy*220+rand(-60,60),life:0.32,color:player.color||player.char.color,r:2});
   sfx('shield');}
  dodgeReq=false;
@@ -1434,6 +1438,7 @@ function update(dt){
   if(e.reactCd>0)e.reactCd-=dt;
   if(e.vulnT>0)e.vulnT-=dt;
   if(e.stunT>0){e.stunT-=dt;stunned=true;}
+  if(e.frozenT>0){e.frozenT-=dt;stunned=true;e.kvx=0;e.kvy=0;if(e.frozenT<=0)e._mMul=-1;/* force mass recompute on thaw */}
   if(e.st){let chill=0,weak=0;
    for(const k in e.st){const o=e.st[k];o.t-=dt;if(o.t<=0){delete e.st[k];continue;}
     const sd=STATUS[k];if(sd.dps)dot+=sd.dps*o.n;if(k==='chill')chill=o.n;if(k==='weak')weak=o.n;}
@@ -1441,7 +1446,7 @@ function update(dt){
    e._weak=weak;
    const sFire=(e.st.inferno||e.st.burn||e.st.plaguefire),sChill=e.st.chill,sShock=e.st.shock,sVoid=e.st.mark;
    if(sFire){e._panicT=(e._panicT||0)-dt;if(e._panicT<=0){e._panicT=rand(0.15,0.35);const pa=Math.random()*TAU,pf=120+Math.random()*160;e.kvx=(e.kvx||0)+Math.cos(pa)*pf;e.kvy=(e.kvy||0)+Math.sin(pa)*pf;}}
-   const mMul=(sChill?2:1)*(sVoid?0.4:1);
+   const mMul=(e.frozenT>0?60:1)*(sChill?2:1)*(sVoid?0.4:1);
    if(e._mMul!==mMul){e._mMul=mMul;const baseM=Math.max(0.5,e.r*e.r/100)*(e.shape==='square'?1.6:(e.boulder?3.4:1))*mMul;e.m=baseM;e.invM=isBig(e)?1/(baseM*PHYS.bossInv):1/baseM;}
    if(sShock&&!e._shockKick){e._shockKick=1;const sa=Math.random()*TAU,sf=200+Math.random()*200;e.kvx=(e.kvx||0)+Math.cos(sa)*sf;e.kvy=(e.kvy||0)+Math.sin(sa)*sf;e.stunT=Math.max(e.stunT||0,0.25);}
    if(!sShock)e._shockKick=0;
@@ -1834,17 +1839,19 @@ function drawEnemy(e){ctx.save();const big=e.elite||e.mage||isBig(e);
  ctx.restore();
  if(e.emod&&EMODS[e.emod]){ctx.save();ctx.font='12px sans-serif';ctx.textAlign='center';ctx.globalAlpha=0.95;ctx.fillText(EMODS[e.emod].icon,e.x,e.y-e.r-8);ctx.restore();}
  if(e.laser&&e.laserT>0){ctx.save();ctx.globalAlpha=0.85;const g=ctx.createLinearGradient(0,e.laserY-14,0,e.laserY+14);g.addColorStop(0,'rgba(255,59,110,0)');g.addColorStop(0.5,'rgba(255,90,110,0.95)');g.addColorStop(1,'rgba(255,59,110,0)');ctx.fillStyle=g;ctx.shadowColor='#ff3b6e';ctx.shadowBlur=18;ctx.fillRect(e.x-2200,e.laserY-14,4400,28);ctx.restore();}
- if(e.stunT>0){ctx.save();ctx.globalAlpha=0.9;ctx.strokeStyle='#bfeaff';ctx.shadowColor='#bfeaff';ctx.shadowBlur=10;ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,TAU);ctx.stroke();ctx.restore();}
+ if(e.frozenT>0){ctx.save();const fp=0.7+0.3*Math.sin(time*4+e.x*0.05);ctx.globalAlpha=0.85*fp;ctx.strokeStyle='#cfeeff';ctx.fillStyle='rgba(180,225,255,0.18)';ctx.shadowColor='#bfeaff';ctx.shadowBlur=12;ctx.lineWidth=2.4;const fr=e.r+4;ctx.beginPath();ctx.rect(e.x-fr,e.y-fr,fr*2,fr*2);ctx.fill();ctx.stroke();ctx.globalAlpha=0.5*fp;ctx.beginPath();ctx.moveTo(e.x-fr,e.y);ctx.lineTo(e.x+fr,e.y);ctx.moveTo(e.x,e.y-fr);ctx.lineTo(e.x,e.y+fr);ctx.stroke();ctx.restore();}
+ else if(e.stunT>0){ctx.save();ctx.globalAlpha=0.9;ctx.strokeStyle='#bfeaff';ctx.shadowColor='#bfeaff';ctx.shadowBlur=10;ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,TAU);ctx.stroke();ctx.restore();}
  if(e.st){let i=0;for(const k in e.st){if(i>=4)break;ctx.save();ctx.globalAlpha=0.95;if(!STATUS[k])continue;ctx.fillStyle=STATUS[k].color;ctx.beginPath();ctx.arc(e.x-9+i*6,e.y-e.r-5,2.4,0,TAU);ctx.fill();ctx.restore();i++;}}
  if((e.elite||isBig(e))&&e.hp<e.maxhp){ctx.save();ctx.strokeStyle=e.color;ctx.lineWidth=6;ctx.beginPath();ctx.arc(e.x,e.y,e.r+10,-Math.PI/2,-Math.PI/2+TAU*(e.hp/e.maxhp));ctx.stroke();ctx.restore();}}
-function predictDodgeLanding(dirx,diry){
+function predictDodgeLanding(dirx,diry,press){
  // mirrors the EXACT dodge+slide integration in update() so the landing dot is accurate.
  const cid=player.char.id,dc=DODGE[cid]||DODGE.vanguard;if(!(dc.d>0))return null;
  const dl=Math.hypot(dirx,diry)||1;dirx/=dl;diry/=dl;
+ const pr=(press==null)?1:Math.max(0.45,Math.min(1,press));
  // Mark the END OF THE IFRAME DASH: the safe landing spot where invulnerability ends.
- // Frame-identical to update()'s dodge burst, so the O is always accurate.
- let pvx=dirx*dc.d*7,pvy=diry*dc.d*7,x=0,y=0;
- const dt=1/60;let dodgeT=Math.min(0.5,dc.d/900);
+ // Frame-identical to update()'s dodge burst (incl. pressure), so the O is always accurate.
+ let pvx=dirx*dc.d*7*pr,pvy=diry*dc.d*7*pr,x=0,y=0;
+ const dt=1/60;let dodgeT=Math.min(0.5,(dc.d*pr)/900);
  const sp=(player.speed||130)*(player.onRoad?1.35:1);const acc=Math.min(1,dt*9*((player.mods&&player.mods.accelMul)||1));
  // replicate update() EXACTLY: decrement dodgeT, accel-lerp toward zero (no input), dodge friction, move.
  while(dodgeT>0){dodgeT-=dt;pvx+=(0-pvx)*acc;pvy+=(0-pvy)*acc;if(dodgeT>0){const f=Math.pow(0.45,dt);pvx*=f;pvy*=f;}x+=pvx*dt;y+=pvy*dt;}
@@ -1855,6 +1862,8 @@ function drawMoveLine(){const p=player;if(!IS_TOUCH)return;
  if(!ax&&!ay){if(pv>14){ax=p.pvx/pv;ay=p.pvy/pv;}else{ax=(p._face||1);ay=0;}}
  const al=Math.hypot(ax,ay)||1;ax/=al;ay/=al;
  const cid=p.char.id,dc=DODGE[cid]||{d:0},canDodge=(dc.d>0&&p.dodgeCd<=0);
+ // live joystick pressure sets how far this dodge will go, so the line + O react to your push.
+ const livePress=(touchActive&&typeof touchVec!=='undefined')?Math.max(0.45,Math.min(1,(Math.hypot(touchVec.x,touchVec.y))/0.92)):1;
  ctx.save();
  // direction line: dashed, grows with speed, soft glowing grey, fits the deep-sea light theme
  const speedFrac=Math.min(1,pv/Math.max(80,p.speed*1.15));
@@ -1865,7 +1874,7 @@ function drawMoveLine(){const p=player;if(!IS_TOUCH)return;
  if(QX&&QX.glow){ctx.shadowColor='#aec6dd';ctx.shadowBlur=6;}
  ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();ctx.setLineDash([]);ctx.shadowBlur=0;
  // landing indicator: the 'O' where a dodge lands RIGHT NOW, in the diver's light
- if(canDodge){const land=predictDodgeLanding(ax,ay);if(land){const lx=p.x+land.x,ly=p.y+land.y;
+ if(canDodge){const land=predictDodgeLanding(ax,ay,livePress);if(land){const lx=p.x+land.x,ly=p.y+land.y;
   const lc=p.color||p.char.color;const pulse=0.5+0.5*Math.sin(time*6);
   ctx.globalAlpha=0.3;ctx.strokeStyle=lc;ctx.lineWidth=1.8;ctx.setLineDash([4,9]);ctx.lineDashOffset=-(time*60)%13;
   ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(lx,ly);ctx.stroke();ctx.setLineDash([]);
@@ -2156,7 +2165,6 @@ function recordRun(result){
   reacts:rs?Object.assign({},rs.reacts):{},
   build:buildSnapshot()};
  lastRecord=rec;runArchive.unshift(rec);if(runArchive.length>30)runArchive.length=30;saveRuns();
- try{if(netId())netSync(true);}catch(e){}
 }
 function fmtT(s){const m=Math.floor(s/60);return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
 function fmtN(n){return (n||0).toLocaleString();}
@@ -2317,26 +2325,17 @@ function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return
 function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 // ---- DIVE NETWORK: presence + friends relay ----
-let NET={online:false,friends:[],inbox:0,lastSync:0};let _lastSyncBody=null;
+let NET={online:false,friends:[],inbox:0,lastSync:0};
 function netId(){return TG_USER&&TG_USER.id!=='guest'?String(TG_USER.id):'';}
-let _syncing=false,_syncPending=false;
-async function netSync(force){const id=netId();if(!id)return;
- if(_syncing){_syncPending=true;return;}_syncing=true;
- try{const s=computeStats();_lastSyncBody=JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8).map(r=>({result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))});const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8).map(r=>({result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))})});
+async function netSync(){const id=netId();if(!id)return;
+ try{const s=computeStats();const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8),runs:(runArchive||[]).slice(0,8).map(r=>({result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken}))})});
   const j=await r.json();if(j&&j.ok){NET.online=true;NET.friends=j.friends||[];const wasInbox=NET.inbox;NET.inbox=j.inboxCount||0;NET.lastSync=Date.now();
    if(NET.inbox>wasInbox)toast('NEW FRIEND REQUEST \u00b7 check Social');updateSocialBadge();}
   else NET.online=false;
- }catch(e){NET.online=false;if(force){try{await new Promise(r=>setTimeout(r,800));await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},keepalive:true,body:_lastSyncBody||'{}'});}catch(e2){}}}
- finally{_syncing=false;if(_syncPending){_syncPending=false;setTimeout(()=>netSync(false),50);}}}
+ }catch(e){NET.online=false;}}
 function updateSocialBadge(){try{const b=document.getElementById('socialbtn');if(b){const base='\u21c4 Social';b.textContent=NET.inbox>0?base+' ('+NET.inbox+')':base;}}catch(e){}}
 setInterval(()=>{if(netId())netSync();},45000);
 setTimeout(()=>{if(netId())netSync();},2500);
-// flush sync when the app is backgrounded or closed (mobile WebViews suspend aggressively)
-function _flushSync(){try{if(netId())netSync(true);}catch(e){}}
-try{document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')_flushSync();});}catch(e){}
-try{window.addEventListener('pagehide',_flushSync);}catch(e){}
-try{window.addEventListener('blur',()=>{if(netId()&&Date.now()-NET.lastSync>8000)netSync(true);});}catch(e){}
-try{if(window.Telegram&&window.Telegram.WebApp){window.Telegram.WebApp.onEvent('viewportChanged',()=>{});if(window.Telegram.WebApp.onEvent)window.Telegram.WebApp.onEvent('themeChanged',()=>{});}}catch(e){}
 function tgHideShare(){try{if(TG)TG.MainButton.hide();}catch(e){}}
 let profName='SURVIVOR',profColor='',profShape='orb',profLogo='⌖';
 let FRIENDS=[];
@@ -2571,7 +2570,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
  if(tab==='invites'){fetch('/api/social?action=inbox&id='+encodeURIComponent(id)).then(r=>r.json()).then(j=>{const box=document.getElementById('inboxlist');if(!box)return;const reqs=(j&&j.requests)||[];if(!reqs.length){box.innerHTML='<div style="color:var(--dim);font-size:12.5px">No pending requests.</div>';return;}box.innerHTML=reqs.map(rq=>`<div class="frow" data-from="${rq.id}"><span>\u25c8 ${rq.name||rq.id}</span><span><button class="btn ghost fac" style="padding:6px 12px;font-size:11px;color:#6cffb0;border-color:#6cffb0">Accept</button> <button class="btn ghost fde" style="padding:6px 12px;font-size:11px;color:#ff5a6e;border-color:#ff5a6e">Decline</button></span></div>`).join('');box.querySelectorAll('.frow').forEach(row=>{const from=row.dataset.from;row.querySelector('.fac').onclick=async()=>{await fetch('/api/social?action=respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,from,accept:true})});toast('FRIEND ADDED');hap('notify','success');netSync();openSocial('invites');};row.querySelector('.fde').onclick=async()=>{await fetch('/api/social?action=respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,from,accept:false})});toast('DECLINED');openSocial('invites');};});}).catch(()=>{const box=document.getElementById('inboxlist');if(box)box.innerHTML='<div style="color:var(--dim)">Relay offline.</div>';});}
  // group roster
 
- if(id&&Date.now()-NET.lastSync>4000)netSync();
+ if(id&&Date.now()-NET.lastSync>20000)netSync();
  document.getElementById('social').classList.remove('hidden');}
 function showPopup(title,sub,icon,color){const m=document.getElementById('popmodal');document.getElementById('poptitle').textContent=title;document.getElementById('popsub').textContent=sub||'';const ic=document.getElementById('popicon');ic.textContent=icon||'\u2713';ic.style.color=color||'#6cffb0';m.querySelector('.popbox').style.borderColor=color||'#6cffb0';m.querySelector('.popbox').style.boxShadow='0 0 40px '+(color||'#6cffb0')+'55';m.classList.remove('hidden');const ok=document.getElementById('popok');ok.onclick=()=>m.classList.add('hidden');try{hap('notify','success');}catch(e){}}
 function qLabel(q){return {potato:'Potato',low:'Low',medium:'Medium',ultra:'Ultra (Full)'}[q]||q;}
