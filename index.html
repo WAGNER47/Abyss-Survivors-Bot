@@ -728,7 +728,7 @@ const ELEMENTS={kinetic:{name:'Kinetic',icon:'◆',color:'#cdd6e8',st:'bleed',po
 const STATUS={inferno:{dps:13,color:'#ff9b3c'},plaguefire:{dps:24,color:'#b6ff5c'},burn:{dps:4,color:'#ff7a3c'},bleed:{dps:2.2,color:'#ff3b5e'},shock:{dps:1.6,color:'#ffe27a'},corr:{dps:2,color:'#9bff5c'},rad:{dps:1.8,color:'#b6ff3c'},chill:{dps:0,color:'#7fdfff'},mark:{dps:0,color:'#b8a3ff'},weak:{dps:0.5,color:'#ff5cf0'}};
 const STEL={inferno:'fire',plaguefire:'toxic',burn:'fire',chill:'ice',shock:'lightning',mark:'void',weak:'plasma',corr:'toxic',rad:'radiation',bleed:'kinetic'};
 function eSt(e){return e.st||(e.st={});}
-function addSt(e,key,amt){const s=eSt(e),o=s[key]||(s[key]={n:0,t:0});o.n=Math.min(600,o.n+amt);o.t=4;
+function addSt(e,key,amt){if(key==='chill'&&player&&player.chillExtra>0&&!isBig(e))amt+=player.chillExtra;const s=eSt(e),o=s[key]||(s[key]={n:0,t:0});o.n=Math.min(600,o.n+amt);o.t=4;
  if(key==='burn'&&o.n>=12&&!s.inferno){const inf=s.inferno=(s.inferno||{n:0,t:0});inf.n=Math.min(200,Math.ceil(o.n/3));inf.t=5;delete s.burn;spawnText(e.x,e.y-e.r-16,'INFERNO','#ff9b3c',true);ring(e.x,e.y,40,'#ff9b3c');}
  if(key==='burn'&&o.n>=300&&!e._ignited){e._ignited=true;toast('THE SCREEN IGNITES');screenShake=10;for(const x of enemies)if(!x._dead)addSt(x,'burn',60);}}
 function applyEl(e,el,amt){const E=ELEMENTS[el];if(!E||e._dead)return;
@@ -742,17 +742,65 @@ function applyEl(e,el,amt){const E=ELEMENTS[el];if(!E||e._dead)return;
   spawnText(e.x,e.y-e.r-16,'ABYSSAL COLLAPSE','#9b6dff',true);}
  if(e.reactCd<=0){const s=eSt(e);for(const k in s){if(s[k].n>=2&&STEL[k]!==el){if(tryReact(e,el,STEL[k],k))break;}}}
  addSt(e,E.st,amt*E.pow*(isBig(e)?0.5:1));}
-function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult,partner=eSt(e)[bKey],used=Math.max(2,partner.n*0.5);
+/* ===== ELEMENTAL GROUND ZONES (battlefield states left by reactions) =====
+   Cheap pooled list. Each zone lingers, affects enemies/player standing in it,
+   then fades. Capped + quality-gated so hordes stay smooth on low-end mobile. */
+let zones=[];let seeds=[];
+const ZONE_CAP_BY_Q={potato:0,low:8,medium:16,ultra:26};
+function zoneCap(){return ZONE_CAP_BY_Q[OPT.quality]!=null?ZONE_CAP_BY_Q[OPT.quality]:16;}
+function addZone(z){
+ const cap=zoneCap();if(cap<=0)return null;
+ // merge into a same-type zone if one is very close (keeps the list short, feels natural)
+ for(const o of zones){if(o.type===z.type&&!o._dead){const dx=o.x-z.x,dy=o.y-z.y;if(dx*dx+dy*dy<(o.r*0.6)*(o.r*0.6)){o.life=Math.max(o.life,z.life);o.r=Math.min(z.r*1.5,Math.max(o.r,z.r));return o;}}}
+ if(zones.length>=cap){let oi=0,ol=1e9;for(let i=0;i<zones.length;i++)if(zones[i].life<ol){ol=zones[i].life;oi=i;}zones.splice(oi,1);}
+ const zs=(player&&player.zoneScale)||1;z.r*=zs;z.life*=zs;
+ z.maxlife=z.life;z._dead=false;zones.push(z);return z;
+}
+// per-frame: fade zones, apply their effect to enemies + player inside.
+function updateZones(dt){
+ if(!zones.length)return;
+ for(const z of zones){
+  if(z._dead)continue;z.life-=dt;if(z.life<=0){z._dead=true;continue;}
+  const near=queryNear(z.x,z.y,z.r+30);
+  for(const e of near){if(e._dead)continue;const dx=e.x-z.x,dy=e.y-z.y,d2=dx*dx+dy*dy,rr=z.r+e.r;if(d2>rr*rr)continue;
+   if(z.el&&!isBig(e)){if((e._zelT=(e._zelT||0)-dt)<=0){e._zelT=0.25;applyEl(e,z.el,z.elAmt||3);}}
+   if(z.dps){dealDamage(e,z.dps*dt,{tick:true});if(e._dead)continue;}
+   if(z.slow&&!isBig(e)){addSt(e,'chill',Math.max(1,Math.round(z.slow)));}
+   if(z.pull&&!isBig(e)){const d=Math.sqrt(d2)||1,m=Math.max(0.6,e.m||e.r*e.r/100),f=z.pull*(1-Math.min(1,d/z.r))/m;e.kvx=(e.kvx||0)-dx/d*f;e.kvy=(e.kvy||0)-dy/d*f;}
+   if(z.dmgAmp)e.vulnT=Math.max(e.vulnT||0,0.3);
+  }
+  // conductive zone: occasionally re-chain lightning between enemies inside it
+  if(z.type==='conductive'){z._arcT=(z._arcT||0)-dt;if(z._arcT<=0){z._arcT=0.35;const inside=near.filter(e=>!e._dead&&dist2(e.x,e.y,z.x,z.y)<z.r*z.r);if(inside.length>=2){let from=inside[0];for(let j=1;j<Math.min(4,inside.length);j++){const c=inside[j];arcs.push({x1:from.x,y1:from.y,x2:c.x,y2:c.y,life:0.18,color:'#5cd0ff'});dealDamage(c,(8+player.level*0.6)*player.damageMult,{tick:true});addSt(c,'shock',3);from=c;}}}}
+  // player standing in a hostile zone? only radioactive/void-rift sting the player lightly
+ }
+ for(let i=zones.length-1;i>=0;i--)if(zones[i]._dead)zones.splice(i,1);
+}
+function drawZones(){
+ for(const z of zones){if(z._dead)continue;const a=Math.min(1,z.life/Math.max(0.5,z.maxlife*0.4));ctx.save();
+  const col=z.color||'#9bff5c';
+  if(z.type==='void'||z.type==='magnetize'){const g=ctx.createRadialGradient(z.x,z.y,2,z.x,z.y,z.r);g.addColorStop(0,'rgba(20,0,40,'+(0.5*a)+')');g.addColorStop(0.6,col.replace(')',','+(0.3*a)+')').replace('rgb','rgba').replace('#','rgba'));g.addColorStop(1,'rgba(10,0,25,0)');ctx.fillStyle=g;ctx.globalAlpha=1;ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,TAU);ctx.fill();
+   ctx.globalAlpha=0.5*a;ctx.strokeStyle=col;if(QX&&QX.glow){ctx.shadowColor=col;ctx.shadowBlur=14;}ctx.lineWidth=2;const sp=time*(z.type==='magnetize'?3:-2);for(let k=0;k<3;k++){const rr=z.r*(0.4+k*0.3);ctx.beginPath();ctx.arc(z.x,z.y,rr,sp+k,sp+k+TAU*0.7);ctx.stroke();}}
+  else{const g=ctx.createRadialGradient(z.x,z.y,z.r*0.2,z.x,z.y,z.r);g.addColorStop(0,col);g.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=(z.type==='frostground'?0.32:0.42)*a;ctx.fillStyle=g;ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,TAU);ctx.fill();
+   if(QX&&QX.glow){ctx.globalAlpha=0.3*a;ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(z.x,z.y,z.r*(0.7+0.3*Math.sin(time*3)),0,TAU);ctx.stroke();}}
+  ctx.restore();}
+}
+function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO','fire|lightning':'SWIRL','kinetic|void':'CRYSTALLIZE','plasma|toxic':'BLOOM','ice|toxic':'CORROSIVE MIST','lightning|void':'MAGNETIZE','fire|radiation':'IRRADIATE'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult*(player.reactAmp||1),partner=eSt(e)[bKey],used=Math.max(2,partner.n*0.5);
  const R={
- 'fire|ice':()=>{dealDamage(e,(14+6*used)*dm);ring(e.x,e.y,46,'#bfeaff');spawnText(e.x,e.y-e.r-16,'THERMAL SHOCK','#bfeaff',true);},
- 'fire|toxic':()=>{ring(e.x,e.y,95,'#9bff5c');for(const x of queryNear(e.x,e.y,95)){if(x._dead)continue;dealDamage(x,(10+3*used)*dm,{tick:x!==e});addSt(x,'burn',4);}spawnText(e.x,e.y-e.r-16,'COMBUSTION','#9bff5c',true);},
- 'lightning|toxic':()=>{let from={x:e.x,y:e.y};const seen=new Set([e]);for(let j=0;j<6;j++){const c=nearestEnemy(from.x,from.y,300,seen);if(!c)break;arcs.push({x1:from.x,y1:from.y,x2:c.x,y2:c.y,life:0.18,color:'#ffe27a'});dealDamage(c,(12+3*used)*dm);seen.add(c);from={x:c.x,y:c.y};}spawnText(e.x,e.y-e.r-16,'CHAIN STORM','#ffe27a',true);},
- 'lightning|plasma':()=>{ring(e.x,e.y,90,'#ff5cf0');for(const x of queryNear(e.x,e.y,90)){if(x._dead)continue;dealDamage(x,(12+4*used)*dm,{tick:x!==e});addSt(x,'shock',5);}radialImpulse(e.x,e.y,90,450);spawnText(e.x,e.y-e.r-16,'OVERLOAD','#ff5cf0',true);},
- 'fire|void':()=>{const s=eSt(e),o=s.burn||(s.burn={n:0,t:4});o.n=Math.min(600,o.n*1.6+10);o.t=5;spawnText(e.x,e.y-e.r-16,'ENTROPY','#b8a3ff',true);},
- 'radiation|toxic':()=>{if(!e.mut){e.mut=true;e.hp=Math.min(e.maxhp*1.3,e.hp*1.3);e.maxhp*=1.3;e.dmg*=1.2;e.speed*=1.1;spawnText(e.x,e.y-e.r-16,'MUTATION','#b6ff3c',true);}},
- 'ice|lightning':()=>{e.vulnT=5;spawnText(e.x,e.y-e.r-16,'SUPERCONDUCT','#7fdfff',true);},
- 'ice|void':()=>{if(isBig(e)){e.stunT=Math.max(e.stunT||0,0.7);}else{e.frozenT=Math.max(e.frozenT||0,1.1);e.stunT=Math.max(e.stunT||0,1.1);ring(e.x,e.y,e.r+18,'#bfeaff');}spawnText(e.x,e.y-e.r-16,'ABSOLUTE ZERO','#bfeaff',true);}}[key];
- if(!R)return false;e.reactCd=1.2;R();partner.n-=used;if(partner.n<1)delete eSt(e)[bKey];return true;}
+ 'fire|ice':()=>{const fr=(e.frozenT>0||(e.st&&e.st.chill&&e.st.chill.n>=8));const R0=fr?70:50;dealDamage(e,(14+6*used)*dm*(fr?1.6:1));ring(e.x,e.y,R0,'#bfeaff');ring(e.x,e.y,R0*0.6,'#fff');radialImpulse(e.x,e.y,R0+30,fr?1200:700);if(e.frozenT>0)e.frozenT=0;burst(e.x,e.y,'#bfeaff',fr?18:8);spawnText(e.x,e.y-e.r-16,fr?'SHATTER':'THERMAL SHOCK','#bfeaff',true);},
+ 'fire|toxic':()=>{ring(e.x,e.y,95,'#ff7a3c');for(const x of queryNear(e.x,e.y,95)){if(x._dead)continue;dealDamage(x,(10+3*used)*dm,{tick:x!==e});addSt(x,'burn',4);}addZone({type:'firepool',x:e.x,y:e.y,r:78,life:4.5,el:'fire',elAmt:3,dps:(10+player.level*0.7)*dm,color:'#ff7a3c'});spawnText(e.x,e.y-e.r-16,'COMBUSTION','#ff7a3c',true);},
+ 'lightning|toxic':()=>{let from={x:e.x,y:e.y};const seen=new Set([e]);for(let j=0;j<6;j++){const c=nearestEnemy(from.x,from.y,300,seen);if(!c)break;arcs.push({x1:from.x,y1:from.y,x2:c.x,y2:c.y,life:0.18,color:'#ffe27a'});dealDamage(c,(12+3*used)*dm);seen.add(c);from={x:c.x,y:c.y};}addZone({type:'conductive',x:e.x,y:e.y,r:96,life:4,el:'lightning',elAmt:2,color:'#5cd0ff'});spawnText(e.x,e.y-e.r-16,'CHAIN STORM','#ffe27a',true);},
+ 'lightning|plasma':()=>{ring(e.x,e.y,100,'#ff5cf0');for(const x of queryNear(e.x,e.y,100)){if(x._dead)continue;dealDamage(x,(12+4*used)*dm,{tick:x!==e});addSt(x,'shock',5);if(!isBig(x))x.stunT=Math.max(x.stunT||0,0.4);}radialImpulse(e.x,e.y,100,650);spawnText(e.x,e.y-e.r-16,'OVERLOAD','#ff5cf0',true);},
+ 'fire|void':()=>{const s=eSt(e),o=s.burn||(s.burn={n:0,t:4});o.n=Math.min(600,o.n*1.6+10);o.t=5;addZone({type:'void',x:e.x,y:e.y,r:120,life:3.2,pull:520,color:'#b8a3ff'});spawnText(e.x,e.y-e.r-16,'ENTROPY','#b8a3ff',true);},
+ 'radiation|toxic':()=>{if(!e.mut){e.mut=true;e.hp=Math.min(e.maxhp*1.3,e.hp*1.3);e.maxhp*=1.3;e.dmg*=1.2;e.speed*=1.1;}ring(e.x,e.y,140,'#b6ff3c');for(const x of queryNear(e.x,e.y,150)){if(x._dead||isBig(x)||x===e)continue;x.fearT=Math.max(x.fearT||0,1.4);}spawnText(e.x,e.y-e.r-16,'MUTATION','#b6ff3c',true);},
+ 'ice|lightning':()=>{e.vulnT=5;addZone({type:'frostground',x:e.x,y:e.y,r:104,life:5,slow:7,color:'#7fdfff'});spawnText(e.x,e.y-e.r-16,'SUPERCONDUCT','#7fdfff',true);},
+ 'ice|void':()=>{if(isBig(e)){e.stunT=Math.max(e.stunT||0,0.7);}else{e.frozenT=Math.max(e.frozenT||0,1.1);e.stunT=Math.max(e.stunT||0,1.1);ring(e.x,e.y,e.r+18,'#bfeaff');}spawnText(e.x,e.y-e.r-16,'ABSOLUTE ZERO','#bfeaff',true);},
+ 'fire|lightning':()=>{ring(e.x,e.y,120,'#ffd24b');const src=eSt(e);let best=null,bn=0;for(const k in src){if(src[k].n>bn){bn=src[k].n;best=k;}}for(const x of queryNear(e.x,e.y,120)){if(x._dead||x===e)continue;dealDamage(x,(8+2*used)*dm,{tick:true});if(best&&STEL[best])addSt(x,best,Math.max(2,Math.ceil(bn*0.5)));}burst(e.x,e.y,'#ffd24b',10);spawnText(e.x,e.y-e.r-16,'SWIRL','#ffd24b',true);},
+ 'kinetic|void':()=>{dealDamage(e,(10+4*used)*dm);drops.push({type:'shard',x:e.x,y:e.y,r:9,vx:rand(-40,40),vy:rand(-40,40)});ring(e.x,e.y,40,'#9bd0ff');spawnText(e.x,e.y-e.r-16,'CRYSTALLIZE','#9bd0ff',true);},
+ 'plasma|toxic':()=>{const _scap=OPT.quality==='potato'?0:(OPT.quality==='low'?6:14);if(seeds.length<_scap)seeds.push({x:e.x,y:e.y,t:1.5,r:10,dmg:(40+player.level*2.5)*dm});ring(e.x,e.y,36,'#6cffb0');spawnText(e.x,e.y-e.r-16,'BLOOM','#6cffb0',true);},
+ 'ice|toxic':()=>{addZone({type:'mist',x:e.x,y:e.y,r:110,life:5.5,el:'toxic',elAmt:4,dps:(6+player.level*0.5)*dm,slow:3,color:'#9bff5c'});spawnText(e.x,e.y-e.r-16,'CORROSIVE MIST','#9bff5c',true);},
+ 'lightning|void':()=>{addZone({type:'magnetize',x:e.x,y:e.y,r:150,life:2.6,pull:760,color:'#7b9bff'});for(const x of queryNear(e.x,e.y,150)){if(x._dead)continue;dealDamage(x,(6+2*used)*dm,{tick:true});addSt(x,'shock',2);}spawnText(e.x,e.y-e.r-16,'MAGNETIZE','#7b9bff',true);},
+ 'fire|radiation':()=>{addZone({type:'radioactive',x:e.x,y:e.y,r:115,life:5,el:'radiation',elAmt:3,dps:(8+player.level*0.6)*dm,dmgAmp:true,color:'#b6ff3c'});spawnText(e.x,e.y-e.r-16,'IRRADIATE','#b6ff3c',true);}}[key];
+ if(!R)return false;e.reactCd=1.2;R();if(player.reactShield>0){const _now=performance.now();if(_now>=(player._rsT||0)){player._rsT=_now+220;if(player.esMax>0)player.es=Math.min(player.esMax,(player.es||0)+player.reactShield);else player.hp=Math.min(player.maxHp,player.hp+player.reactShield);}}partner.n-=used;if(partner.n<1)delete eSt(e)[bKey];return true;}
 /* legacy wrappers used inside weapon defs */
 function applyBurn(e,dps,t){addSt(e,'burn',Math.max(1,dps/4));}
 function applyBleed(e,dps,t){addSt(e,'bleed',Math.max(1,dps/2.2));}
@@ -957,6 +1005,10 @@ const RELICS=[
 {id:'overclock',name:'Overclock',desc:'Redline the rig, ignore the warnings. +20% attack speed.',color:'#00e5d4',apply(){player.perm.attackspeed=Math.min(0.6,player.perm.attackspeed+0.20);}},
 {id:'titan',name:'Titan Heart',desc:'A second heart, bigger than the first. +120 hull. Stack \'em.',color:'#ff8a6e',stack:true,apply(){player.perm.maxhp+=120;}},
 {id:'detonator',name:'Detonator',desc:'Every crit leaves a crater. They go off in a chain. 35% splash.',color:'#ff7a3c',apply(){player.perm.critBoom=true;}},
+{id:'catalyst',name:'Unstable Catalyst',desc:'Your elemental reactions hit much harder. +60% reaction and ground-zone damage.',color:'#9bff5c',stack:true,apply(){player.perm.reactAmp=(player.perm.reactAmp||1)+0.6;}},
+{id:'wellspring',name:'Deep Wellspring',desc:'The pools, fogs and rifts you leave behind grow larger and linger longer. +40% zone size and duration.',color:'#5cd0ff',stack:true,apply(){player.perm.zoneScale=(player.perm.zoneScale||1)+0.4;}},
+{id:'feedback',name:'Reactive Plating',desc:'Triggering a reaction feeds your shield. Heals 8 shield (or hull) on every reaction, a few times a second.',color:'#9bd0ff',stack:true,apply(){player.perm.reactShield=(player.perm.reactShield||0)+8;}},
+{id:'permafrost',name:'Permafrost Lattice',desc:'Your ice bites deeper. Chill always lands with extra stacks, freezing crowds in place for longer.',color:'#bfeaff',apply(){player.perm.chillExtra=(player.perm.chillExtra||0)+4;}},
 ];
 const BOONS=[
 {name:'+22% Damage',desc:'More teeth. No catch. Just bite harder.',color:'#ff5a6e',apply(){player.perm.dmg+=0.22;}},
@@ -974,6 +1026,10 @@ const BOONS=[
 {name:'Titan Slayer',desc:'The big ones bleed too. +35% to anything that thinks it\'s a boss.',color:'#c77bff',can(){return (player.perm.titanMul||1)<1.8;},apply(){player.perm.titanMul=(player.perm.titanMul||1)*1.35;}},
 {name:'Event Ward',desc:'Stand in the storm and grin. 35% less hazard pain, 40% less black hole pull.',color:'#b07bff',can(){return (player.perm.hazardRes||0)<0.7;},apply(){player.perm.hazardRes=Math.min(0.7,(player.perm.hazardRes||0)+0.35);}},
 {name:'Bounty Surge',desc:'Skim a little extra off the top. +20% credits & rez.',color:'#ffc24b',apply(){player.perm.lootMul*=1.2;}},
+{name:'+30% Reaction Power',desc:'Your elemental reactions and the zones they leave hit noticeably harder.',color:'#9bff5c',apply(){player.perm.reactAmp=(player.perm.reactAmp||1)+0.30;}},
+{name:'Lingering Deep',desc:'Fire pools, poison fog, frost ground and rifts grow bigger and last longer.',color:'#5cd0ff',can(){return (player.perm.zoneScale||1)<2.2;},apply(){player.perm.zoneScale=(player.perm.zoneScale||1)+0.30;}},
+{name:'Reactive Ward',desc:'Every reaction you trigger tops up a little shield. Great for staying in the thick of it.',color:'#9bd0ff',apply(){player.perm.reactShield=(player.perm.reactShield||0)+6;}},
+{name:'Deep Freeze',desc:'Your chill lands with extra bite, slowing and locking down crowds for longer.',color:'#bfeaff',can(){return (player.perm.chillExtra||0)<10;},apply(){player.perm.chillExtra=(player.perm.chillExtra||0)+3;}},
 ];
 
 /* ===== STATE ===== */
@@ -1027,7 +1083,7 @@ function makePlayer(charDef){
    thorns:0,killHeal:0,enemySlow:1,companionCount:0,companions:[],
    es:0,esMax:0,esDelay:0,esRecMul:1,_esShatterT:0,hasBarrier:false,hasRegen:false,barrier:{ready:true,cd:0},barrierRecharge:BAL.barrierRecharge,
    relics:{},_deflectR:0,_halo:null,permShield:(charDef.id==='sentinel'||charDef.id==='vyper'),fieldHaste:1,boonNames:[],dodgeCd:0,dodgeT:0,_slideT:0,slowT:0,color:(profColor||charDef.color),pshape:profShape,parryActive:false,parryT:0,parryCdT:0,parryFlash:0,bulwarkT:0,
-   perm:{dmg:0,maxhp:0,speed:0,crit:0,area:0,attackspeed:0,extraProj:0,killHeal:0,enemySlow:1,critMult:2,es:0,lootMul:1,glassHpMult:1,critBoom:false,hazardRes:0,titanMul:1},
+   perm:{dmg:0,maxhp:0,speed:0,crit:0,area:0,attackspeed:0,extraProj:0,killHeal:0,enemySlow:1,critMult:2,es:0,lootMul:1,glassHpMult:1,critBoom:false,hazardRes:0,titanMul:1,reactAmp:1,zoneScale:1,reactShield:0,chillExtra:0},
    mods:m};
   recalc(p,true);p.hp=p.maxHp;p.es=p.esMax;return p;
 }
@@ -1054,6 +1110,7 @@ function recalc(p,init){
   p.knockMul=1+0.35*g('knock');
   p.slowRes=m.slowResBase||0;
   p.killHeal=pm.killHeal;
+  p.reactAmp=pm.reactAmp||1;p.zoneScale=pm.zoneScale||1;p.reactShield=pm.reactShield||0;p.chillExtra=pm.chillExtra||0;
   p.enemySlow=pm.enemySlow;
   p.esMax=25*g('energyshield')+pm.es;
   p.esRecMul=Math.pow(0.8,g('capacitor'));
@@ -1311,7 +1368,7 @@ function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t
 function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  
  chosenChar=charDef;player=makePlayer(charDef);
- enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];
+ enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];
  time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
  rs={dmg:0,taken:0,elite:0,boss:0,peak:0,acc:0,t:0,dodges:0,reacts:{}};
@@ -1413,6 +1470,8 @@ function update(dt){
   if(alertTime>0)alertTime-=dt;
   if(comboT>0){comboT-=dt;if(comboT<=0)comboN=0;}
   if(feedReactT>0)feedReactT-=dt;
+  updateZones(dt);
+  if(seeds.length){for(const sd of seeds){sd.t-=dt;if(sd.t<=0){const tgt=nearestEnemy(sd.x,sd.y,420)||{x:sd.x,y:sd.y};ring(sd.x,sd.y,70,'#6cffb0');burst(sd.x,sd.y,'#6cffb0',16);for(const x of queryNear(tgt.x,tgt.y,90)){if(x._dead)continue;dealDamage(x,sd.dmg,{tick:true});}sd._dead=true;}}for(let i=seeds.length-1;i>=0;i--)if(seeds[i]._dead)seeds.splice(i,1);}
   if(corruption>0){corrWhisperT=(corrWhisperT||0)-dt;if(corrWhisperT<=0){corrWhisperT=rand(7,12);spawnText(player.x+rand(-80,80),player.y+rand(-60,-20),pick(CORRUPT_LINES),'#ff3df0',Math.random()<0.3,true);}}
   fpsWatchdog(dt);
   if(corrFrozen){const mins=Math.floor((time-corrFreezeTime)/60);if(mins>corrScaleStep){corrScaleStep=mins;corrScaleMul=Math.pow(3,corrScaleStep);gameAlert('THE DEEP GROWS TEETH','#ff3df0','everything is 3x stronger');}}
@@ -1439,6 +1498,7 @@ function update(dt){
   if(e.vulnT>0)e.vulnT-=dt;
   if(e.stunT>0){e.stunT-=dt;stunned=true;}
   if(e.frozenT>0){e.frozenT-=dt;stunned=true;e.kvx=0;e.kvy=0;if(e.frozenT<=0)e._mMul=-1;/* force mass recompute on thaw */}
+  if(e.fearT>0)e.fearT-=dt;
   if(e.st){let chill=0,weak=0;
    for(const k in e.st){const o=e.st[k];o.t-=dt;if(o.t<=0){delete e.st[k];continue;}
     const sd=STATUS[k];if(sd.dps)dot+=sd.dps*o.n;if(k==='chill')chill=o.n;if(k==='weak')weak=o.n;}
@@ -1510,7 +1570,7 @@ function update(dt){
     if(e.finalboss){for(let k=0;k<16;k++)enemyShot(e.x,e.y,k/16*TAU+time,250,7,e.dmg*0.5,3.5,'#ff7df0',true);}
     else if(big){const col=e.arch==='solar'?'#ff8a3c':'#ffd24b';for(let k=0;k<10;k++)enemyShot(e.x,e.y,k/10*TAU,220,7,e.dmg*0.5,3,col,true);}
     else{const a=Math.atan2(dy,dx);enemyShot(e.x,e.y,a,240,6,ETYPES.shooter.dmg*BAL.enemyDmg(time)+10,3,'#5cd0ff',false);}}}
-  else{const esE=(e.sharp||e.speed>=300)?earlySpeedEase():1;if(e.sharp||e.stamp||e.speed>=180){e._svx=dx/d*e.speed*spmul*esE;e._svy=dy/d*e.speed*spmul*esE;}e.x+=dx/d*e.speed*spmul*esE*dt;e.y+=dy/d*e.speed*spmul*esE*dt;}
+  else{const esE=(e.sharp||e.speed>=300)?earlySpeedEase():1;const fdir=(e.fearT>0)?-1.15:1;if(e.sharp||e.stamp||e.speed>=180){e._svx=dx/d*e.speed*spmul*esE*fdir;e._svy=dy/d*e.speed*spmul*esE*fdir;}e.x+=dx/d*e.speed*spmul*esE*fdir*dt;e.y+=dy/d*e.speed*spmul*esE*fdir*dt;}
   if(e.hitFlash>0)e.hitFlash-=dt;
   if(e.dmg>0&&d<e.r+player.r&&player.iframes<=0&&!player.parryActive){
     hitPlayer(e.dmg*(e._weak?Math.max(0.5,1-0.02*e._weak):1),(e.sharp||e.r>=40)?'heavy':'contact',(e.warden||e.finalboss)?0.28:((e.sharp||e.r>=40)?0.15:0.08));
@@ -1658,6 +1718,7 @@ let real=Math.max(1,dmg-player.armor);if(rs)rs.taken+=real;player.esDelay=2.0*pl
  if(player.hp<=0){if(player.phoenix){player.phoenix=false;player.hp=player.maxHp*0.5;player.iframes=2;player.hurtFlash=0.4;ring(player.x,player.y,140,'#ff7a3c');toast('PHOENIX PROTOCOL');sfx('boss');}else{player.hp=0;runOver='dead';}}}
 function collectDrop(d){
  if(d.type==='gold'){gold+=Math.round(randi(1,3)*player.goldMult);sfx('pickup');}
+ else if(d.type==='shard'){const amt=Math.max(20,Math.round(player.maxHp*0.12));if(player.esMax>0){player.es=clamp((player.es||0)+amt,0,player.esMax);}else{player.hp=clamp(player.hp+amt,0,player.maxHp);}ring(player.x,player.y,player.r+30,'#9bd0ff');toast('CRYSTAL SHARD');sfx('shield');}
  else if(d.type==='heart'){player.hp=clamp(player.hp+player.maxHp*0.25,0,player.maxHp);toast('+HULL');sfx('levelup');}
  else if(d.type==='magnet'){for(const o of orbs)o.mag=true;ring(player.x,player.y,180,'#5cd0ff');toast('RESONANCE MAGNET');sfx('levelup');}
  else if(d.type==='bomb'){toast('VOID BURST');sfx('bomb');screenShake=12;radialImpulse(player.x,player.y,420,820);for(const c of corpses){const a=Math.max(0,c.life/c.maxlife);ctx.save();ctx.globalAlpha=a*0.7;ctx.fillStyle=c.color;ctx.shadowColor=c.color;ctx.shadowBlur=8;ctx.translate(c.x,c.y);ctx.rotate(c.rot);const r=c.r*(0.6+0.4*a);if(c.shape==='square')ctx.fillRect(-r,-r,r*2,r*2);else if(c.shape==='tri'){ctx.beginPath();ctx.moveTo(0,-r*1.2);ctx.lineTo(r,r*0.9);ctx.lineTo(-r,r*0.9);ctx.closePath();ctx.fill();}else if(c.shape==='hex'){ctx.beginPath();for(let k=0;k<6;k++){const ha=k/6*TAU;k?ctx.lineTo(Math.cos(ha)*r,Math.sin(ha)*r):ctx.moveTo(Math.cos(ha)*r,Math.sin(ha)*r);}ctx.closePath();ctx.fill();}else{ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fill();}ctx.restore();}
@@ -1712,6 +1773,8 @@ function render(){
  ctx.translate(W/2+shakeX,H/2+shakeY);ctx.scale(VIEW,VIEW);ctx.translate(-player.x,-player.y);
  const camX=player.x-VW/2,camY=player.y-VH/2;
  drawGridBg(camX,camY,VW,VH);drawRoads(camX,camY,VW,VH);
+ drawZones();
+ for(const sd of seeds){ctx.save();const pz=0.6+0.4*Math.sin(time*10);ctx.globalAlpha=0.8*pz;ctx.fillStyle='#6cffb0';if(QX&&QX.glow){ctx.shadowColor='#6cffb0';ctx.shadowBlur=14;}ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r*pz,0,TAU);ctx.fill();ctx.globalAlpha=0.4;ctx.strokeStyle='#6cffb0';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r+5+pz*4,0,TAU);ctx.stroke();ctx.restore();}
  for(const tr of trails){ctx.save();ctx.globalAlpha=Math.min(0.55,tr.life*0.4);const g=ctx.createRadialGradient(tr.x,tr.y,2,tr.x,tr.y,tr.r);g.addColorStop(0,'rgba(255,150,60,0.9)');g.addColorStop(1,'rgba(255,80,30,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.r,0,TAU);ctx.fill();ctx.restore();}
  for(const hz of hazards){ctx.save();
   if(hz.tele>0){ctx.globalAlpha=0.45+0.3*Math.sin(time*12);ctx.strokeStyle=hz.type==='meteor'?'#ff9b4b':(hz.type==='blackhole'?'#b07bff':(hz.type==='tar'?'#8a6bd8':(hz.type==='solar'?'#ffb04b':'#ff7b9b')));ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.stroke();ctx.setLineDash([]);}
@@ -1725,7 +1788,7 @@ function render(){
  for(const c of chests){ctx.save();const pulse=0.7+0.3*Math.sin(time*6);ctx.globalAlpha=pulse;ctx.shadowColor='#ffd24b';ctx.shadowBlur=18;ctx.fillStyle='#ffd24b';ctx.fillRect(c.x-9,c.y-7,18,14);ctx.fillStyle='#5a4410';ctx.fillRect(c.x-9,c.y-1,18,3);ctx.restore();}
  for(const d of drops){if(d.type==='gold')glowDot(d.x,d.y,d.r,'#ffc24b',8);
   else if(d.type==='heart'){ctx.save();ctx.shadowColor='#ff5a6e';ctx.shadowBlur=14;ctx.fillStyle='#ff8a9e';ctx.font='18px sans-serif';ctx.textAlign='center';ctx.fillText('❤',d.x,d.y+6);ctx.restore();}
-  else if(d.type==='magnet')drawSymbol(d.x,d.y,'⊚','#5cd0ff');else if(d.type==='bomb')drawSymbol(d.x,d.y,'✸','#ffc24b');
+  else if(d.type==='magnet')drawSymbol(d.x,d.y,'⊚','#5cd0ff');else if(d.type==='bomb')drawSymbol(d.x,d.y,'✸','#ffc24b');else if(d.type==='shard')drawSymbol(d.x,d.y,'◈','#9bd0ff');
   if(d.type!=='gold'){ctx.save();const pu=0.5+0.5*Math.sin(time*5+d.x*0.01);const dc=d.type==='heart'?'#ff5a6e':(d.type==='magnet'?'#5cd0ff':'#ffc24b');ctx.globalAlpha=0.35+0.4*pu;ctx.strokeStyle=dc;ctx.shadowColor=dc;ctx.shadowBlur=12;ctx.lineWidth=2;ctx.beginPath();ctx.arc(d.x,d.y,13+5*pu,0,TAU);ctx.stroke();ctx.restore();}}
  const aw=player.weapons.find(x=>x.id==='aura');
  if(aw&&aw._render){const r=aw._render.radius;ctx.save();const g=ctx.createRadialGradient(player.x,player.y,r*0.3,player.x,player.y,r);g.addColorStop(0,'rgba(155,109,255,0)');g.addColorStop(0.7,'rgba(155,109,255,0.10)');g.addColorStop(1,'rgba(155,109,255,0.28)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(player.x,player.y,r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(155,109,255,0.5)';ctx.lineWidth=2;ctx.stroke();ctx.restore();}
@@ -1841,6 +1904,7 @@ function drawEnemy(e){ctx.save();const big=e.elite||e.mage||isBig(e);
  if(e.laser&&e.laserT>0){ctx.save();ctx.globalAlpha=0.85;const g=ctx.createLinearGradient(0,e.laserY-14,0,e.laserY+14);g.addColorStop(0,'rgba(255,59,110,0)');g.addColorStop(0.5,'rgba(255,90,110,0.95)');g.addColorStop(1,'rgba(255,59,110,0)');ctx.fillStyle=g;ctx.shadowColor='#ff3b6e';ctx.shadowBlur=18;ctx.fillRect(e.x-2200,e.laserY-14,4400,28);ctx.restore();}
  if(e.frozenT>0){ctx.save();const fp=0.7+0.3*Math.sin(time*4+e.x*0.05);ctx.globalAlpha=0.85*fp;ctx.strokeStyle='#cfeeff';ctx.fillStyle='rgba(180,225,255,0.18)';ctx.shadowColor='#bfeaff';ctx.shadowBlur=12;ctx.lineWidth=2.4;const fr=e.r+4;ctx.beginPath();ctx.rect(e.x-fr,e.y-fr,fr*2,fr*2);ctx.fill();ctx.stroke();ctx.globalAlpha=0.5*fp;ctx.beginPath();ctx.moveTo(e.x-fr,e.y);ctx.lineTo(e.x+fr,e.y);ctx.moveTo(e.x,e.y-fr);ctx.lineTo(e.x,e.y+fr);ctx.stroke();ctx.restore();}
  else if(e.stunT>0){ctx.save();ctx.globalAlpha=0.9;ctx.strokeStyle='#bfeaff';ctx.shadowColor='#bfeaff';ctx.shadowBlur=10;ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,e.r+3,0,TAU);ctx.stroke();ctx.restore();}
+ if(e.fearT>0){ctx.save();ctx.globalAlpha=0.85;ctx.fillStyle='#b6ff3c';ctx.font='10px sans-serif';ctx.textAlign='center';ctx.fillText('‼',e.x,e.y-e.r-7);ctx.restore();}
  if(e.st){let i=0;for(const k in e.st){if(i>=4)break;ctx.save();ctx.globalAlpha=0.95;if(!STATUS[k])continue;ctx.fillStyle=STATUS[k].color;ctx.beginPath();ctx.arc(e.x-9+i*6,e.y-e.r-5,2.4,0,TAU);ctx.fill();ctx.restore();i++;}}
  if((e.elite||isBig(e))&&e.hp<e.maxhp){ctx.save();ctx.strokeStyle=e.color;ctx.lineWidth=6;ctx.beginPath();ctx.arc(e.x,e.y,e.r+10,-Math.PI/2,-Math.PI/2+TAU*(e.hp/e.maxhp));ctx.stroke();ctx.restore();}}
 function predictDodgeLanding(dirx,diry,press){
@@ -2218,14 +2282,20 @@ const ST_INFO={
  weak:{name:'Weakened',el:'plasma',txt:'Plasma overload. Weakened enemies hit you softer. Survival through suppression.'},
  bleed:{name:'Bleed',el:'kinetic',txt:'Raw kinetic wounds that drip damage. The honest status.'}};
 const REACT_INFO=[
- ['fire','ice','Thermal Shock','A burst of pure shock damage when fire meets ice. Front loaded and brutal.'],
- ['fire','toxic','Combustion','The poison cloud detonates, spreading fire to everything nearby.'],
- ['lightning','toxic','Chain Storm','A six jump chain of lightning rips through the pack.'],
- ['lightning','plasma','Overload','The target explodes and sprays shock onto its neighbors.'],
- ['fire','void','Entropy','Burn stops having a ceiling. Each proc multiplies it. Snowball the deep.'],
- ['radiation','toxic','Mutation','The enemy grows stronger but drops far richer loot. Risk for reward.'],
- ['ice','lightning','Superconduct','Strips resistance. The target takes +50% from all damage.'],
- ['ice','void','Absolute Zero','Total freeze. The enemy simply stops, fully locked.']];
+ ['fire','ice','Thermal Shock','A shock burst that knocks the whole pack outward. If the target was frozen, it shatters for far more and clears the freeze.'],
+ ['fire','toxic','Combustion','Drops a burning fire pool on the ground. Anything that stands in it keeps taking fire damage.'],
+ ['lightning','toxic','Chain Storm','A six jump lightning chain, and it leaves a conductive zone behind that keeps zapping anything that walks in.'],
+ ['lightning','plasma','Overload','A hard scatter that flings enemies away and briefly stuns everyone caught in it.'],
+ ['fire','void','Entropy','Burn loses its ceiling and snowballs, plus a void rift opens that pulls enemies inward. Soak them, then ignite.'],
+ ['radiation','toxic','Mutation','The enemy grows stronger but drops far richer loot, and lets out a fear pulse that sends nearby fodder fleeing. Risk for reward.'],
+ ['ice','lightning','Superconduct','The target takes +50% from everything, and a frozen ground zone forms that slows all who cross it.'],
+ ['ice','void','Absolute Zero','Total freeze. The enemy locks solid and becomes an immovable wall the horde piles into.'],
+ ['fire','lightning','Swirl','Spreads the strongest status on the target out to every enemy nearby. Turn one burning foe into a burning crowd.'],
+ ['kinetic','void','Crystallize','Drops a crystal shard. Walk over it for a chunk of shield, or hull if you have no shield.'],
+ ['toxic','plasma','Bloom','Plants a seed that blooms after about 1.5 seconds, detonating on the nearest pack with a homing burst.'],
+ ['ice','toxic','Corrosive Mist','Lays down a poison fog that stacks corrosion and slows everything caught inside it.'],
+ ['lightning','void','Magnetize','Opens a strong pull rift that yanks enemies into a tight cluster. Set it up, then blow the cluster apart.'],
+ ['fire','radiation','Irradiate','Leaves a radioactive zone that applies radiation and makes everything inside take extra damage.']];
 const ITEM_INFO=[
  ['◈','#ffc24b','Credit Cache','Pickup','Loose salvage. Bank it. Credits feed your greed perks and the run archive.'],
  ['❤','#ff5a6e','Repair Cell','Pickup','Patches a chunk of hull back on. Grab it before the next wave reads you.'],
@@ -2461,7 +2531,7 @@ function buildCardHTML(){if(!player)return'';
  for(const w of player.weapons){const W2=WEAPONS[w.id];s+=`<div class="bw"><span style="color:${W2.color}">${W2.icon} ${evoName(w.id,w.evo||0)}</span><span class="st">${'\u2605'.repeat(Math.min(w.level,8))}${(w.evo||0)?' E'+w.evo:''}</span></div>`;}
  if(player.passives&&Object.keys(player.passives).length){s+='<h5>Augments</h5>';
   for(const id in player.passives){const P2=PASSIVES[id];if(P2)s+=`<div class="bw"><span style="color:${P2.color}">${P2.icon} ${P2.name}</span><span class="st">LV ${player.passives[id]}</span></div>`;}}
- const RN={'fire|ice':'Thermal Shock','fire|toxic':'Combustion','lightning|toxic':'Chain Storm','lightning|plasma':'Overload','fire|void':'Entropy','radiation|toxic':'Mutation','ice|lightning':'Superconduct','ice|void':'Absolute Zero'};
+ const RN={'fire|ice':'Thermal Shock','fire|toxic':'Combustion','lightning|toxic':'Chain Storm','lightning|plasma':'Overload','fire|void':'Entropy','radiation|toxic':'Mutation','ice|lightning':'Superconduct','ice|void':'Absolute Zero','fire|lightning':'Swirl','kinetic|void':'Crystallize','plasma|toxic':'Bloom','ice|toxic':'Corrosive Mist','lightning|void':'Magnetize','fire|radiation':'Irradiate'};
  const els=Object.keys(elc),act=[];
  for(const k in RN){const[a,b]=k.split('|');if(els.includes(a)&&els.includes(b))act.push(RN[k]);}
  s+='<h5>Synergy</h5>'+(act.length?act.map(n=>`<div class="syn">\u25c8 ${n.toUpperCase()} ACTIVE</div>`).join(''):'<div style="color:var(--dim);font-size:12px">mix two elements to unlock reactions</div>');
