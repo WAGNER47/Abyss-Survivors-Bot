@@ -698,7 +698,7 @@ function sfx(type){if(!AC||muted)return;try{const t=AC.currentTime;
 /* ===== BALANCE (single source of truth) ===== */
 const BAL={
   enemyHp(t){const lv=(typeof player!=='undefined'&&player&&player.level)?player.level:1;return (1+t/52+Math.pow(t/250,2))*(1+lv*0.009);},
-  enemyDmg(t){const lv=(typeof player!=='undefined'&&player&&player.level)?player.level:1;return (1+t/170)*(1+lv*0.005);},
+  enemyDmg(t){const lv=(typeof player!=='undefined'&&player&&player.level)?player.level:1;return (1+t/210)*(1+lv*0.004);},
   spawnInterval(t){return Math.max(0.28,0.95-t*0.011);},
   spawnBatch(t){return 2+Math.floor(t/18);},
   enemyCap:260,
@@ -740,8 +740,8 @@ function applyEl(e,el,amt){const E=ELEMENTS[el];if(!E||e._dead)return;
   dealDamage(e,(80+pn*6)*dmC,{tick:true});
   for(const x of queryNear(e.x,e.y,130)){if(x._dead)continue;const ix=e.x-x.x,iy=e.y-x.y,idd=Math.hypot(ix,iy)||1,im=Math.max(0.6,x.m||x.r*x.r/100);x.kvx=(x.kvx||0)+ix/idd*420/im;x.kvy=(x.kvy||0)+iy/idd*420/im;if(x!==e)dealDamage(x,(30+pn*2)*dmC,{tick:true});}
   spawnText(e.x,e.y-e.r-16,'ABYSSAL COLLAPSE','#9b6dff',true);}
- if(e.reactCd<=0){const s=eSt(e);for(const k in s){if(s[k].n>=2&&STEL[k]!==el){if(tryReact(e,el,STEL[k],k))break;}}}
- addSt(e,E.st,amt*E.pow*(isBig(e)?0.5:1));}
+ if(e.reactCd<=0){const s=eSt(e);for(const k in s){if(s[k].n>=1&&STEL[k]!==el){if(tryReact(e,el,STEL[k],k))break;}}}
+ addSt(e,E.st,amt*E.pow*(isBig(e)?0.65:1));}
 /* ===== ELEMENTAL GROUND ZONES (battlefield states left by reactions) =====
    Cheap pooled list. Each zone lingers, affects enemies/player standing in it,
    then fades. Capped + quality-gated so hordes stay smooth on low-end mobile. */
@@ -784,7 +784,7 @@ function drawZones(){
    if(QX&&QX.glow){ctx.globalAlpha=0.3*a;ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(z.x,z.y,z.r*(0.7+0.3*Math.sin(time*3)),0,TAU);ctx.stroke();}}
   ctx.restore();}
 }
-function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO','fire|lightning':'SWIRL','kinetic|void':'CRYSTALLIZE','plasma|toxic':'BLOOM','ice|toxic':'CORROSIVE MIST','lightning|void':'MAGNETIZE','fire|radiation':'IRRADIATE'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult*(player.reactAmp||1),partner=eSt(e)[bKey],used=Math.max(2,partner.n*0.5);
+function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO','fire|lightning':'SWIRL','kinetic|void':'CRYSTALLIZE','plasma|toxic':'BLOOM','ice|toxic':'CORROSIVE MIST','lightning|void':'MAGNETIZE','fire|radiation':'IRRADIATE'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult*(player.reactAmp||1),partner=eSt(e)[bKey],used=Math.max(1,partner.n*0.45);
  const R={
  'fire|ice':()=>{const fr=(e.frozenT>0||(e.st&&e.st.chill&&e.st.chill.n>=8));const R0=fr?70:50;dealDamage(e,(14+6*used)*dm*(fr?1.6:1));ring(e.x,e.y,R0,'#bfeaff');ring(e.x,e.y,R0*0.6,'#fff');radialImpulse(e.x,e.y,R0+30,fr?1200:700);if(e.frozenT>0)e.frozenT=0;burst(e.x,e.y,'#bfeaff',fr?18:8);spawnText(e.x,e.y-e.r-16,fr?'SHATTER':'THERMAL SHOCK','#bfeaff',true);},
  'fire|toxic':()=>{ring(e.x,e.y,95,'#ff7a3c');for(const x of queryNear(e.x,e.y,95)){if(x._dead)continue;dealDamage(x,(10+3*used)*dm,{tick:x!==e});addSt(x,'burn',4);}addZone({type:'firepool',x:e.x,y:e.y,r:78,life:4.5,el:'fire',elAmt:3,dps:(10+player.level*0.7)*dm,color:'#ff7a3c'});spawnText(e.x,e.y-e.r-16,'COMBUSTION','#ff7a3c',true);},
@@ -800,7 +800,7 @@ function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs
  'ice|toxic':()=>{addZone({type:'mist',x:e.x,y:e.y,r:110,life:5.5,el:'toxic',elAmt:4,dps:(6+player.level*0.5)*dm,slow:3,color:'#9bff5c'});spawnText(e.x,e.y-e.r-16,'CORROSIVE MIST','#9bff5c',true);},
  'lightning|void':()=>{addZone({type:'magnetize',x:e.x,y:e.y,r:150,life:2.6,pull:760,color:'#7b9bff'});for(const x of queryNear(e.x,e.y,150)){if(x._dead)continue;dealDamage(x,(6+2*used)*dm,{tick:true});addSt(x,'shock',2);}spawnText(e.x,e.y-e.r-16,'MAGNETIZE','#7b9bff',true);},
  'fire|radiation':()=>{addZone({type:'radioactive',x:e.x,y:e.y,r:115,life:5,el:'radiation',elAmt:3,dps:(8+player.level*0.6)*dm,dmgAmp:true,color:'#b6ff3c'});spawnText(e.x,e.y-e.r-16,'IRRADIATE','#b6ff3c',true);}}[key];
- if(!R)return false;e.reactCd=1.2;R();if(player.reactShield>0){const _now=performance.now();if(_now>=(player._rsT||0)){player._rsT=_now+220;if(player.esMax>0)player.es=Math.min(player.esMax,(player.es||0)+player.reactShield);else player.hp=Math.min(player.maxHp,player.hp+player.reactShield);}}partner.n-=used;if(partner.n<1)delete eSt(e)[bKey];return true;}
+ if(!R)return false;e.reactCd=0.8;R();if(player.reactShield>0){const _now=performance.now();if(_now>=(player._rsT||0)){player._rsT=_now+220;if(player.esMax>0)player.es=Math.min(player.esMax,(player.es||0)+player.reactShield);else player.hp=Math.min(player.maxHp,player.hp+player.reactShield);}}partner.n-=used;if(partner.n<1)delete eSt(e)[bKey];return true;}
 /* legacy wrappers used inside weapon defs */
 function applyBurn(e,dps,t){addSt(e,'burn',Math.max(1,dps/4));}
 function applyBleed(e,dps,t){addSt(e,'bleed',Math.max(1,dps/2.2));}
@@ -1573,7 +1573,7 @@ function update(dt){
   else{const esE=(e.sharp||e.speed>=300)?earlySpeedEase():1;const fdir=(e.fearT>0)?-1.15:1;if(e.sharp||e.stamp||e.speed>=180){e._svx=dx/d*e.speed*spmul*esE*fdir;e._svy=dy/d*e.speed*spmul*esE*fdir;}e.x+=dx/d*e.speed*spmul*esE*fdir*dt;e.y+=dy/d*e.speed*spmul*esE*fdir*dt;}
   if(e.hitFlash>0)e.hitFlash-=dt;
   if(e.dmg>0&&d<e.r+player.r&&player.iframes<=0&&!player.parryActive){
-    hitPlayer(e.dmg*(e._weak?Math.max(0.5,1-0.02*e._weak):1),(e.sharp||e.r>=40)?'heavy':'contact',(e.warden||e.finalboss)?0.28:((e.sharp||e.r>=40)?0.15:0.08));
+    hitPlayer(e.dmg*(e._weak?Math.max(0.5,1-0.02*e._weak):1),(e.sharp||e.r>=40)?'heavy':'contact',(e.warden||e.finalboss)?0.24:((e.sharp||e.r>=40)?0.12:0.065));
     if(e.sharp){player.slowT=2.2*(1-0.5*(player.slowRes||0));burst(e.x,e.y,e.color,8);e._dead=true;ring(player.x,player.y,player.r+20,'#ff5a6e');
      // ENERGY SHIELD: a single triangle shatters it completely, no matter the stats.
      if(player.es>0){player.es=0;player.esDelay=Math.max(player.esDelay,5*player.esRecMul);player._esShatterT=5;
@@ -1594,8 +1594,8 @@ function update(dt){
   if(evo>0){player.damageMult*=1+0.35*evo;player.extraProj+=evo;player.area*=1+0.06*evo;player.cdMul*=Math.pow(0.92,evo);}
   if(w.cosmic&&def.continuous)player.damageMult*=1.4;
   if(player.onRoad)player.damageMult*=1.1;
-  const els=wEls(w),pow=0.8+0.25*w.level;
-  if(def.continuous){CURW={els,rate:0.5+0.08*w.level};def.tick(player,w.level,dt,w);CURW=null;}
+  const els=wEls(w),pow=1.3+0.35*w.level;
+  if(def.continuous){CURW={els,rate:0.8+0.13*w.level};def.tick(player,w.level,dt,w);CURW=null;}
   else{w.timer-=dt;if(w.timer<=0){w.timer=def.cd(w.level,player)*player.fieldHaste;const n0=pjs.length;def.fire(player,def.stats(w.level,player));if(w.cosmic)def.fire(player,def.stats(w.level,player));for(let i=n0;i<pjs.length;i++){pjs[i].els=els;pjs[i].elPow=pow;pjs[i].srcW=w.id;}}}
   player.damageMult=dm0;player.extraProj=ep0;player.area=ar0;player.cdMul=cd0;}
 
@@ -1727,7 +1727,7 @@ function isChoiceLevel(lv){if(lv<=10)return true;if(lv<=30)return lv%2===0;if(lv
 const CORR_CAP_LEVEL=103;
 // EARLY GRACE: hazards and fast enemies are gentler until level 10, then full strength.
 // Linear ramp from 0.42 at L1 to 1.0 at L10. After L10 it is always 1.0 (no mercy for vets).
-function earlyEase(){const lv=player&&player.level?player.level:1;if(lv>=10)return 1;return 0.42+0.58*((lv-1)/9);}
+function earlyEase(){const lv=player&&player.level?player.level:1;if(lv>=12)return 1;return 0.35+0.65*((lv-1)/11);}
 // Triangle / fast-enemy speed ease: a touch gentler early so new players can read them.
 function earlySpeedEase(){const lv=player&&player.level?player.level:1;if(lv>=10)return 1;return 0.6+0.4*((lv-1)/9);}
 function paceTarget(t){
@@ -2003,7 +2003,7 @@ function buildOffers(){const pool=[];
  player.weapons.forEach(w=>{
   if(w.level<WEAPONS[w.id].max)pool.push({type:'wlvl',id:w.id});
   else if((w.evo||0)<4)pool.push({type:'evo',id:w.id},{type:'evo',id:w.id});
-  if((w.inf||[]).length<2){const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate&&!(w.inf||[]).includes(el));if(opts.length)pool.push({type:'infuse',id:w.id,el:pick(opts)});}});
+  if((w.inf||[]).length<2){const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate&&!(w.inf||[]).includes(el));if(opts.length){pool.push({type:'infuse',id:w.id,el:pick(opts)});pool.push({type:'infuse',id:w.id,el:pick(opts)});}}});
  if(player.weapons.length<BAL.weaponSlots)for(const id in WEAPONS){if(!player.weapons.find(w=>w.id===id))pool.push({type:'wnew',id});}
  for(const id in player.passives){if(player.passives[id]<PASSIVES[id].max)pool.push({type:'plvl',id});}
  if(Object.keys(player.passives).length<BAL.passiveSlots)for(const id in PASSIVES){if(!(id in player.passives))pool.push({type:'pnew',id});}
@@ -2011,7 +2011,7 @@ for(let i=pool.length-1;i>0;i--){const j=randi(0,i);[pool[i],pool[j]]=[pool[j],p
  // EARLY GAME: teach builds. Before level 12, float new weapons/passives to the front so
  // players see variety. After that, normal shuffled odds (vets get no special treatment).
  if(player.level<12){pool.sort((a,b)=>{const av=(a.type==='wnew'||a.type==='pnew')?0:(a.type==='infuse'?1:2);const bv=(b.type==='wnew'||b.type==='pnew')?0:(b.type==='infuse'?1:2);return av-bv;});}
- const out=[];for(const o of pool){if(out.length>=3)break;if(o.type==='infuse'&&out.some(x=>x.type==='infuse'))continue;out.push(o);}
+ const out=[];let _infN=0;for(const o of pool){if(out.length>=3)break;if(o.type==='infuse'){if(_infN>=2)continue;_infN++;}out.push(o);}
  if(out.length)while(out.length<3)out.push(Math.random()<0.5?{type:'heal'}:{type:'gold'});return out;}
 function offerCard(o){
  if(o.type==='wlvl'||o.type==='wnew'){const d=WEAPONS[o.id],lv=o.type==='wlvl'?player.weapons.find(w=>w.id===o.id).level+1:1;const el=ELEMENTS[WEAPON_EL[o.id]||'kinetic'];return{color:d.color,icon:d.icon,tag:o.type==='wnew'?'NEW':'WEAPON',name:d.name,lvtxt:(o.type==='wnew'?'Acquire':`Lv ${lv-1} → ${lv}`)+' · '+el.name,desc:d.desc(lv)};}
@@ -2324,9 +2324,9 @@ const CODEX_TABS={
  Items(){let s='<div class="gsectnote">Things the deep leaves behind. Most of it flies to you the moment you get close. Tap any card for the full read.</div>'+'<div class="gsectnote">Marked enemies: some foes spawn with a glyph overhead. Learn them fast:</div>'+MOD_INFO.map(m=>codexEntry(m[0],m[1],m[2],'Modifier',m[3])).join('');for(const[i,c,n,t,d] of ITEM_INFO)s+=codexEntry(i,c,n,t,d);s+='<div class="gsectnote" style="margin-top:8px">Hazards to avoid:</div>';for(const[i,c,n,d] of HAZ_INFO)s+=codexEntry(i,c,n,'Hazard',d);return s;}
  ,Weapons(){let s='<div class="gsectnote">Your guns fire on their own. Your job is choosing which ones grow. Max a weapon to unlock four Evolution tiers, then feed it elements in the draft. Tap any weapon for the full read.</div>';for(const id in WEAPONS){const w=WEAPONS[id],el=ELEMENTS[WEAPON_EL[id]||'kinetic'];s+=codexEntry(w.icon,w.color,w.name,el.name+' base',(typeof w.desc==='function'?w.desc(1):w.desc||'').replace(/`/g,''));}return s;}
  ,Divers(){let s='<div class="gsectnote">Six ways to descend. Each one plays a different game. Tap a diver to study them before your next run.</div>';for(const c of CHARS)s+=codexEntry(c.glyph,c.color,c.name,c.role,c.desc);return s;}
- ,Elements(){let s='<div class="gsectnote">Eight damage types. Every weapon has one built in and can be infused with two more. Mixing two different elements on one enemy triggers a Reaction.</div>';for(const id in ELEMENTS){const e=ELEMENTS[id],st=ST_INFO[e.st];s+=codexEntry(e.icon,e.color,e.name,'applies '+(st?st.name:e.st),st?st.txt:'');}return s;}
+ ,Elements(){let s='<div class="gsectnote">Eight damage types. Every weapon has one built in and can be infused with two more, and infusions show up often in the draft. Landing just two different elements on the same enemy sets off a Reaction, so two-element builds come online fast.</div>';for(const id in ELEMENTS){const e=ELEMENTS[id],st=ST_INFO[e.st];s+=codexEntry(e.icon,e.color,e.name,'applies '+(st?st.name:e.st),st?st.txt:'');}return s;}
  ,Status(){let s='<div class="gsectnote">Effects stack as pips over an enemy. The more pips, the harder it bites.</div>';for(const k in ST_INFO){const si=ST_INFO[k],c=(STATUS[k]||{}).color||'#fff',e=ELEMENTS[si.el];s+=codexEntry(e.icon,c,si.name,'from '+e.name,si.txt);}return s;}
- ,Reactions(){let s='<div class="gsectnote">Land two different elements on the same target and the deep answers. This is where builds get broken.</div>';for(const[a,b,name,d] of REACT_INFO){const ea=ELEMENTS[a],eb=ELEMENTS[b];s+=`<div class="gentry" style="--gc:${eb.color}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${ea.color};border-color:${ea.color}">${ea.icon} ${ea.name}</span><span class="gplus">+</span><span class="gpill" style="color:${eb.color};border-color:${eb.color}">${eb.icon} ${eb.name}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}s+='<div class="gsectnote" style="margin-top:10px">Escalation chains. Stack deeper, burn brighter:</div>';for(const[from,name,d,c] of CHAIN_INFO){s+=`<div class="gentry" style="--gc:${c}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${c};border-color:${c}">${from}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}return s;}
+ ,Reactions(){let s='<div class="gsectnote">Land two different elements on the same enemy and the deep answers. There are 14 reactions, and most now leave something on the battlefield: fire pools, poison fog, pull rifts, frozen ground, freeze walls, even crystal shards you can grab. Reactions trigger from a single stack of a second element now, so they fire constantly once you carry two elements. This is where builds get broken.</div>';for(const[a,b,name,d] of REACT_INFO){const ea=ELEMENTS[a],eb=ELEMENTS[b];s+=`<div class="gentry" style="--gc:${eb.color}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${ea.color};border-color:${ea.color}">${ea.icon} ${ea.name}</span><span class="gplus">+</span><span class="gpill" style="color:${eb.color};border-color:${eb.color}">${eb.icon} ${eb.name}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}s+='<div class="gsectnote" style="margin-top:10px">Escalation chains. Stack deeper, burn brighter:</div>';for(const[from,name,d,c] of CHAIN_INFO){s+=`<div class="gentry" style="--gc:${c}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${c};border-color:${c}">${from}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}return s;}
  ,Combat(){return '<div class="gsectnote">How the deep actually works. Tap any card to read the whole thing before your next run.</div>'
   +codexEntry('\u25c7','#00e5d4','Dodge, Guard, Parry','Space or the dive button','Every diver has one survival tool. Learn yours first.','Every diver answers danger differently.\n\nMost divers blink a short distance with full invulnerability. Ranger blinks farthest and fastest, on the shortest cooldown in the game. Her whole life is dodge, shotgun, dodge.\n\nVanguard does not dodge. He plants his feet and raises an unbreakable Guard for over a second. While it holds, nothing hurts him and slows wash off his hull.\n\nYujin parries. Tap the button and a quarter second window opens where everything breaks against your fists: bullets, lasers, stampedes, even black hole cores. There is no cooldown. Rapid taps mean rapid windows. With perfect reads Yujin survives anything. With lazy thumbs Yujin dies fast.')
   +codexEntry('\u23e3','#9b6dff','Shields','Vyper and Sentinel','A permanent field that eats incoming fire.','Vyper and Sentinel carry a permanent energy field that swallows every non boss projectile on contact. It does not block body slams, so keep moving.\n\nEvery other diver earns a recharging Barrier as they level. When the blue bar under your hull is up, you can afford one mistake. Watch it. Tank when it is full, run when it is empty.')
