@@ -1,12 +1,4 @@
 // api/social.js  ·  ABYSS // SURVIVORS  ·  Friend system + presence + DURABLE STATS relay (V6)
-// Works with ANY Vercel Redis / Upstash integration. It reads whichever env var is present.
-//
-// V6 change: the server is now the durable source of truth for a player's games-played count
-// and run archive. Telegram CloudStorage has a 4KB-per-value limit and localStorage is wiped
-// between Mini App launches, so the in-app cache cannot be trusted to persist progress. The
-// game now syncs every run to here; this file merges those runs, counts each one exactly once
-// (monotonic, never decreases), stores the run archive, and returns the authoritative numbers
-// so the client can display and re-cache them.
 
 const URL_CANDIDATES = ['KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL', 'REDIS_REST_API_URL'];
 const TOK_CANDIDATES = ['KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN', 'REDIS_REST_API_TOKEN'];
