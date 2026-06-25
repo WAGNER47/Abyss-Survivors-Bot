@@ -338,6 +338,57 @@
     #clock{font-size:20px;min-width:78px}
     .chips{font-size:12px}
   }
+  /* ===== CAPTAIN LEVEL — account ascension (premium) ===== */
+  .cap-wrap{width:min(560px,94vw);max-height:68vh;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;text-align:center;padding:2px 6px 18px}
+  #captain .logo{background:linear-gradient(115deg,var(--c1,#00e5d4) 8%,var(--c2,#5cd0ff) 92%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px var(--glow,rgba(0,229,212,.4))}
+  .cap-emblem{position:relative;width:170px;height:170px;margin:4px auto 2px}
+  .cap-ring{position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from 0deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4) 72%,rgba(255,255,255,.92),var(--c1,#00e5d4));
+    -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 8px));
+            mask:radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 8px));
+    filter:drop-shadow(0 0 14px var(--c1,#00e5d4));animation:capspin 9s linear infinite}
+  .cap-ring.r2{inset:9px;opacity:.4;animation:capspin 15s linear infinite reverse;filter:none}
+  .cap-core{position:absolute;inset:17px;border-radius:50%;
+    background:radial-gradient(120% 120% at 50% 22%,rgba(20,30,54,.96),rgba(7,11,22,.99));
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:inset 0 0 30px rgba(0,0,0,.6),0 0 34px var(--glow,rgba(0,229,212,.35));
+    display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .cap-lvlnum{font-family:var(--disp);font-weight:900;font-size:60px;line-height:.9;color:#fff;text-shadow:0 0 22px var(--c1,#00e5d4);letter-spacing:.02em}
+  .cap-lvllbl{font-family:var(--ui);font-weight:700;letter-spacing:.42em;font-size:10px;color:var(--c2,#5cd0ff);margin-top:5px;padding-left:.42em;opacity:.95}
+  .cap-rank{font-family:var(--disp);font-weight:800;font-size:clamp(20px,5.5vw,28px);letter-spacing:.1em;margin:11px 0 2px;
+    background:linear-gradient(100deg,var(--c1,#00e5d4),var(--c2,#5cd0ff));-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 16px var(--glow,rgba(0,229,212,.4)))}
+  .cap-ranksub{font-family:var(--ui);font-weight:600;letter-spacing:.28em;font-size:10px;color:var(--dim);text-transform:uppercase;margin-bottom:17px}
+  .cap-barwrap{width:min(420px,92%);margin:0 auto}
+  .cap-barlbls{display:flex;justify-content:space-between;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.04em;margin-bottom:6px}
+  .cap-barlbls .l{color:var(--ink)} .cap-barlbls .r{color:var(--c2,#5cd0ff)}
+  .cap-bar{height:15px;border-radius:10px;background:rgba(108,131,176,.14);border:1px solid var(--line);overflow:hidden;position:relative}
+  .cap-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--c1,#00e5d4),var(--c2,#5cd0ff));position:relative;overflow:hidden;box-shadow:0 0 14px var(--glow,rgba(0,229,212,.5));transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .cap-fill::after{content:'';position:absolute;top:0;left:0;height:100%;width:55%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:capshim 2.4s linear infinite}
+  .cap-next{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-top:8px}
+  .cap-next b{color:var(--c2,#5cd0ff);font-weight:800}
+  .cap-stats{display:flex;gap:10px;width:min(420px,92%);margin:18px auto 2px}
+  .cap-stat{flex:1;background:linear-gradient(180deg,rgba(22,33,60,.5),rgba(13,20,38,.5));border:1px solid var(--line);border-radius:10px;padding:11px 8px}
+  .cap-stat .v{font-family:var(--disp);font-weight:800;font-size:20px;color:#fff;text-shadow:0 0 12px var(--glow,rgba(0,229,212,.4))}
+  .cap-stat .k{font-family:var(--ui);font-weight:700;letter-spacing:.16em;font-size:9px;color:var(--dim);text-transform:uppercase;margin-top:3px}
+  .cap-laddertitle{font-family:var(--ui);font-weight:800;letter-spacing:.26em;font-size:10px;color:var(--dim);text-transform:uppercase;text-align:left;margin:23px 0 8px 4px}
+  .cap-ladder{text-align:left}
+  .cap-tier{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:9px;margin-bottom:6px;border:1px solid var(--line);background:rgba(13,20,38,.4);position:relative;overflow:hidden}
+  .cap-tier .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--dim)}
+  .cap-tier .tn{font-family:var(--disp);font-weight:700;letter-spacing:.07em;font-size:13px;color:var(--dim);flex:1}
+  .cap-tier .tl{font-family:var(--ui);font-weight:700;letter-spacing:.1em;font-size:10px;color:var(--dim)}
+  .cap-tier .lock{font-family:var(--ui);font-weight:700;letter-spacing:.1em;font-size:10px;color:var(--dim);opacity:.55}
+  .cap-tier.done{opacity:.9}
+  .cap-tier.done .dot{background:var(--tc);box-shadow:0 0 8px var(--tc)}
+  .cap-tier.done .tn{color:var(--ink)}
+  .cap-tier.on{border-color:var(--tc);background:linear-gradient(100deg,rgba(255,255,255,.045),rgba(13,20,38,.4));box-shadow:0 0 18px -3px var(--tc),inset 0 0 0 1px var(--tc)}
+  .cap-tier.on .dot{background:var(--tc);box-shadow:0 0 12px var(--tc);animation:cappulse 1.8s ease-in-out infinite}
+  .cap-tier.on .tn{color:#fff;text-shadow:0 0 12px var(--tc)}
+  .cap-tier.on .tl{color:var(--tc)}
+  .cap-navlv{font-family:var(--disp);font-weight:800;font-size:11px;color:var(--gold);margin-left:auto;letter-spacing:.05em;text-shadow:0 0 10px rgba(255,194,75,.5)}
+  @keyframes capspin{to{transform:rotate(360deg)}}
+  @keyframes capshim{0%{transform:translateX(-180%)}100%{transform:translateX(360%)}}
+  @keyframes cappulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.35);opacity:1}}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -404,6 +455,7 @@
     </div>
     <div class="nav-links">
       <button class="nav-link" data-nav="profile"><span class="ni">◉</span> Profile</button>
+      <button class="nav-link" data-nav="captain"><span class="ni">&#10022;</span> Captain <span class="cap-navlv" id="capNavLv"></span></button>
       <button class="nav-link" data-nav="social"><span class="ni">⇄</span> Social</button>
       <button class="nav-link" data-nav="leaderboard"><span class="ni">⚑</span> Leaderboard</button>
       <button class="nav-link" data-nav="archive"><span class="ni">▤</span> Run Archive</button>
@@ -463,6 +515,14 @@
     <div class="logo" style="font-size:clamp(26px,6vw,46px)">OPERATOR</div>
     <div class="pwrap" id="profilebody"></div>
     <button class="btn ghost" id="profileback" style="margin-top:14px">Back</button>
+  </div>
+
+  <!-- Captain Level -->
+  <div class="screen hidden" id="captain">
+    <div class="studiomark">account ascension</div>
+    <div class="logo" style="font-size:clamp(24px,5.5vw,40px)">CAPTAIN</div>
+    <div class="cap-wrap" id="captainbody"></div>
+    <button class="btn ghost" id="captainback" style="margin-top:14px">Back</button>
   </div>
 
   <!-- Codex / Guides -->
@@ -2237,7 +2297,7 @@ function grantChest(){
 /* ===== PAUSE / END ===== */
 function doPause(){if(state!=='playing')return;state='paused';document.getElementById('pause').classList.remove('hidden');}
 function doResume(){if(state!=='paused')return;state='playing';document.getElementById('pause').classList.add('hidden');lastT=performance.now();}
-function hideAllScreens(){['menu','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
+function hideAllScreens(){['menu','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
 function showNavToggle(){const nt=document.getElementById('navToggle');if(nt)nt.style.display='flex';}
 
 function runStats(){return{time,level:player.level,kills,dodges:rs?rs.dodges:0,reacts:rs?rs.reacts:{},taken:rs?Math.round(rs.taken):0,peak:rs?Math.round(rs.peak):0,gold,char:chosenChar.name,
@@ -2348,6 +2408,66 @@ function buildSnapshot(){
   boons:player.boonNames.slice(),
   cores};
 }
+// ===== CAPTAIN LEVEL — account-wide ascension from lifetime XP =====
+function captainRunXP(r){
+ if(!r)return 0;
+ var lvl=r.level||1,kills=r.kills||0,boss=r.boss||0,elite=r.elite||0,corr=r.corruption||0,t=r.time||0,win=(r.result==='Victory')?1:0;
+ return Math.round(lvl*9 + kills*0.6 + boss*45 + elite*7 + corr*30 + t/5 + win*300);
+}
+function captainTotalXP(){
+ var sum=0;try{for(var i=0;i<runArchive.length;i++)sum+=captainRunXP(runArchive[i]);}catch(e){}
+ var net=(typeof NET!=='undefined'&&NET&&NET.stats&&NET.stats.xp)||0;
+ return Math.max(sum,net|0);
+}
+function captainLevelInfo(xp){
+ xp=Math.max(0,Math.floor(xp||0));
+ var lvl=1,floor=0,need=300;
+ while(xp>=floor+need&&lvl<500){floor+=need;lvl++;need=Math.round(300*Math.pow(lvl,1.22));}
+ var into=xp-floor;
+ return {level:lvl,into:into,need:need,floor:floor,total:xp,pct:Math.max(0,Math.min(1,into/need))};
+}
+function captainRank(lvl){
+ if(lvl>=60)return {name:'LEVIATHAN',c1:'#ffffff',c2:'#b6ff3c',glow:'rgba(182,255,60,.45)'};
+ if(lvl>=45)return {name:'VOID SOVEREIGN',c1:'#ffc24b',c2:'#ff9b4b',glow:'rgba(255,194,75,.45)'};
+ if(lvl>=30)return {name:'ABYSSAL CAPTAIN',c1:'#ff5cf0',c2:'#b66cff',glow:'rgba(255,92,240,.45)'};
+ if(lvl>=20)return {name:'TRENCH WALKER',c1:'#b66cff',c2:'#5cd0ff',glow:'rgba(182,108,255,.45)'};
+ if(lvl>=10)return {name:'DEEP DIVER',c1:'#5cd0ff',c2:'#00e5d4',glow:'rgba(92,208,255,.45)'};
+ if(lvl>=5)return {name:'PRESSURE DIVER',c1:'#00e5d4',c2:'#6cffb0',glow:'rgba(0,229,212,.45)'};
+ return {name:'SURFACE DIVER',c1:'#6cffb0',c2:'#00e5d4',glow:'rgba(108,255,176,.4)'};
+}
+var CAP_TIERS=[{lv:1,name:'SURFACE DIVER'},{lv:5,name:'PRESSURE DIVER'},{lv:10,name:'DEEP DIVER'},{lv:20,name:'TRENCH WALKER'},{lv:30,name:'ABYSSAL CAPTAIN'},{lv:45,name:'VOID SOVEREIGN'},{lv:60,name:'LEVIATHAN'}];
+function openCaptain(){
+ hideAllScreens();state='captain';
+ var xp=captainTotalXP();var info=captainLevelInfo(xp);var rk=captainRank(info.level);
+ var runs=Math.max((typeof runArchive!=='undefined'?runArchive.length:0),(typeof NET!=='undefined'&&NET.gamesPlayed)||0);
+ var curIdx=0;for(var i=0;i<CAP_TIERS.length;i++){if(info.level>=CAP_TIERS[i].lv)curIdx=i;}
+ var ladder='';
+ for(var j=0;j<CAP_TIERS.length;j++){
+  var t=CAP_TIERS[j];var tr=captainRank(t.lv);
+  var cls=j<curIdx?'cap-tier done':(j===curIdx?'cap-tier on':'cap-tier');
+  var right=info.level>=t.lv?('<span class="tl">Lv '+t.lv+'+</span>'):('<span class="lock">Lv '+t.lv+'</span>');
+  ladder+='<div class="'+cls+'" style="--tc:'+tr.c1+'"><span class="dot"></span><span class="tn">'+t.name+'</span>'+right+'</div>';
+ }
+ var toNext=Math.max(0,info.need-info.into);
+ var body=''+
+  '<div class="cap-emblem"><div class="cap-ring"></div><div class="cap-ring r2"></div>'+
+   '<div class="cap-core"><div class="cap-lvlnum">'+info.level+'</div><div class="cap-lvllbl">CAPTAIN</div></div></div>'+
+  '<div class="cap-rank">'+rk.name+'</div>'+
+  '<div class="cap-ranksub">total descent experience</div>'+
+  '<div class="cap-barwrap">'+
+   '<div class="cap-barlbls"><span class="l">Lv '+info.level+'</span><span class="r">'+fmtN(info.into)+' / '+fmtN(info.need)+' XP</span></div>'+
+   '<div class="cap-bar"><div class="cap-fill" style="width:'+(info.pct*100).toFixed(1)+'%"></div></div>'+
+   '<div class="cap-next"><b>'+fmtN(toNext)+'</b> XP to Level '+(info.level+1)+'</div></div>'+
+  '<div class="cap-stats">'+
+   '<div class="cap-stat"><div class="v">'+fmtN(info.total)+'</div><div class="k">Lifetime XP</div></div>'+
+   '<div class="cap-stat"><div class="v">'+fmtN(runs)+'</div><div class="k">Total Runs</div></div></div>'+
+  '<div class="cap-laddertitle">Rank Ladder</div><div class="cap-ladder">'+ladder+'</div>';
+ var host=document.getElementById('captainbody');if(host)host.innerHTML=body;
+ var scr=document.getElementById('captain');
+ if(scr){scr.style.setProperty('--c1',rk.c1);scr.style.setProperty('--c2',rk.c2);scr.style.setProperty('--glow',rk.glow);scr.classList.remove('hidden');}
+ showNavToggle();
+}
+
 function recordRun(result){
  const rec={
   date:Date.now(),result,char:chosenChar.name,
@@ -2539,6 +2659,7 @@ async function netSync(){const id=netId();if(!id)return;
    if(j.stats){NET.stats=j.stats;if(typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);}
    const changed=mergeServerRuns(j.runs);
    try{refreshNavHead();}catch(e){}
+   if(state==='captain'){try{openCaptain();}catch(e){}}
    if((changed)&&state==='profile'){const ae=document.activeElement;if(!ae||ae.id!=='pname')openProfile();}
    if(NET.inbox>wasInbox)toast('NEW FRIEND REQUEST \u00b7 check Social');updateSocialBadge();}
   else NET.online=false;
@@ -2817,6 +2938,7 @@ try{updateSocialBadge();}catch(e){}
 document.getElementById('socialback').onclick=toMenu;
 {const _p=document.getElementById('profilebtn');if(_p)_p.onclick=openProfile;}
 document.getElementById('profileback').onclick=toMenu;
+var _capb=document.getElementById('captainback');if(_capb)_capb.onclick=toMenu;
 {const _g=document.getElementById('guidebtn');if(_g)_g.onclick=openCodex;}
 document.getElementById('codexback').onclick=toMenu;
 {const _c=document.getElementById('creditsbtn');if(_c)_c.onclick=()=>{hideAllScreens();document.getElementById('credits').classList.remove('hidden');};}
@@ -2845,6 +2967,7 @@ document.getElementById('startbtn').onclick=()=>{if(!AC)initAudio();toCharSelect
  if(scrim)scrim.onclick=closeNav;
  document.querySelectorAll('.nav-link').forEach(b=>{b.onclick=()=>{const nav=b.dataset.nav;closeNav();
   if(nav==='profile')openProfile();
+  else if(nav==='captain')openCaptain();
   else if(nav==='social')openSocial('friends');
   else if(nav==='leaderboard')openLeaderboard();
   else if(nav==='archive')openArchive();
@@ -2857,6 +2980,7 @@ document.getElementById('startbtn').onclick=()=>{if(!AC)initAudio();toCharSelect
 })();
 function refreshNavHead(){try{
  const nm=document.getElementById('navName');if(nm)nm.textContent=(profName||'SURVIVOR');
+ const clv=document.getElementById('capNavLv');if(clv){try{clv.textContent='Lv '+captainLevelInfo(captainTotalXP()).level;}catch(e){clv.textContent='';}}
  const av=document.getElementById('navAv');if(av){
   const photo=(typeof TG_USER!=='undefined'&&TG_USER&&TG_USER.photo)?TG_USER.photo:'';
   if(photo)av.innerHTML='<img src="'+photo+'" alt="">';
