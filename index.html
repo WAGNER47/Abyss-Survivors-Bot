@@ -2359,6 +2359,7 @@ function recordRun(result){
   build:buildSnapshot()};
  lastRecord=rec;runArchive.unshift(rec);if(runArchive.length>30)runArchive.length=30;saveRuns();
  NET.gamesPlayed=Math.max((NET.gamesPlayed||0)+1,runArchive.length);
+ try{refreshNavHead();}catch(e){}
  try{if(netId())netSync();}catch(e){}
 }
 function fmtT(s){const m=Math.floor(s/60);return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
@@ -2526,7 +2527,7 @@ function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return
 function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 // ---- DIVE NETWORK: presence + friends relay ----
-let NET={online:false,friends:[],inbox:0,lastSync:0,gamesPlayed:0};
+let NET={online:false,friends:[],inbox:0,lastSync:0,gamesPlayed:0,stats:null};
 // Merge runs the server returns into the local archive (server is the durable source of truth).
 // Dedup by date; keep local copies (which carry the full build snapshot) when a run exists on both sides.
 function mergeServerRuns(sr){try{if(!Array.isArray(sr)||!sr.length)return false;const byDate={};for(const r of (runArchive||[]))if(r&&r.date!=null)byDate[r.date]=r;let added=false;for(const r of sr){if(!r||r.date==null)continue;if(!byDate[r.date]){byDate[r.date]=r;added=true;}}if(!added)return false;runArchive=Object.values(byDate).sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,30);saveRuns();return true;}catch(e){return false;}}
@@ -2535,8 +2536,9 @@ async function netSync(){const id=netId();if(!id)return;
  try{const s=computeStats();const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8).map(r=>({date:r.date,result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))})});
   const j=await r.json();if(j&&j.ok){NET.online=true;NET.friends=j.friends||[];const wasInbox=NET.inbox;NET.inbox=j.inboxCount||0;NET.lastSync=Date.now();
    // Durable stats: the server holds the real games-played count (Redis, survives relaunches).
-   if(j.stats&&typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);
+   if(j.stats){NET.stats=j.stats;if(typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);}
    const changed=mergeServerRuns(j.runs);
+   try{refreshNavHead();}catch(e){}
    if((changed)&&state==='profile'){const ae=document.activeElement;if(!ae||ae.id!=='pname')openProfile();}
    if(NET.inbox>wasInbox)toast('NEW FRIEND REQUEST \u00b7 check Social');updateSocialBadge();}
   else NET.online=false;
@@ -2862,9 +2864,13 @@ function refreshNavHead(){try{
   if(profColor){av.style.background='linear-gradient(145deg,'+profColor+',#00e5d4)';av.style.boxShadow='0 0 30px '+profColor+'99';}
  }
  const st=document.getElementById('navStats');if(st){try{const s=computeStats();
-  st.innerHTML='<div class="nav-stat"><div class="v">'+(s.total||0)+'</div><div class="l">Runs</div></div>'+
-   '<div class="nav-stat"><div class="v">'+(s.wins||0)+'</div><div class="l">Wins</div></div>'+
-   '<div class="nav-stat"><div class="v">'+(s.highLevel||0)+'</div><div class="l">Best Lv</div></div>';
+  const ns=NET.stats||{};
+  const runs=Math.max(s.total||0,NET.gamesPlayed||0);
+  const wins=Math.max(s.wins||0,ns.wins||0);
+  const bestLv=Math.max(s.highLevel||0,ns.level||0);
+  st.innerHTML='<div class="nav-stat"><div class="v">'+runs+'</div><div class="l">Runs</div></div>'+
+   '<div class="nav-stat"><div class="v">'+wins+'</div><div class="l">Wins</div></div>'+
+   '<div class="nav-stat"><div class="v">'+bestLv+'</div><div class="l">Best Lv</div></div>';
  }catch(e){}}
 }catch(e){}}
 function openCredits(){hideAllScreens();state='credits';document.getElementById('credits').classList.remove('hidden');}
