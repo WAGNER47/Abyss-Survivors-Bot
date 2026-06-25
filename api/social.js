@@ -1,5 +1,12 @@
-// api/social.js  ·  ABYSS // SURVIVORS  ·  Friend system + presence relay (V5, hardened)
-// Works with ANY Vercel Redis / Upstash integration. It reads whichever env var
+// api/social.js  ·  ABYSS // SURVIVORS  ·  Friend system + presence + DURABLE STATS relay (V6)
+// Works with ANY Vercel Redis / Upstash integration. It reads whichever env var is present.
+//
+// V6 change: the server is now the durable source of truth for a player's games-played count
+// and run archive. Telegram CloudStorage has a 4KB-per-value limit and localStorage is wiped
+// between Mini App launches, so the in-app cache cannot be trusted to persist progress. The
+// game now syncs every run to here; this file merges those runs, counts each one exactly once
+// (monotonic, never decreases), stores the run archive, and returns the authoritative numbers
+// so the client can display and re-cache them.
 
 const URL_CANDIDATES = ['KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL', 'REDIS_REST_API_URL'];
 const TOK_CANDIDATES = ['KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN', 'REDIS_REST_API_TOKEN'];
@@ -32,6 +39,32 @@ function send(res, obj) {
   res.status(200).json(obj);
 }
 
+const maxNum = (a, b) => Math.max(Number(a) || 0, Number(b) || 0);
+
+// Merge incoming stats over stored stats. Cumulative / best-ever counters never go down,
+// so a stale client (e.g. after a relaunch where its local cache reset) can never erase progress.
+function mergeStats(prev, incoming) {
+  prev = prev || {}; incoming = incoming || {};
+  return {
+    level:    maxNum(prev.level,    incoming.level),
+    wins:     maxNum(prev.wins,     incoming.wins),
+    kills:    maxNum(prev.kills,    incoming.kills),
+    best:     maxNum(prev.best,     incoming.best),
+    timeIn:   maxNum(prev.timeIn,   incoming.timeIn),
+    gold:     maxNum(prev.gold,     incoming.gold),
+    maxCorr:  maxNum(prev.maxCorr,  incoming.maxCorr),
+    mainRuns: maxNum(prev.mainRuns, incoming.mainRuns),
+    // descriptive fields: take the latest non-empty, else keep previous
+    main:     incoming.main     != null ? incoming.main     : (prev.main || '\u2014'),
+    axes:     incoming.axes     || prev.axes     || [],
+    favEl:    incoming.favEl    || prev.favEl    || [],
+    favRe:    incoming.favRe    || prev.favRe    || [],
+    favGear:  incoming.favGear  || prev.favGear  || [],
+    perDiver: incoming.perDiver || prev.perDiver || []
+    // .total is filled in below with the monotonic games-played count
+  };
+}
+
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return send(res, { ok: true });
   const q = req.query || {};
@@ -51,7 +84,7 @@ module.exports = async (req, res) => {
       urlVar: URLENV ? URLENV.key : null,
       tokenVar: TOKENV ? TOKENV.key : null,
       ping,
-      hint: HAS_KV ? 'Relay is wired. Friends will work.' : 'No Redis credentials found. Add a Redis integration from the Vercel Marketplace, connect it to this project, then redeploy. See SOCIAL_SETUP.md.'
+      hint: HAS_KV ? 'Relay is wired. Friends and durable stats will work.' : 'No Redis credentials found. Add a Redis integration from the Vercel Marketplace, connect it to this project, then redeploy. See SOCIAL_SETUP.md.'
     });
   }
 
@@ -64,16 +97,55 @@ module.exports = async (req, res) => {
       const me = String(body.id || '');
       if (!me) return send(res, { ok: false });
       const prev = (await jget('p:' + me)) || {};
+
+      // ---- DURABLE STATS ----
+      const inStats = body.stats || {};
+      const mergedStats = mergeStats(prev.stats || {}, inStats);
+
+      // run-id ledger: every run date we have ever seen (kept separate from the presence
+      // timestamp 'seen'). 'rids' lets us count each run exactly once, even though the client
+      // re-sends its recent runs on every sync.
+      const rids = Array.isArray(prev.rids) ? prev.rids.slice() : [];
+      const ridSet = new Set(rids.map(String));
+      const firstContact = (prev.gamesPlayed == null); // pre-V6 / brand-new record
+      let gamesPlayed = Number(prev.gamesPlayed) || 0;
+
+      const inRuns = Array.isArray(body.runs) ? body.runs : [];
+      if (firstContact) {
+        // Seed ONCE from the client's local sample (which already includes the runs being sent),
+        // then register those run ids WITHOUT counting them so we don't double up. From here on
+        // the count is tracked purely incrementally via the ledger.
+        gamesPlayed = Number(inStats.total) || 0;
+        for (const r of inRuns) { const d = r && r.date != null ? String(r.date) : null; if (d && !ridSet.has(d)) { ridSet.add(d); rids.push(d); } }
+      } else {
+        // Every genuinely new run date increments the durable counter exactly once.
+        for (const r of inRuns) { const d = r && r.date != null ? String(r.date) : null; if (d && !ridSet.has(d)) { ridSet.add(d); rids.push(d); gamesPlayed++; } }
+      }
+
+      // Merge the run records themselves (newest first), preferring the richer copy on collision.
+      const byDate = {};
+      const prevRuns = Array.isArray(prev.runs) ? prev.runs : [];
+      for (const r of prevRuns) if (r && r.date != null) byDate[String(r.date)] = r;
+      for (const r of inRuns)   if (r && r.date != null) byDate[String(r.date)] = Object.assign({}, byDate[String(r.date)] || {}, r);
+      const mergedRuns = Object.values(byDate).sort((a, b) => (b.date || 0) - (a.date || 0)).slice(0, 60);
+
+      // The authoritative games-played count is exposed as stats.total for the client to display.
+      mergedStats.total = gamesPlayed;
+
       const prof = {
         id: me,
         name: body.name || prev.name || 'Survivor',
         username: body.username || prev.username || '',
         photo: body.photo || prev.photo || '',
         about: body.about != null ? body.about : (prev.about || ''),
-        stats: body.stats || prev.stats || {},
-        seen: now
+        stats: mergedStats,
+        runs: mergedRuns,
+        gamesPlayed,
+        rids: rids.slice(-500),   // bound the ledger
+        seen: now                 // PRESENCE timestamp (unchanged name, used by friends/group online checks)
       };
       await jset('p:' + me, prof);
+
       const fids = (await jget('f:' + me)) || [];
       const friends = [];
       for (const fid of fids) {
@@ -81,7 +153,8 @@ module.exports = async (req, res) => {
         if (fp) friends.push({ id: fp.id, name: fp.name, username: fp.username, photo: fp.photo, online: (now - (fp.seen || 0)) < 70000, lastSeen: fp.seen || 0 });
       }
       const inbox = (await jget('r:' + me)) || [];
-      return send(res, { ok: true, relay: 'online', friends, inboxCount: inbox.length });
+      // Return the durable numbers so the client can display + re-cache them.
+      return send(res, { ok: true, relay: 'online', friends, inboxCount: inbox.length, stats: mergedStats, runs: mergedRuns });
     }
 
     if (action === 'profile') {
@@ -92,7 +165,6 @@ module.exports = async (req, res) => {
     if (action === 'request') {
       const me = String(body.id || ''), target = String(body.target || '');
       if (!me || !target || me === target) return send(res, { ok: false, note: 'bad ids' });
-      // already friends?
       const myFriends = (await jget('f:' + me)) || [];
       if (myFriends.includes(target)) return send(res, { ok: true, already: true });
       const myProf = await jget('p:' + me);
