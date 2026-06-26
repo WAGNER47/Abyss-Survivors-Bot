@@ -338,50 +338,62 @@
     #clock{font-size:20px;min-width:78px}
     .chips{font-size:12px}
   }
-  /* ===== CAPTAIN LEVEL — account ascension (premium) ===== */
+    /* ===== CAPTAIN LEVEL — account ascension (premium redesign) ===== */
   .cap-wrap{width:min(560px,94vw);max-height:68vh;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;text-align:center;padding:2px 6px 18px}
   #captain .logo{background:linear-gradient(115deg,var(--c1,#00e5d4) 8%,var(--c2,#5cd0ff) 92%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px var(--glow,rgba(0,229,212,.4))}
-  .cap-emblem{position:relative;width:170px;height:170px;margin:4px auto 2px}
+  .cap-emblem{position:relative;width:184px;height:184px;margin:6px auto 4px}
+  .cap-halo{position:absolute;inset:-22px;border-radius:50%;background:radial-gradient(circle,var(--glow,rgba(0,229,212,.4)) 0%,transparent 68%);filter:blur(6px);animation:caphalo 3.4s ease-in-out infinite}
   .cap-ring{position:absolute;inset:0;border-radius:50%;
-    background:conic-gradient(from 0deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4) 72%,rgba(255,255,255,.92),var(--c1,#00e5d4));
-    -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 8px));
-            mask:radial-gradient(farthest-side,#0000 calc(100% - 9px),#000 calc(100% - 8px));
-    filter:drop-shadow(0 0 14px var(--c1,#00e5d4));animation:capspin 9s linear infinite}
-  .cap-ring.r2{inset:9px;opacity:.4;animation:capspin 15s linear infinite reverse;filter:none}
-  .cap-core{position:absolute;inset:17px;border-radius:50%;
-    background:radial-gradient(120% 120% at 50% 22%,rgba(20,30,54,.96),rgba(7,11,22,.99));
-    border:1px solid rgba(255,255,255,.08);
-    box-shadow:inset 0 0 30px rgba(0,0,0,.6),0 0 34px var(--glow,rgba(0,229,212,.35));
+    background:conic-gradient(from 0deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4) 70%,#fff,var(--c1,#00e5d4));
+    -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 7px),#000 calc(100% - 6px));
+            mask:radial-gradient(farthest-side,#0000 calc(100% - 7px),#000 calc(100% - 6px));
+    filter:drop-shadow(0 0 12px var(--c1,#00e5d4));animation:capspin 8s linear infinite}
+  .cap-ring.r2{inset:11px;opacity:.5;animation:capspin 13s linear infinite reverse;filter:none;
+    -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,#0000 calc(100% - 4px),#000 calc(100% - 3px))}
+  .cap-ring.r3{inset:-7px;opacity:.3;animation:capspin 22s linear infinite;filter:none;
+    -webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 2px),#000 calc(100% - 1.5px));mask:radial-gradient(farthest-side,#0000 calc(100% - 2px),#000 calc(100% - 1.5px))}
+  .cap-core{position:absolute;inset:20px;border-radius:50%;
+    background:radial-gradient(120% 120% at 50% 20%,rgba(22,33,60,.97),rgba(6,10,20,1));
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:inset 0 0 36px rgba(0,0,0,.7),0 0 40px var(--glow,rgba(0,229,212,.4));
     display:flex;flex-direction:column;align-items:center;justify-content:center}
-  .cap-lvlnum{font-family:var(--disp);font-weight:900;font-size:60px;line-height:.9;color:#fff;text-shadow:0 0 22px var(--c1,#00e5d4);letter-spacing:.02em}
-  .cap-lvllbl{font-family:var(--ui);font-weight:700;letter-spacing:.42em;font-size:10px;color:var(--c2,#5cd0ff);margin-top:5px;padding-left:.42em;opacity:.95}
-  .cap-rank{font-family:var(--disp);font-weight:800;font-size:clamp(20px,5.5vw,28px);letter-spacing:.1em;margin:11px 0 2px;
-    background:linear-gradient(100deg,var(--c1,#00e5d4),var(--c2,#5cd0ff));-webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 16px var(--glow,rgba(0,229,212,.4)))}
-  .cap-ranksub{font-family:var(--ui);font-weight:600;letter-spacing:.28em;font-size:10px;color:var(--dim);text-transform:uppercase;margin-bottom:17px}
-  .cap-barwrap{width:min(420px,92%);margin:0 auto}
-  .cap-barlbls{display:flex;justify-content:space-between;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.04em;margin-bottom:6px}
+  .cap-lvlnum{font-family:var(--disp);font-weight:900;font-size:66px;line-height:.9;color:#fff;text-shadow:0 0 26px var(--c1,#00e5d4),0 0 8px #fff;letter-spacing:.01em}
+  .cap-lvllbl{font-family:var(--ui);font-weight:700;letter-spacing:.46em;font-size:9px;color:var(--c2,#5cd0ff);margin-top:6px;padding-left:.46em;opacity:.95}
+  .cap-rank{font-family:var(--disp);font-weight:800;font-size:clamp(22px,6vw,32px);letter-spacing:.1em;margin:14px 0 0;
+    background:linear-gradient(100deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 18px var(--glow,rgba(0,229,212,.5)));animation:capflow 4s linear infinite}
+  .cap-tierbadge{display:inline-block;font-family:var(--ui);font-weight:800;letter-spacing:.22em;font-size:10px;color:var(--c2,#5cd0ff);border:1px solid var(--c1,#00e5d4);border-radius:20px;padding:3px 12px;margin-top:9px;background:rgba(0,0,0,.25);box-shadow:0 0 12px -2px var(--glow,rgba(0,229,212,.5)),inset 0 0 8px -3px var(--c1,#00e5d4)}
+  .cap-nextrank{font-family:var(--ui);font-weight:700;letter-spacing:.14em;font-size:10px;color:var(--dim);text-transform:uppercase;margin:12px 0 16px;opacity:.92}
+  .cap-barwrap{width:min(430px,92%);margin:0 auto}
+  .cap-barlbls{display:flex;justify-content:space-between;font-family:var(--ui);font-weight:700;font-size:11px;letter-spacing:.05em;margin-bottom:7px}
   .cap-barlbls .l{color:var(--ink)} .cap-barlbls .r{color:var(--c2,#5cd0ff)}
-  .cap-bar{height:15px;border-radius:10px;background:rgba(108,131,176,.14);border:1px solid var(--line);overflow:hidden;position:relative}
-  .cap-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--c1,#00e5d4),var(--c2,#5cd0ff));position:relative;overflow:hidden;box-shadow:0 0 14px var(--glow,rgba(0,229,212,.5));transition:width .9s cubic-bezier(.2,.8,.2,1)}
-  .cap-fill::after{content:'';position:absolute;top:0;left:0;height:100%;width:55%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:capshim 2.4s linear infinite}
-  .cap-next{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-top:8px}
+  .cap-bar{height:17px;border-radius:11px;background:rgba(108,131,176,.13);border:1px solid var(--line);overflow:hidden;position:relative;box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+  .cap-fill{height:100%;border-radius:11px;position:relative;overflow:hidden;
+    background:linear-gradient(90deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4));background-size:200% auto;
+    box-shadow:0 0 16px var(--glow,rgba(0,229,212,.6));animation:capflow 3s linear infinite;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+  .cap-fill::after{content:'';position:absolute;top:0;left:0;height:100%;width:50%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);animation:capshim 2.2s linear infinite}
+  .cap-next{font-family:var(--ui);font-weight:600;font-size:11px;letter-spacing:.05em;color:var(--dim);margin-top:9px}
   .cap-next b{color:var(--c2,#5cd0ff);font-weight:800}
-  .cap-stats{display:flex;gap:10px;width:min(420px,92%);margin:18px auto 2px}
-  .cap-stat{flex:1;background:linear-gradient(180deg,rgba(22,33,60,.5),rgba(13,20,38,.5));border:1px solid var(--line);border-radius:10px;padding:11px 8px}
-  .cap-stat .v{font-family:var(--disp);font-weight:800;font-size:20px;color:#fff;text-shadow:0 0 12px var(--glow,rgba(0,229,212,.4))}
+  .cap-max{color:var(--c1,#00e5d4)!important;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+  .cap-stats{display:flex;gap:11px;width:min(430px,92%);margin:20px auto 2px}
+  .cap-stat{flex:1;background:linear-gradient(180deg,rgba(22,33,60,.55),rgba(13,20,38,.5));border:1px solid var(--line);border-radius:11px;padding:12px 8px;position:relative;overflow:hidden}
+  .cap-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c1,#00e5d4),transparent);opacity:.5}
+  .cap-stat .v{font-family:var(--disp);font-weight:800;font-size:21px;color:#fff;text-shadow:0 0 12px var(--glow,rgba(0,229,212,.45))}
   .cap-stat .k{font-family:var(--ui);font-weight:700;letter-spacing:.16em;font-size:9px;color:var(--dim);text-transform:uppercase;margin-top:3px}
-  .cap-laddertitle{font-family:var(--ui);font-weight:800;letter-spacing:.26em;font-size:10px;color:var(--dim);text-transform:uppercase;text-align:left;margin:23px 0 8px 4px}
+  .cap-laddertitle{font-family:var(--ui);font-weight:800;letter-spacing:.28em;font-size:10px;color:var(--dim);text-transform:uppercase;text-align:left;margin:24px 0 9px 4px}
   .cap-ladder{text-align:left}
-  .cap-tier{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:9px;margin-bottom:6px;border:1px solid var(--line);background:rgba(13,20,38,.4);position:relative;overflow:hidden}
-  .cap-tier .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--dim)}
-  .cap-tier .tn{font-family:var(--disp);font-weight:700;letter-spacing:.07em;font-size:13px;color:var(--dim);flex:1}
+  .cap-tier{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:10px;margin-bottom:6px;border:1px solid var(--line);background:rgba(13,20,38,.4);position:relative;overflow:hidden}
+  .cap-tier .tnum{font-family:var(--disp);font-weight:800;font-size:11px;color:var(--dim);width:18px;text-align:center;flex:none;opacity:.55}
+  .cap-tier .dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--dim)}
+  .cap-tier .tn{font-family:var(--disp);font-weight:700;letter-spacing:.06em;font-size:13px;color:var(--dim);flex:1}
   .cap-tier .tl{font-family:var(--ui);font-weight:700;letter-spacing:.1em;font-size:10px;color:var(--dim)}
-  .cap-tier .lock{font-family:var(--ui);font-weight:700;letter-spacing:.1em;font-size:10px;color:var(--dim);opacity:.55}
-  .cap-tier.done{opacity:.9}
+  .cap-tier .lock{font-family:var(--ui);font-weight:700;letter-spacing:.1em;font-size:10px;color:var(--dim);opacity:.5}
+  .cap-tier.done{opacity:.92}
+  .cap-tier.done .tnum{color:var(--tc);opacity:.9}
   .cap-tier.done .dot{background:var(--tc);box-shadow:0 0 8px var(--tc)}
   .cap-tier.done .tn{color:var(--ink)}
-  .cap-tier.on{border-color:var(--tc);background:linear-gradient(100deg,rgba(255,255,255,.045),rgba(13,20,38,.4));box-shadow:0 0 18px -3px var(--tc),inset 0 0 0 1px var(--tc)}
+  .cap-tier.on{border-color:var(--tc);background:linear-gradient(100deg,rgba(255,255,255,.05),rgba(13,20,38,.4));box-shadow:0 0 20px -3px var(--tc),inset 0 0 0 1px var(--tc)}
+  .cap-tier.on .tnum{color:#fff;opacity:1}
   .cap-tier.on .dot{background:var(--tc);box-shadow:0 0 12px var(--tc);animation:cappulse 1.8s ease-in-out infinite}
   .cap-tier.on .tn{color:#fff;text-shadow:0 0 12px var(--tc)}
   .cap-tier.on .tl{color:var(--tc)}
@@ -389,6 +401,8 @@
   @keyframes capspin{to{transform:rotate(360deg)}}
   @keyframes capshim{0%{transform:translateX(-180%)}100%{transform:translateX(360%)}}
   @keyframes cappulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.35);opacity:1}}
+  @keyframes caphalo{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
+  @keyframes capflow{to{background-position:200% center}}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1111,7 +1125,7 @@ const BOONS=[
 let state='menu';
 let player,enemies,pjs,epjs,orbs,drops,particles,texts,arcs,fx,hazards,chests;
 let time=0,kills=0,gold=0,spawnTimer=0,screenShake=0,shakeX=0,shakeY=0;
-let camZoom=1,camZoomTarget=1,camPunch=0;
+let camZoom=1,camZoomTarget=1,camPunch=0,camCX=0,camCY=0;
 let pendingLevels=0,pendingBoons=0,pendingChests=0,bestTime=0,runOver=false;
 let legendaryArmed=false,legendaryFirstLevel=5,legendaryWindowT=0,surgeEnded=false,chestCdT=0;
 let endgame=false,corruption=0,eliteTimer=75,meteorT=8,stampT=170,lastBombT=-999;
@@ -1446,7 +1460,7 @@ function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  
  chosenChar=charDef;player=makePlayer(charDef);
  enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];
- time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
+ time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;camCX=0;camCY=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
  rs={dmg:0,taken:0,elite:0,boss:0,peak:0,acc:0,t:0,dodges:0,reacts:{}};
  endgame=false;corruption=0;corrFrozen=false;corrFreezeTime=0;corrScaleStep=0;corrScaleMul=1;corpses=[];eliteTimer=75;meteorT=8;shards=[];roadShown=false;stampT=170;lastBombT=-999;swarmT=150;swarmCount=0;bigT=200;triVolleyT=18;alertText='';alertTime=0;swarmMax=150;trails=[];obj=null;objT=75;recycleT=0.5;megaCount=0;leviathanLock=false;corruptMods={speed:0,explode:false,double:false,meteors:false,bless:0,bossUp:0};
@@ -1562,7 +1576,7 @@ function update(dt){
  _aimX=ml>0?mx:0;_aimY=ml>0?my:0;
  if(player.slowT>0)player.slowT-=dt;
  const sp=player.speed*(player.onRoad?1.35:1)*(player.slowT>0?(0.35+0.65*(player.slowRes||0)):1)*(player._chargingUp?0.24:1);
- const acc=Math.min(1,dt*9*(player.mods.accelMul||1));
+ const acc=Math.min(1,dt*12*(player.mods.accelMul||1));
  var _kbd=(keys['w']||keys['a']||keys['s']||keys['d']||keys['arrowup']||keys['arrowdown']||keys['arrowleft']||keys['arrowright']);
  var _throttle=1;if(touchActive&&!_kbd&&ml>0)_throttle=Math.max(0.2,Math.min(1,touchMag/0.92));
  player.pvx+=(mx*sp*_throttle-player.pvx)*acc;player.pvy+=(my*sp*_throttle-player.pvy)*acc;
@@ -1794,7 +1808,7 @@ function update(dt){
   const sink=v=>{if(player.parryActive)return;v*=(1-(player.perm.hazardRes||0));if(rs)rs.taken+=v;player.esDelay=2*player.esRecMul;if(player.es>0){const ab=Math.min(player.es,v);player.es-=ab;v-=ab;}if(v>0)player.hp-=v;player.hurtFlash=Math.max(player.hurtFlash,0.14);if(player.hp<=0){if(player.phoenix){player.phoenix=false;player.hp=player.maxHp*0.5;player.iframes=2;player.hurtFlash=0.4;ring(player.x,player.y,140,'#ff7a3c');toast('PHOENIX PROTOCOL');sfx('boss');}else{player.hp=0;runOver='dead';}}};
   if(hz.type==='meteor'){if(!hz._boom){hz._boom=true;ring(hz.x,hz.y,hz.r,'#ff9b4b');screenShake=Math.max(screenShake,8);sfx('bomb');if(dh<hz.r)sink(40*BAL.enemyDmg(time));for(const x of queryNear(hz.x,hz.y,hz.r+40)){if(!x._dead&&dist2(hz.x,hz.y,x.x,x.y)<hz.r*hz.r)dealDamage(x,(80+time*0.4),{tick:true});}radialImpulse(hz.x,hz.y,hz.r+30,650);}}
   else if(hz.type==='blackhole'){
-   if(dh<hz.r&&!(player._bhImmuneT>0)){player._inBlackhole=true;player._bhEscX=dxh/dh;player._bhEscY=dyh/dh;const _bh=1-((player.mods&&player.mods.bhResist)||0);const f=hz.pull*earlyEase()*(1-dh/hz.r)*(1-(player.perm.hazardRes||0)*0.6)*_bh;player.x-=dxh/dh*f*dt;player.y-=dyh/dh*f*dt;}
+   if(dh<hz.r&&!(player._bhImmuneT>0)){player._inBlackhole=true;player._bhEscX=dxh/dh;player._bhEscY=dyh/dh;const _bh=1-((player.mods&&player.mods.bhResist)||0);const f=hz.pull*earlyEase()*(1-dh/hz.r)*(1-(player.perm.hazardRes||0)*0.6)*_bh;const step=Math.min(f*dt,Math.max(0,dh-hz.coreR*0.55));if(step>0){player.x-=dxh/dh*step;player.y-=dyh/dh*step;}}
    if(dh<hz.coreR&&!(player._bhImmuneT>0))sink(hz.dps*earlyEase()*dt*(1-((player.mods&&player.mods.bhResist)||0)*0.7));
    for(const x of queryNear(hz.x,hz.y,hz.r)){if(x._dead||isBig(x))continue;const ex=hz.x-x.x,ey=hz.y-x.y,ed=Math.hypot(ex,ey)||1;if(ed>hz.r)continue;const xm=Math.max(0.6,x.m||x.r*x.r/100),aa=hz.pull*1.1*(1-ed/hz.r)/xm;x.kvx=(x.kvx||0)+ex/ed*aa*dt;x.kvy=(x.kvy||0)+ey/ed*aa*dt;if(ed<hz.coreR+x.r)dealDamage(x,hz.dps*0.8*dt,{tick:true});}
    for(const o of orbs){const ox=hz.x-o.x,oy=hz.y-o.y,od=Math.hypot(ox,oy)||1;if(od<hz.r){o.vx+=ox/od*500*dt;o.vy+=oy/od*500*dt;}}}
@@ -1826,8 +1840,21 @@ function update(dt){
  for(let i=corpses.length-1;i>=0;i--){const c=corpses[i];c.life-=dt;if(c.life<=0){corpses.splice(i,1);continue;}c.x+=c.vx*dt;c.y+=c.vy*dt;c.rot+=c.vr*dt;c.vx*=Math.pow(0.06,dt);c.vy*=Math.pow(0.06,dt);}
 
  if(screenShake>0){screenShake-=dt*40;shakeX=rand(-screenShake,screenShake);shakeY=rand(-screenShake,screenShake);}else{shakeX=0;shakeY=0;screenShake=0;}
+  // --- safety net: a non-finite position must never vanish the diver or fling the camera ---
+ if(isFinite(player.x)&&isFinite(player.y)){player._lgx=player.x;player._lgy=player.y;}
+ else{player.x=player._lgx||0;player.y=player._lgy||0;player.pvx=0;player.pvy=0;}
+ // --- camera zoom (Rhino charge): clamped + softened so it can never blow up ---
  if(!(player&&player.char&&player.char.id==='rhino'&&player._chargingUp))camZoomTarget=1;
- camZoom+=(camZoomTarget-camZoom)*Math.min(1,dt*9);camPunch*=0.84;if(Math.abs(camPunch)<0.004)camPunch=0;
+ camZoom+=(camZoomTarget-camZoom)*Math.min(1,dt*9);camPunch*=0.88;if(Math.abs(camPunch)<0.004)camPunch=0;
+ if(!isFinite(camZoom))camZoom=1;if(!isFinite(camPunch))camPunch=0;
+ camZoom=clamp(camZoom,0.75,1.5);camPunch=clamp(camPunch,-0.45,0.6);
+ // --- smoothed camera centre with subtle look-ahead + a hard leash that keeps the diver on screen ---
+ {let _tx=player.x+clamp(player.pvx*0.06,-70,70),_ty=player.y+clamp(player.pvy*0.06,-70,70);
+  if(!isFinite(camCX)||!isFinite(camCY)){camCX=player.x;camCY=player.y;}
+  const _k=1-Math.exp(-dt/0.05);camCX+=(_tx-camCX)*_k;camCY+=(_ty-camCY)*_k;
+  const _lx=camCX-player.x,_ly=camCY-player.y,_ld=Math.hypot(_lx,_ly),_maxL=Math.min(W,H)*0.16/(VIEW||1);
+  if(_ld>_maxL&&_ld>0){const _s=_maxL/_ld;camCX=player.x+_lx*_s;camCY=player.y+_ly*_s;}
+  if(!isFinite(camCX))camCX=isFinite(player.x)?player.x:0;if(!isFinite(camCY))camCY=isFinite(player.y)?player.y:0;}
  updateHUD();
 
  // resolve end-of-frame events (order matters; chest is non-skippable)
@@ -1924,8 +1951,10 @@ function onLevelUp(lv){
 function render(){
  ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);ctx.save();
  const VW=W/VIEW,VH=H/VIEW;
- const _cz=VIEW*(camZoom+camPunch);ctx.translate(W/2+shakeX,H/2+shakeY);ctx.scale(_cz,_cz);ctx.translate(-player.x,-player.y);
- const camX=player.x-VW/2,camY=player.y-VH/2;
+ let _cz=VIEW*(camZoom+camPunch);if(!isFinite(_cz))_cz=VIEW;_cz=Math.max(VIEW*0.6,Math.min(VIEW*1.8,_cz));
+ let _cx=isFinite(camCX)?camCX:player.x,_cy=isFinite(camCY)?camCY:player.y;if(!isFinite(_cx))_cx=0;if(!isFinite(_cy))_cy=0;
+ ctx.translate(W/2+shakeX,H/2+shakeY);ctx.scale(_cz,_cz);ctx.translate(-_cx,-_cy);
+ const camX=_cx-VW/2,camY=_cy-VH/2;
  drawGridBg(camX,camY,VW,VH);drawRoads(camX,camY,VW,VH);
  drawZones();
  for(const sd of seeds){ctx.save();const pz=0.6+0.4*Math.sin(time*10);ctx.globalAlpha=0.8*pz;ctx.fillStyle='#6cffb0';if(QX&&QX.glow){ctx.shadowColor='#6cffb0';ctx.shadowBlur=14;}ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r*pz,0,TAU);ctx.fill();ctx.globalAlpha=0.4;ctx.strokeStyle='#6cffb0';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r+5+pz*4,0,TAU);ctx.stroke();ctx.restore();}
@@ -1988,7 +2017,7 @@ function render(){
   ctx.fillStyle='rgba(108,255,176,0.16)';ctx.fillRect(ox-pw/2+10,oy+ph/2-11,pw-20,5);
   ctx.fillStyle=urgent?'#ff5a6e':'#6cffb0';ctx.fillRect(ox-pw/2+10,oy+ph/2-11,(pw-20)*Math.min(1,prog),5);
   ctx.restore();}
- if(alertTime>0){ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);const a=Math.min(1,alertTime/0.4)*Math.min(1,(2.6-alertTime)/0.3+0.3);const cy=H*0.26;
+ if(alertTime>0){ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);const a=Math.min(1,alertTime/0.4)*Math.min(1,(2.6-alertTime)/0.3+0.3);const cy=H*(IS_TOUCH?0.36:0.28);
   ctx.globalAlpha=a*0.16;ctx.fillStyle=alertColor;ctx.fillRect(0,cy-34,W,68);
   ctx.globalAlpha=a;ctx.strokeStyle=alertColor;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,cy-34);ctx.lineTo(W,cy-34);ctx.moveTo(0,cy+34);ctx.lineTo(W,cy+34);ctx.stroke();
   if(alertSub){ctx.font='600 '+(W<560?10:12)+'px Orbitron,sans-serif';ctx.fillStyle=alertColor;ctx.fillText(alertSub.toUpperCase(),W/2,cy+46);}
@@ -2117,9 +2146,9 @@ function drawCharAura(p){
  if(id==='vanguard'){ctx.globalAlpha=0.5;ctx.strokeStyle='#00e5d4';if(glow){ctx.shadowColor='#00e5d4';ctx.shadowBlur=7;}ctx.lineWidth=2;for(let i=0;i<3;i++){const a=t*0.6+i/3*TAU,ox=p.x+Math.cos(a)*(p.r+16),oy=p.y+Math.sin(a)*(p.r+16);ctx.beginPath();for(let k=0;k<6;k++){const ha=k/6*TAU+a,hx=ox+Math.cos(ha)*5,hy=oy+Math.sin(ha)*5;k?ctx.lineTo(hx,hy):ctx.moveTo(hx,hy);}ctx.closePath();ctx.stroke();}}
  else if(id==='sentinel'){ctx.globalAlpha=0.45;ctx.fillStyle='#5cf0d0';if(glow){ctx.shadowColor='#5cf0d0';ctx.shadowBlur=6;}for(let i=0;i<8;i++){const a=t*0.8+i/8*TAU;ctx.beginPath();ctx.arc(p.x+Math.cos(a)*(p.r+14),p.y+Math.sin(a)*(p.r+14),1.6,0,TAU);ctx.fill();}const sa=t*2.2;ctx.globalAlpha=0.22;ctx.strokeStyle='#5cf0d0';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.x+Math.cos(sa)*(p.r+22),p.y+Math.sin(sa)*(p.r+22));ctx.stroke();}
  else if(id==='sniper'){ctx.globalAlpha=0.4;ctx.strokeStyle='#6cf0ff';if(glow){ctx.shadowColor='#6cf0ff';ctx.shadowBlur=5;}ctx.lineWidth=1.3;const R=p.r+18,ra=t*0.5;ctx.beginPath();ctx.arc(p.x,p.y,R,0,TAU);ctx.stroke();for(let k=0;k<4;k++){const a=ra+k/4*TAU;ctx.beginPath();ctx.moveTo(p.x+Math.cos(a)*(R-5),p.y+Math.sin(a)*(R-5));ctx.lineTo(p.x+Math.cos(a)*(R+5),p.y+Math.sin(a)*(R+5));ctx.stroke();}}
- else if(id==='vyper'){if(moving&&Math.random()<0.3)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+rand(-p.r,p.r),vx:rand(-10,10),vy:rand(20,52),life:0.5,color:'#9bff5c',r:1.6});ctx.globalAlpha=0.3+0.15*Math.sin(t*4);ctx.strokeStyle='#9bff5c';if(glow){ctx.shadowColor='#9bff5c';ctx.shadowBlur=9;}ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+8,t%TAU,t%TAU+Math.PI*1.3);ctx.stroke();}
- else if(id==='yujin'){if(Math.random()<0.14)particles.push({x:p.x+rand(-20,20),y:p.y+rand(-20,20),vx:rand(-15,15),vy:rand(-26,-8),life:1.0,color:'#ffd0e0',r:1.8});ctx.globalAlpha=0.32;ctx.strokeStyle='#ffe27a';if(glow){ctx.shadowColor='#ffe27a';ctx.shadowBlur=8;}ctx.lineWidth=1.6;const ba=t*1.2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+12,ba,ba+0.85);ctx.stroke();}
- else if(id==='rhino'){if(moving&&Math.random()<0.28)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+p.r*0.5,vx:rand(-30,30),vy:rand(-6,16),life:0.42,color:'#caa37a',r:2.6});}
+ else if(id==='vyper'){if(moving&&particles.length<340&&Math.random()<0.17)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+rand(-p.r,p.r),vx:rand(-10,10),vy:rand(20,52),life:0.5,color:'#9bff5c',r:1.6});ctx.globalAlpha=0.3+0.15*Math.sin(t*4);ctx.strokeStyle='#9bff5c';if(glow){ctx.shadowColor='#9bff5c';ctx.shadowBlur=9;}ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+8,t%TAU,t%TAU+Math.PI*1.3);ctx.stroke();}
+ else if(id==='yujin'){if(particles.length<340&&Math.random()<0.09)particles.push({x:p.x+rand(-20,20),y:p.y+rand(-20,20),vx:rand(-15,15),vy:rand(-26,-8),life:1.0,color:'#ffd0e0',r:1.8});ctx.globalAlpha=0.32;ctx.strokeStyle='#ffe27a';if(glow){ctx.shadowColor='#ffe27a';ctx.shadowBlur=8;}ctx.lineWidth=1.6;const ba=t*1.2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+12,ba,ba+0.85);ctx.stroke();}
+ else if(id==='rhino'){if(moving&&particles.length<340&&Math.random()<0.16)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+p.r*0.5,vx:rand(-30,30),vy:rand(-6,16),life:0.42,color:'#caa37a',r:2.6});}
  else if(id==='sorcerer'){ctx.globalAlpha=0.75;const a1=t*1.6,a2=-t*1.3;if(glow)ctx.shadowBlur=8;ctx.fillStyle='#ff5cf0';if(glow)ctx.shadowColor='#ff5cf0';ctx.beginPath();ctx.arc(p.x+Math.cos(a1)*(p.r+12),p.y+Math.sin(a1)*(p.r+12),2.4,0,TAU);ctx.fill();ctx.fillStyle='#5cd0ff';if(glow)ctx.shadowColor='#5cd0ff';ctx.beginPath();ctx.arc(p.x+Math.cos(a2)*(p.r+12),p.y+Math.sin(a2)*(p.r+12),2.4,0,TAU);ctx.fill();}
  ctx.restore();
 }
@@ -2419,23 +2448,28 @@ function captainTotalXP(){
  var net=(typeof NET!=='undefined'&&NET&&NET.stats&&NET.stats.xp)||0;
  return Math.max(sum,net|0);
 }
+// Deep curve: early levels arrive fast, L100 is a ~5000-hour pinnacle (cumulative ~25M XP).
 function captainLevelInfo(xp){
  xp=Math.max(0,Math.floor(xp||0));
- var lvl=1,floor=0,need=300;
- while(xp>=floor+need&&lvl<500){floor+=need;lvl++;need=Math.round(300*Math.pow(lvl,1.22));}
+ var lvl=1,floor=0,need=520;
+ while(lvl<100&&xp>=floor+need){floor+=need;lvl++;need=Math.round(520*Math.pow(lvl,1.55));}
+ if(lvl>=100)return {level:100,into:1,need:1,floor:floor,total:xp,pct:1,max:true};
  var into=xp-floor;
- return {level:lvl,into:into,need:need,floor:floor,total:xp,pct:Math.max(0,Math.min(1,into/need))};
+ return {level:lvl,into:into,need:need,floor:floor,total:xp,pct:Math.max(0,Math.min(1,into/need)),max:false};
 }
 function captainRank(lvl){
- if(lvl>=60)return {name:'LEVIATHAN',c1:'#ffffff',c2:'#b6ff3c',glow:'rgba(182,255,60,.45)'};
- if(lvl>=45)return {name:'VOID SOVEREIGN',c1:'#ffc24b',c2:'#ff9b4b',glow:'rgba(255,194,75,.45)'};
- if(lvl>=30)return {name:'ABYSSAL CAPTAIN',c1:'#ff5cf0',c2:'#b66cff',glow:'rgba(255,92,240,.45)'};
- if(lvl>=20)return {name:'TRENCH WALKER',c1:'#b66cff',c2:'#5cd0ff',glow:'rgba(182,108,255,.45)'};
- if(lvl>=10)return {name:'DEEP DIVER',c1:'#5cd0ff',c2:'#00e5d4',glow:'rgba(92,208,255,.45)'};
- if(lvl>=5)return {name:'PRESSURE DIVER',c1:'#00e5d4',c2:'#6cffb0',glow:'rgba(0,229,212,.45)'};
- return {name:'SURFACE DIVER',c1:'#6cffb0',c2:'#00e5d4',glow:'rgba(108,255,176,.4)'};
+ if(lvl>=100)return {name:'THE DROWNED GOD',c1:'#ffffff',c2:'#9beaff',glow:'rgba(180,240,255,.7)'};
+ if(lvl>=78)return {name:'ELDER OF THE DEEP',c1:'#ffc24b',c2:'#ff8a3c',glow:'rgba(255,194,75,.6)'};
+ if(lvl>=60)return {name:'NIGHTMARE SOVEREIGN',c1:'#ff6a8e',c2:'#ffb24b',glow:'rgba(255,106,142,.55)'};
+ if(lvl>=45)return {name:'LEVIATHAN',c1:'#ff5cf0',c2:'#ff6ca8',glow:'rgba(255,92,240,.55)'};
+ if(lvl>=32)return {name:'VOIDBORNE',c1:'#c46cff',c2:'#ff5cf0',glow:'rgba(196,108,255,.55)'};
+ if(lvl>=22)return {name:'HADAL WRAITH',c1:'#9b6dff',c2:'#c46cff',glow:'rgba(155,109,255,.55)'};
+ if(lvl>=14)return {name:'ABYSS REAPER',c1:'#5c9bff',c2:'#9b6dff',glow:'rgba(123,140,255,.5)'};
+ if(lvl>=8)return {name:'TRENCH STALKER',c1:'#4fd0ff',c2:'#5c9bff',glow:'rgba(79,208,255,.5)'};
+ if(lvl>=4)return {name:'DEEP DIVER',c1:'#00e5d4',c2:'#4fd0ff',glow:'rgba(0,229,212,.5)'};
+ return {name:'DRIFTER',c1:'#6cffb0',c2:'#00e5d4',glow:'rgba(108,255,176,.45)'};
 }
-var CAP_TIERS=[{lv:1,name:'SURFACE DIVER'},{lv:5,name:'PRESSURE DIVER'},{lv:10,name:'DEEP DIVER'},{lv:20,name:'TRENCH WALKER'},{lv:30,name:'ABYSSAL CAPTAIN'},{lv:45,name:'VOID SOVEREIGN'},{lv:60,name:'LEVIATHAN'}];
+var CAP_TIERS=[{lv:1,name:'DRIFTER'},{lv:4,name:'DEEP DIVER'},{lv:8,name:'TRENCH STALKER'},{lv:14,name:'ABYSS REAPER'},{lv:22,name:'HADAL WRAITH'},{lv:32,name:'VOIDBORNE'},{lv:45,name:'LEVIATHAN'},{lv:60,name:'NIGHTMARE SOVEREIGN'},{lv:78,name:'ELDER OF THE DEEP'},{lv:100,name:'THE DROWNED GOD'}];
 function openCaptain(){
  hideAllScreens();state='captain';
  var xp=captainTotalXP();var info=captainLevelInfo(xp);var rk=captainRank(info.level);
@@ -2445,19 +2479,26 @@ function openCaptain(){
  for(var j=0;j<CAP_TIERS.length;j++){
   var t=CAP_TIERS[j];var tr=captainRank(t.lv);
   var cls=j<curIdx?'cap-tier done':(j===curIdx?'cap-tier on':'cap-tier');
-  var right=info.level>=t.lv?('<span class="tl">Lv '+t.lv+'+</span>'):('<span class="lock">Lv '+t.lv+'</span>');
-  ladder+='<div class="'+cls+'" style="--tc:'+tr.c1+'"><span class="dot"></span><span class="tn">'+t.name+'</span>'+right+'</div>';
+  var right=info.level>=t.lv?('<span class="tl">Lv '+t.lv+'</span>'):('<span class="lock">Lv '+t.lv+'</span>');
+  ladder+='<div class="'+cls+'" style="--tc:'+tr.c1+'"><span class="tnum">'+(j+1)+'</span><span class="dot"></span><span class="tn">'+t.name+'</span>'+right+'</div>';
  }
- var toNext=Math.max(0,info.need-info.into);
+ var nextLine;
+ if(curIdx>=CAP_TIERS.length-1){nextLine='APEX RANK ACHIEVED';}
+ else{var nt=CAP_TIERS[curIdx+1];var dl=Math.max(1,nt.lv-info.level);nextLine='&#9656; '+dl+' LEVEL'+(dl===1?'':'S')+' TO '+nt.name;}
+ var barRight,nextRow;
+ if(info.max){barRight='MAX';nextRow='<div class="cap-next cap-max">Maximum Depth Reached</div>';}
+ else{barRight=fmtN(info.into)+' / '+fmtN(info.need)+' XP';nextRow='<div class="cap-next"><b>'+fmtN(Math.max(0,info.need-info.into))+'</b> XP to Level '+(info.level+1)+'</div>';}
  var body=''+
-  '<div class="cap-emblem"><div class="cap-ring"></div><div class="cap-ring r2"></div>'+
+  '<div class="cap-emblem"><div class="cap-halo"></div>'+
+   '<div class="cap-ring"></div><div class="cap-ring r2"></div><div class="cap-ring r3"></div>'+
    '<div class="cap-core"><div class="cap-lvlnum">'+info.level+'</div><div class="cap-lvllbl">CAPTAIN</div></div></div>'+
   '<div class="cap-rank">'+rk.name+'</div>'+
-  '<div class="cap-ranksub">total descent experience</div>'+
+  '<div class="cap-tierbadge">TIER '+(curIdx+1)+' / '+CAP_TIERS.length+'</div>'+
+  '<div class="cap-nextrank">'+nextLine+'</div>'+
   '<div class="cap-barwrap">'+
-   '<div class="cap-barlbls"><span class="l">Lv '+info.level+'</span><span class="r">'+fmtN(info.into)+' / '+fmtN(info.need)+' XP</span></div>'+
+   '<div class="cap-barlbls"><span class="l">LV '+info.level+'</span><span class="r">'+barRight+'</span></div>'+
    '<div class="cap-bar"><div class="cap-fill" style="width:'+(info.pct*100).toFixed(1)+'%"></div></div>'+
-   '<div class="cap-next"><b>'+fmtN(toNext)+'</b> XP to Level '+(info.level+1)+'</div></div>'+
+   nextRow+'</div>'+
   '<div class="cap-stats">'+
    '<div class="cap-stat"><div class="v">'+fmtN(info.total)+'</div><div class="k">Lifetime XP</div></div>'+
    '<div class="cap-stat"><div class="v">'+fmtN(runs)+'</div><div class="k">Total Runs</div></div></div>'+
