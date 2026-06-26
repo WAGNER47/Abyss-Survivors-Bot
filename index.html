@@ -2358,9 +2358,6 @@ function recordRun(result){
   reacts:rs?Object.assign({},rs.reacts):{},
   build:buildSnapshot()};
  lastRecord=rec;runArchive.unshift(rec);if(runArchive.length>30)runArchive.length=30;saveRuns();
- NET.gamesPlayed=Math.max((NET.gamesPlayed||0)+1,runArchive.length);
- try{refreshNavHead();}catch(e){}
- try{if(netId())netSync();}catch(e){}
 }
 function fmtT(s){const m=Math.floor(s/60);return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
 function fmtN(n){return (n||0).toLocaleString();}
@@ -2527,19 +2524,11 @@ function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return
 function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 // ---- DIVE NETWORK: presence + friends relay ----
-let NET={online:false,friends:[],inbox:0,lastSync:0,gamesPlayed:0,stats:null};
-// Merge runs the server returns into the local archive (server is the durable source of truth).
-// Dedup by date; keep local copies (which carry the full build snapshot) when a run exists on both sides.
-function mergeServerRuns(sr){try{if(!Array.isArray(sr)||!sr.length)return false;const byDate={};for(const r of (runArchive||[]))if(r&&r.date!=null)byDate[r.date]=r;let added=false;for(const r of sr){if(!r||r.date==null)continue;if(!byDate[r.date]){byDate[r.date]=r;added=true;}}if(!added)return false;runArchive=Object.values(byDate).sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,30);saveRuns();return true;}catch(e){return false;}}
+let NET={online:false,friends:[],inbox:0,lastSync:0};
 function netId(){return TG_USER&&TG_USER.id!=='guest'?String(TG_USER.id):'';}
 async function netSync(){const id=netId();if(!id)return;
- try{const s=computeStats();const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8).map(r=>({date:r.date,result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))})});
+ try{const s=computeStats();const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8),runs:(runArchive||[]).slice(0,8).map(r=>({result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken}))})});
   const j=await r.json();if(j&&j.ok){NET.online=true;NET.friends=j.friends||[];const wasInbox=NET.inbox;NET.inbox=j.inboxCount||0;NET.lastSync=Date.now();
-   // Durable stats: the server holds the real games-played count (Redis, survives relaunches).
-   if(j.stats){NET.stats=j.stats;if(typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);}
-   const changed=mergeServerRuns(j.runs);
-   try{refreshNavHead();}catch(e){}
-   if((changed)&&state==='profile'){const ae=document.activeElement;if(!ae||ae.id!=='pname')openProfile();}
    if(NET.inbox>wasInbox)toast('NEW FRIEND REQUEST \u00b7 check Social');updateSocialBadge();}
   else NET.online=false;
  }catch(e){NET.online=false;}}
@@ -2590,7 +2579,6 @@ function svgRadar(vals,labels){const cx=110,cy=104,R=78,n=vals.length;
  return '<svg viewBox="0 0 220 208" style="width:min(280px,72vw);display:block;margin:0 auto">'+grid+axes+'<polygon points="'+poly+'" fill="rgba(176,107,255,0.28)" stroke="#b06bff" stroke-width="2"/>'+labs+'</svg>';}
 function openProfile(){hideAllScreens();state='profile';
  const total=runArchive.length,wins=runArchive.filter(r=>r.result==='Victory').length;
- const gamesShown=Math.max(total,NET.gamesPlayed||0);
  const tk=runArchive.reduce((a,r)=>a+(r.kills||0),0),tt=runArchive.reduce((a,r)=>a+(r.time||0),0),tg=runArchive.reduce((a,r)=>a+(r.gold||0),0);
  const hl=runArchive.reduce((a,r)=>Math.max(a,r.level||0),0),hc=runArchive.reduce((a,r)=>Math.max(a,r.corruption||0),0);
  const per={};runArchive.forEach(r=>per[r.char]=(per[r.char]||0)+1);
@@ -2629,7 +2617,7 @@ function openProfile(){hideAllScreens();state='profile';
     <div class="ptitle" style="margin-top:10px">Shape</div><div class="shaperow">${shapeBtns}</div>
     <div class="ptitle" style="margin-top:10px">Sigil</div><div class="shaperow">${logoBtns}</div></div>`+
   `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+
-   stat(gamesShown,'Total Runs')+stat(wins,'Victories')+stat(total?Math.round(wins/total*100)+'%':'\u2014','Win Rate')+
+   stat(total,'Total Runs')+stat(wins,'Victories')+stat(total?Math.round(wins/total*100)+'%':'\u2014','Win Rate')+
    stat(fmtT(bestTime),'Best Time')+stat(fmtN(tk),'Total Kills')+stat(hl||'\u2014','Highest Level')+
    stat(fmtT(tt),'Time in the Deep')+stat(fmtN(tg),'Credits Earned')+stat(hc||'\u2014','Max Corruption')+
   `</div></div>`+
@@ -2864,13 +2852,9 @@ function refreshNavHead(){try{
   if(profColor){av.style.background='linear-gradient(145deg,'+profColor+',#00e5d4)';av.style.boxShadow='0 0 30px '+profColor+'99';}
  }
  const st=document.getElementById('navStats');if(st){try{const s=computeStats();
-  const ns=NET.stats||{};
-  const runs=Math.max(s.total||0,NET.gamesPlayed||0);
-  const wins=Math.max(s.wins||0,ns.wins||0);
-  const bestLv=Math.max(s.highLevel||0,ns.level||0);
-  st.innerHTML='<div class="nav-stat"><div class="v">'+runs+'</div><div class="l">Runs</div></div>'+
-   '<div class="nav-stat"><div class="v">'+wins+'</div><div class="l">Wins</div></div>'+
-   '<div class="nav-stat"><div class="v">'+bestLv+'</div><div class="l">Best Lv</div></div>';
+  st.innerHTML='<div class="nav-stat"><div class="v">'+(s.total||0)+'</div><div class="l">Runs</div></div>'+
+   '<div class="nav-stat"><div class="v">'+(s.wins||0)+'</div><div class="l">Wins</div></div>'+
+   '<div class="nav-stat"><div class="v">'+(s.highLevel||0)+'</div><div class="l">Best Lv</div></div>';
  }catch(e){}}
 }catch(e){}}
 function openCredits(){hideAllScreens();state='credits';document.getElementById('credits').classList.remove('hidden');}
