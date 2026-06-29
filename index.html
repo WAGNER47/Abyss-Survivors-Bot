@@ -518,6 +518,20 @@
   @media(max-width:420px){.mtile{padding:12px}.mtile .mt b{font-size:11.5px}.btn.mdesc{font-size:15px;padding:15px 30px}.msub{font-size:10.5px;letter-spacing:.15em}}
   /* credits polish */
   .credit-foot{margin-top:4px;font-family:var(--ui);font-size:10.5px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;opacity:.7;text-align:center}
+  /* ===================== LORE (special menu button + screen) ===================== */
+  .lore-btn{position:absolute;top:14px;right:14px;z-index:6;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 13px 7px;border-radius:14px;border:1px solid rgba(255,194,75,0.42);background:radial-gradient(ellipse at 50% 0%,rgba(62,44,14,0.88),rgba(20,14,6,0.82));cursor:pointer;transition:transform .16s,box-shadow .2s,border-color .2s;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:loreGlow 3.6s ease-in-out infinite}
+  .lore-btn:hover{transform:translateY(-2px) scale(1.05);border-color:rgba(255,214,120,0.9)}
+  .lore-btn:active{transform:scale(.96)}
+  .lore-rune{font-size:21px;color:#ffd24b;filter:drop-shadow(0 0 8px rgba(255,194,75,0.9));line-height:1}
+  .lore-txt{font-family:var(--disp);font-weight:800;font-size:9px;letter-spacing:.26em;color:#ffe2a0;padding-left:.26em}
+  @keyframes loreGlow{0%,100%{box-shadow:0 0 20px -9px rgba(255,194,75,0.55),inset 0 0 16px -8px rgba(255,194,75,0.4)}50%{box-shadow:0 0 30px -5px rgba(255,194,75,0.85),inset 0 0 18px -6px rgba(255,194,75,0.65)}}
+  #lore{background:radial-gradient(ellipse at 50% 38%,rgba(34,24,8,0.7),rgba(4,5,10,0.96))}
+  .lore-wrap{display:flex;flex-direction:column;align-items:center;gap:17px;text-align:center;max-width:440px;padding:0 26px}
+  .lore-sigil{font-size:62px;color:#ffd24b;filter:drop-shadow(0 0 22px rgba(255,194,75,0.8));animation:loreSpin 24s linear infinite}
+  .lore-title{font-family:var(--disp);font-weight:900;font-size:clamp(34px,9vw,52px);letter-spacing:.2em;color:#ffe2a0;text-shadow:0 0 26px rgba(255,194,75,0.55);margin:0;padding-left:.2em}
+  .lore-soon{font-family:var(--disp);font-weight:700;letter-spacing:.42em;font-size:13px;color:#ffd24b;padding:9px 22px 9px 26px;border:1px solid rgba(255,194,75,0.42);border-radius:30px;background:rgba(40,28,8,0.5)}
+  .lore-flavor{font-family:var(--ui);font-size:13px;line-height:1.85;color:#b79a6a;letter-spacing:.04em;margin:0}
+  @keyframes loreSpin{to{transform:rotate(360deg)}}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -598,6 +612,7 @@
 
   <div class="screen" id="menu">
     <canvas id="menufx"></canvas>
+    <button class="lore-btn" id="loreBtn" aria-label="Lore"><span class="lore-rune">&#10070;</span><span class="lore-txt">LORE</span></button>
     <div class="studiomark" style="position:relative;z-index:2">veil &amp; wire studio®</div>
     <div class="logo" style="position:relative;z-index:2">ABYSS<small>SURVIVORS</small></div>
     <div class="msub">Bioluminescent deep &middot; 18,000m down &middot; it has noticed your light</div>
@@ -615,6 +630,16 @@
       <div class="mcontrols" id="hintline"><b>WASD</b> / drag to move &middot; <b>Space</b> dodge &middot; guns auto-fire</div>
     </div>
     <div class="transmission" id="transmission"></div>
+  </div>
+
+  <div class="screen hidden" id="lore">
+    <div class="lore-wrap" style="position:relative;z-index:2">
+      <div class="lore-sigil">&#10070;</div>
+      <h1 class="lore-title">LORE</h1>
+      <div class="lore-soon">COMING SOON</div>
+      <p class="lore-flavor">The deep remembers what the surface forgot.<br>Its story will surface in time.</p>
+      <button class="btn ghost" id="loreback" style="margin-top:6px">Back</button>
+    </div>
   </div>
 
   <div id="codexdetail" class="hidden"><div class="cdbox"><div class="cdhead"><span class="cdsw" id="cdsw"></span><div><h3 id="cdtitle"></h3><span class="gtag" id="cdtag"></span></div><button id="cdclose">✕</button></div><p id="cdbody"></p></div></div>
@@ -1278,7 +1303,7 @@ function wEls(w){const out=[WEAPON_EL[w.id]||'kinetic'];if(w.inf)out.push(...w.i
 function evoName(id,tier){const n=EVOS[id]&&EVOS[id].names;return n?n[tier-1]:WEAPONS[id].name+' '+['Mk II','Mk III','Prime','Omega'][tier-1];}
 let CURW=null,CURP=null,DT=0;
 const DODGE={vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.85},sniper:{d:340,cd:1.4},vyper:{d:300,cd:1.3},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99}};
-const BULWARK={dur:1.4,cd:4.5};const PARRY={win:0.24,cd:0.5};
+const BULWARK={dur:1.4,cd:4.5};const PARRY={win:0.34,cd:0.42};
 const RHINO={trampleDmg:48,knock:1400,aftershock:1500,aftershockDmg:120,maxHold:4};
 const HEX={dur:2.6,cd:9,radius:200,pull:300};
 /* ===== RARITY LADDER & BUILD CORES ===== */
@@ -1675,7 +1700,7 @@ function spawnHazard(x,y,type){type=type||'mage';if(hazards.length>=BAL.hazardCa
 
 /* ========================= COMBAT OVERHAUL v8 (souls-like bosses) ========================= */
 // The single active "major boss" (giant warden/finalboss/void-lord) the arena is built around.
-function majorBoss(){let b=null;for(const e of enemies){if(e._dead)continue;if((e.warden||e.finalboss)&&e.r>=200){if(!b||e.r>b.r)b=e;}}return b;}
+function majorBoss(){let huge=false,b=null;for(const e of enemies){if(e._dead)continue;if(!(e.warden||e.finalboss))continue;if(e.r>=400){huge=true;}else if(e.r>=200){if(!b||e.r>b.r)b=e;}}return huge?null:b;}
 
 // ----- telegraphed boss beams: heavy %-HP lasers that FORCE a dodge (souls-like) -----
 let bossBeams=[];
@@ -1943,6 +1968,9 @@ function update(dt){
    if(rs)rs.dodges=(rs.dodges||0)+1;ring(player.x,player.y,player.r+22,'#ffe27a');burst(player.x,player.y,'#ffe27a',12);for(let i=0;i<8;i++){const a=Math.atan2(ey,ex)+rand(-0.6,0.6);particles.push({x:player.x,y:player.y,vx:-Math.cos(a)*240,vy:-Math.sin(a)*240,life:0.3,color:'#ffe27a',r:2});}sfx('shield');toast('BLINK');
   } else if(player.parryCdT<=0){
    if(rs)rs.dodges=(rs.dodges||0)+1;player.parryT=PARRY.win;player.parryActive=true;player.parryCdT=PARRY.cd;ring(player.x,player.y,player.r+16,'#ffe27a');sfx('shing');
+   // PARRY PULSE: a successful parry shoves and damages everything close (rewards aggressive timing)
+   const PR=player.r+92;ring(player.x,player.y,PR,'#ffe27a');burst(player.x,player.y,'#ffe27a',14);screenShake=Math.max(screenShake,4);
+   for(const e of queryNear(player.x,player.y,PR)){if(e._dead)continue;const kx=e.x-player.x,ky=e.y-player.y,kd=Math.hypot(kx,ky)||1;if(kd>PR+e.r)continue;const m=Math.max(0.6,e.m||e.r*e.r/100);e.kvx=(e.kvx||0)+kx/kd*940/m;e.kvy=(e.kvy||0)+ky/kd*940/m;dealDamage(e,player.damageMult*95+(isBig(e)?e.maxhp*0.012:0),{tick:true});if(!e._dead&&e.sharp){e._dead=true;burst(e.x,e.y,'#ffe27a',6);}}
   }
  }
  else if(abilityReq&&cid==='vanguard'&&player.dodgeCd<=0){dodgeReq=false;player.bulwarkT=BULWARK.dur;player.dodgeCd=BULWARK.cd;player.iframes=Math.max(player.iframes,BULWARK.dur);ring(player.x,player.y,player.r+24,'#00e5d4');sfx('shield');}
@@ -1985,7 +2013,7 @@ function update(dt){
  player.x+=player.pvx*dt;player.y+=player.pvy*dt;
  // ===== BOSS ARENA: you cannot flee a major boss. Clamp the diver inside a ring around it. =====
  {const _mb=majorBoss();
-  if(_mb){const arR=Math.min(560,Math.max(360,Math.max(W,H)/VIEW*0.46))+_mb.r*0.22;
+  if(_mb){const arR=Math.min(780,Math.max(480,Math.max(W,H)/VIEW*0.58))+_mb.r*0.32;
    player._arenaR=arR;player._arenaX=_mb.x;player._arenaY=_mb.y;
    const ddx=player.x-_mb.x,ddy=player.y-_mb.y,dq=Math.hypot(ddx,ddy)||1;
    if(dq>arR){const ux=ddx/dq,uy=ddy/dq;player.x=_mb.x+ux*arR;player.y=_mb.y+uy*arR;
@@ -2221,7 +2249,13 @@ function update(dt){
   if(player.permShield&&!p.boss){const sr=player.r+18;if(dd<sr+p.r){p.life=0;burst(p.x,p.y,'#9b6dff',4);continue;}}
   if(player.hasBarrier&&player.barrier.ready){const br=player.r+22;if(dd<br+p.r){p.life=0;player.barrier.ready=false;player.barrier.cd=player.barrierRecharge;burst(p.x,p.y,'#9bd0ff',5);sfx('shield');continue;}}
   if(dd<player.r+p.r){
-    if(player.parryActive){p.life=0;burst(p.x,p.y,'#ffe27a',6);player.parryFlash=0.25;player.parryT=Math.max(player.parryT,0.12);hap('impact','rigid');if(player.char.id==='yujin'){player.hp=clamp(player.hp+player.maxHp*0.012,0,player.maxHp);player.parryCdT=0;radialImpulse(player.x,player.y,180,420);}continue;}
+    if(player.parryActive){
+     // REFLECT: bounce the shot back at 20x its damage as a golden lance that tears through enemies
+     const sp=Math.hypot(p.vx,p.vy)||1,bs=Math.max(sp,680)*1.25;
+     pjs.push({x:p.x,y:p.y,vx:-p.vx/sp*bs,vy:-p.vy/sp*bs,r:Math.max(7,p.r),dmg:(p.dmg||10)*20,pierce:5,life:2.2,color:'#ffe27a',kind:'bolt',hit:new Set(),_reflect:true});
+     p.life=0;burst(p.x,p.y,'#ffe27a',9);ring(p.x,p.y,p.r+18,'#ffe27a');player.parryFlash=0.3;player.parryT=Math.max(player.parryT,0.14);hap('impact','rigid');sfx('shing');
+     if(player.char.id==='yujin'){player.hp=clamp(player.hp+player.maxHp*0.015,0,player.maxHp);player.parryCdT=0;}
+     continue;}
     if(player.iframes<=0)hitPlayer(p.dmg,'projectile',p.pct);p.life=0;}}
  for(let i=epjs.length-1;i>=0;i--)if(epjs[i].life<=0)epjs.splice(i,1);
 
@@ -2802,7 +2836,7 @@ function grantChest(){
 /* ===== PAUSE / END ===== */
 function doPause(){if(state!=='playing')return;state='paused';document.getElementById('pause').classList.remove('hidden');}
 function doResume(){if(state!=='paused')return;state='playing';document.getElementById('pause').classList.add('hidden');lastT=performance.now();}
-function hideAllScreens(){['menu','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
+function hideAllScreens(){['menu','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics','lore'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
 function showNavToggle(){const nt=document.getElementById('navToggle');if(nt)nt.style.display='flex';}
 
 function runStats(){return{time,level:player.level,kills,dodges:rs?rs.dodges:0,reacts:rs?rs.reacts:{},taken:rs?Math.round(rs.taken):0,peak:rs?Math.round(rs.peak):0,gold,char:chosenChar.name,
@@ -3757,6 +3791,8 @@ var _cosBtn=document.getElementById('cosbtn');if(_cosBtn)_cosBtn.onclick=()=>{if
 var _mSoc=document.getElementById('navsocial');if(_mSoc)_mSoc.onclick=()=>{if(!AC)initAudio();openSocial('friends');};
 var _mProf=document.getElementById('navprofile');if(_mProf)_mProf.onclick=()=>{if(!AC)initAudio();openProfile();};
 var _mGuide=document.getElementById('navguide');if(_mGuide)_mGuide.onclick=()=>{if(!AC)initAudio();openCodex();};
+var _mLore=document.getElementById('loreBtn');if(_mLore)_mLore.onclick=()=>{if(!AC)initAudio();openLore();};
+var _mLoreBack=document.getElementById('loreback');if(_mLoreBack)_mLoreBack.onclick=toMenu;
 // ===== NAV DRAWER =====
 (function(){
  const tog=document.getElementById('navToggle'),drw=document.getElementById('navDrawer'),scrim=document.getElementById('navScrim');
@@ -3807,6 +3843,7 @@ function refreshNavHead(){try{
  }catch(e){}}
 }catch(e){}}
 function openCredits(){hideAllScreens();state='credits';document.getElementById('credits').classList.remove('hidden');}
+function openLore(){hideAllScreens();state='lore';document.getElementById('lore').classList.remove('hidden');}
 function openLeaderboard(){hideAllScreens();state='leaderboard';
  const B=document.getElementById('leaderbody');
  B.innerHTML=`<div class="pcard" style="text-align:center;padding:30px 20px">
