@@ -496,6 +496,28 @@
   .vsbar .vtv{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-family:var(--disp);font-size:10.5px;color:#fff0f4;z-index:3;text-shadow:0 1px 2px rgba(0,0,0,.6)}
   .vscrown{position:absolute;top:50%;transform:translateY(-50%);font-size:10px;z-index:4}
   .fp-syncED{font-family:var(--ui);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-top:5px}
+  /* ===================== MAIN MENU v2 (hub) ===================== */
+  .msub{position:relative;z-index:2;max-width:520px;text-align:center;margin:13px auto 2px;font-family:var(--ui);font-size:11.5px;letter-spacing:.2em;line-height:1.6;color:#7d93bd;text-transform:uppercase;opacity:.82}
+  .menu-hub{display:flex;flex-direction:column;align-items:center;gap:15px;width:min(440px,92vw);margin-top:18px}
+  .mplayer{display:flex;align-items:center;gap:11px;padding:7px 15px 7px 8px;border-radius:30px;border:1px solid rgba(108,131,176,.25);background:rgba(10,18,32,.55);cursor:pointer;transition:transform .14s,border-color .14s,box-shadow .2s;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+  .mplayer:hover{transform:translateY(-1px);border-color:rgba(0,229,212,.5);box-shadow:0 0 20px -6px #00e5d4}
+  .mp-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;background:linear-gradient(145deg,var(--ac,#00e5d4),#0b1830);box-shadow:0 0 12px var(--ac,#00e5d4);overflow:hidden;flex:none}
+  .mp-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .mp-nm{font-family:var(--disp);font-weight:700;font-size:13.5px;letter-spacing:.05em;color:#eaf2ff}
+  .btn.mdesc{width:100%;font-size:17px;padding:17px 40px;letter-spacing:.22em}
+  .mtiles{display:grid;grid-template-columns:1fr 1fr;gap:11px;width:100%}
+  .mtile{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:13px;border:1px solid rgba(108,131,176,.26);background:linear-gradient(135deg,rgba(16,28,50,.62),rgba(9,16,30,.62));cursor:pointer;transition:transform .14s,border-color .14s,box-shadow .2s;text-align:left;color:inherit;font-family:inherit}
+  .mtile:hover{transform:translateY(-2px);border-color:var(--tc,#00e5d4);box-shadow:0 8px 24px rgba(0,0,0,.4),0 0 18px -7px var(--tc,#00e5d4)}
+  .mtile:active{transform:translateY(0)}
+  .mtile .mi{font-size:20px;color:var(--tc,#00e5d4);filter:drop-shadow(0 0 8px var(--tc,#00e5d4));width:24px;text-align:center;flex:none}
+  .mtile .mt{display:flex;flex-direction:column;min-width:0}
+  .mtile .mt b{font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.05em;color:#eaf2ff;white-space:nowrap}
+  .mtile .mt span{font-family:var(--ui);font-size:9.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;margin-top:2px}
+  .mcontrols{margin-top:6px;font-family:var(--ui);font-size:10.5px;letter-spacing:.1em;color:var(--dim);text-transform:uppercase;opacity:.7;text-align:center}
+  .mcontrols b{color:#9fb6e0;font-weight:700}
+  @media(max-width:420px){.mtile{padding:12px}.mtile .mt b{font-size:11.5px}.btn.mdesc{font-size:15px;padding:15px 30px}.msub{font-size:10.5px;letter-spacing:.15em}}
+  /* credits polish */
+  .credit-foot{margin-top:4px;font-family:var(--ui);font-size:10.5px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;opacity:.7;text-align:center}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -578,15 +600,21 @@
     <canvas id="menufx"></canvas>
     <div class="studiomark" style="position:relative;z-index:2">veil &amp; wire studio®</div>
     <div class="logo" style="position:relative;z-index:2">ABYSS<small>SURVIVORS</small></div>
-    <p class="tagline">You drift into the bioluminescent deep. Things in the dark want your light. Move, kill, and survive.<br><br>Let me see the real you. Level your way to 100, then surprise me with your final decision.<br><br>Let's see how long you last in the abyss. See you there, survivor.</p>
-    <div id="menucol" style="display:flex;flex-direction:column;align-items:center;gap:18px">
-      <button class="btn" id="startbtn">DESCEND</button>
-      <button class="btn ghost" id="cosbtn" style="border-color:rgba(108,255,208,0.45);color:#bff7e4">&#10070; COSMETICS</button>
-      <div id="menurow" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:560px"><button class="btn ghost" id="optbtn">⚙ Settings</button><button class="btn ghost" id="creditsbtn2">♡ Credits</button></div>
-      <div style="margin-top:10px;font-family:var(--ui);font-size:11.5px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;opacity:.8">☰ tap the menu for more</div>
+    <div class="msub">Bioluminescent deep &middot; 18,000m down &middot; it has noticed your light</div>
+    <div class="menu-hub" style="position:relative;z-index:2">
+      <div class="mplayer" id="mplayer" style="display:none"></div>
+      <button class="btn mdesc" id="startbtn">DESCEND</button>
+      <div class="mtiles">
+        <button class="mtile" id="cosbtn" style="--tc:#6cffb0"><span class="mi">&#10070;</span><span class="mt"><b>Cosmetics</b><span>Customize</span></span></button>
+        <button class="mtile" id="navsocial" style="--tc:#5cd0ff"><span class="mi">&#9673;</span><span class="mt"><b>Dive Network</b><span>Friends</span></span></button>
+        <button class="mtile" id="navprofile" style="--tc:#9b6dff"><span class="mi">&#9670;</span><span class="mt"><b>Profile</b><span>Your record</span></span></button>
+        <button class="mtile" id="navguide" style="--tc:#ffc24b"><span class="mi">&#10022;</span><span class="mt"><b>Codex</b><span>Bestiary</span></span></button>
+        <button class="mtile" id="optbtn" style="--tc:#8aa6da"><span class="mi">&#9881;</span><span class="mt"><b>Settings</b><span>Options</span></span></button>
+        <button class="mtile" id="creditsbtn2" style="--tc:#ff7a9b"><span class="mi">&#9829;</span><span class="mt"><b>Credits</b><span>Thanks</span></span></button>
+      </div>
+      <div class="mcontrols" id="hintline"><b>WASD</b> / drag to move &middot; <b>Space</b> dodge &middot; guns auto-fire</div>
     </div>
     <div class="transmission" id="transmission"></div>
-    <div class="hint" id="hintline"><b>WASD</b> / <b>Arrows</b> move &nbsp;·&nbsp; <b>Space</b> dodge / parry / guard &nbsp;·&nbsp; <b>P</b> pause &nbsp;·&nbsp; guns auto fire</div>
   </div>
 
   <div id="codexdetail" class="hidden"><div class="cdbox"><div class="cdhead"><span class="cdsw" id="cdsw"></span><div><h3 id="cdtitle"></h3><span class="gtag" id="cdtag"></span></div><button id="cdclose">✕</button></div><p id="cdbody"></p></div></div>
@@ -658,14 +686,14 @@
     <div class="studiomark">veil &amp; wire studio®</div>
     <div class="logo" style="font-size:clamp(28px,7vw,52px)">CREDITS</div>
     <div class="creditbox">
-      <div class="crow"><span class="ck">A Game By / Executive</span><span class="cv">veil &amp; wire studio®</span></div>
+      <div class="crow"><span class="ck">A Game By</span><span class="cv">veil &amp; wire studio®</span></div>
       <div class="crow"><span class="ck">Core Development</span><span class="cv">Ramtin Mohammadi</span></div>
       <div class="crow"><span class="ck">UI Design</span><span class="cv">Ramtin Mohammadi</span></div>
-      <div class="crow"><span class="ck">Sound</span><span class="cv">Ramtin Mohammadi</span></div>
-      <div class="crow"><span class="ck">Special Thanks</span><span class="cv">Friends, family &amp; playtesters</span></div>
-      <div class="crow"><span class="ck">&nbsp;</span><span class="cv">Amir · Mehrasal · Chris · Dina · Behnam · MohammadReza · Mohammad · Sonya</span></div>
+      <div class="crow"><span class="ck">Sound Design</span><span class="cv">Ramtin Mohammadi</span></div>
+      <div class="crow"><span class="ck">Special Thanks</span><span class="cv">To everyone who dares to dive</span></div>
     </div>
-    <button class="btn ghost" id="creditsback">Back</button>
+    <div class="credit-foot">Made in the deep</div>
+    <button class="btn ghost" id="creditsback" style="margin-top:18px">Back</button>
   </div>
 
   <!-- Character select -->
@@ -3128,6 +3156,7 @@ async function netSync(){const id=netId();if(!id)return;
    if(j.stats){NET.stats=j.stats;if(typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);}
    const changed=mergeServerRuns(j.runs);
    try{refreshNavHead();}catch(e){}
+   try{if(state==='menu')refreshMenuChip();}catch(e){}
    if(state==='captain'){try{openCaptain();}catch(e){}}
    if(state==='social'){try{const ft=document.getElementById('friendgrid');if(ft)hydrateFriends();}catch(e){}}
    if((changed)&&state==='profile'){const ae=document.activeElement;if(!ae||ae.id!=='pname')openProfile();}
@@ -3140,6 +3169,8 @@ setInterval(()=>{if(netId())netSync();},45000);
 try{document.addEventListener('visibilitychange',()=>{if(!document.hidden&&netId()&&Date.now()-NET.lastSync>8000){netSync();if(state==='social')hydrateFriends();}});}catch(e){}
 try{window.addEventListener('focus',()=>{if(netId()&&Date.now()-NET.lastSync>8000)netSync();});}catch(e){}
 setTimeout(()=>{if(netId())netSync();},2500);
+setTimeout(()=>{try{refreshMenuChip();}catch(e){}},500);
+setTimeout(()=>{try{refreshMenuChip();}catch(e){}},1800);
 function tgHideShare(){try{if(TG)TG.MainButton.hide();}catch(e){}}
 let profName='SURVIVOR',profColor='',profShape='orb',profLogo='⌖';
 let FRIENDS=[];
@@ -3487,7 +3518,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
    const sorted=NET.friends.slice().map(f=>{const seen=(NET.fcache[f.id]&&NET.fcache[f.id].seen)||f.lastSeen;return Object.assign({},f,{_tier:presenceTier(seen,f.online),_seen:seen});}).sort((a,b)=>(b._tier.rank-a._tier.rank)||((b._seen||0)-(a._seen||0)));
    s+=`<div class="fgrid" id="friendgrid">`;
    s+=sorted.map(f=>{const cached=NET.fcache[f.id]||{};const ac=NEONS[Math.abs(hashStr(f.id))%NEONS.length];const av=f.photo?`<img src="${f.photo}">`:(f.name||'?').slice(0,1).toUpperCase();const tier=f._tier;
-    return `<div class="fcard" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}" style="--pc:${tier.glow};--ac:${ac};--acg:${ac}66"><div class="fav">${av}</div><div class="fmid"><div class="fnm">${f.name||('Diver '+f.id)}</div><div class="fpres"><span class="fdot ${tier.cls}"></span><span class="fpreslbl" style="color:${tier.color}">${tier.label}</span></div><div class="fbest">${cached.best?('Best Lv <b>'+cached.best+'</b>'):'\u00b7 \u00b7 \u00b7'}</div></div><div class="fright"><span class="fcap">${capChip(cached.cap||0)}</span></div><span class="fchev">\u203a</span></div>`;
+    return `<div class="fcard" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}" style="--pc:${tier.glow};--ac:${ac};--acg:${ac}66"><div class="fav">${av}</div><div class="fmid"><div class="fnm">${f.name||('Diver '+f.id)}</div><div class="fpres"><span class="fdot ${tier.cls}"></span><span class="fpreslbl" style="color:${tier.color}">${tier.label}</span></div><div class="fbest">${(cached.best||f.best)?('Best Lv <b>'+(cached.best||f.best)+'</b>'):'\u00b7 \u00b7 \u00b7'}</div></div><div class="fright"><span class="fcap">${capChip(cached.cap||f.cap||0)}</span></div><span class="fchev">\u203a</span></div>`;
    }).join('');
    s+=`</div>`;
   } else {
@@ -3571,10 +3602,13 @@ function buildCharSelect(){const list=document.getElementById('charlist');list.i
   el.innerHTML=`<div class="glyph" style="color:${c.color};filter:drop-shadow(0 0 12px ${c.color})">${c.glyph}</div><h3>${c.name}</h3><div class="role">${c.role}</div><p>${c.desc}</p><div class="perks">${c.perks}</div>`;
   el.onclick=()=>{if(!AC)initAudio();startRun(c);};list.appendChild(el);});}
 function toMenu(){tgHideShare(); // TELEGRAM MINI APP
- const __bc=document.getElementById('buildcard');if(__bc)__bc.classList.add('hidden');state='menu';showHUD(false);hideAllScreens();showNavToggle();document.getElementById('menu').classList.remove('hidden');player=null;try{ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);}catch(e){}}
+ const __bc=document.getElementById('buildcard');if(__bc)__bc.classList.add('hidden');state='menu';showHUD(false);hideAllScreens();showNavToggle();document.getElementById('menu').classList.remove('hidden');try{refreshMenuChip();}catch(e){}player=null;try{ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);}catch(e){}}
 function toCharSelect(){hideAllScreens();buildCharSelect();document.getElementById('charselect').classList.remove('hidden');}
 document.getElementById('startbtn').onclick=()=>{if(!AC)initAudio();toCharSelect();};
 var _cosBtn=document.getElementById('cosbtn');if(_cosBtn)_cosBtn.onclick=()=>{if(!AC)initAudio();openCosmetics();};
+var _mSoc=document.getElementById('navsocial');if(_mSoc)_mSoc.onclick=()=>{if(!AC)initAudio();openSocial('friends');};
+var _mProf=document.getElementById('navprofile');if(_mProf)_mProf.onclick=()=>{if(!AC)initAudio();openProfile();};
+var _mGuide=document.getElementById('navguide');if(_mGuide)_mGuide.onclick=()=>{if(!AC)initAudio();openCodex();};
 // ===== NAV DRAWER =====
 (function(){
  const tog=document.getElementById('navToggle'),drw=document.getElementById('navDrawer'),scrim=document.getElementById('navScrim');
@@ -3597,6 +3631,14 @@ var _cosBtn=document.getElementById('cosbtn');if(_cosBtn)_cosBtn.onclick=()=>{if
  const navHead=document.getElementById('navHead');if(navHead)navHead.onclick=()=>{closeNav();openProfile();};
  const navAv=document.getElementById('navAv');if(navAv)navAv.onclick=()=>{closeNav();openProfile();};
 })();
+function refreshMenuChip(){try{const el=document.getElementById('mplayer');if(!el)return;
+ let lv=1;try{lv=captainLevelInfo(captainTotalXP()).level;}catch(e){}
+ const photo=(typeof TG_USER!=='undefined'&&TG_USER&&TG_USER.photo)?TG_USER.photo:'';
+ const av=photo?'<img src="'+photo+'" alt="">':(profLogo||'\u25c6');
+ el.innerHTML='<div class="mp-av" style="--ac:'+(profColor||'#00e5d4')+'">'+av+'</div><div class="mp-nm">'+(profName||'SURVIVOR')+'</div>'+capChip(lv);
+ el.style.display='flex';
+ el.onclick=()=>openProfile();
+}catch(e){}}
 function refreshNavHead(){try{
  const nm=document.getElementById('navName');if(nm)nm.textContent=(profName||'SURVIVOR');
  const clv=document.getElementById('capNavLv');if(clv){try{clv.textContent='Lv '+captainLevelInfo(captainTotalXP()).level;}catch(e){clv.textContent='';}}
