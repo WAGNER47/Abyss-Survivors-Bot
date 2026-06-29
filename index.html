@@ -424,6 +424,78 @@
   @keyframes cappulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.35);opacity:1}}
   @keyframes caphalo{0%,100%{opacity:.55;transform:scale(.96)}50%{opacity:1;transform:scale(1.06)}}
   @keyframes capflow{to{background-position:200% center}}
+  /* ===================== DIVE NETWORK v2 (friends rework) ===================== */
+  #social .pwrap{width:min(940px,96vw);max-height:76vh}
+  #profile .pwrap{width:min(760px,96vw)}
+  /* live network constellation header */
+  .fnet-hero{position:relative;width:100%;border:1px solid rgba(108,255,208,0.16);border-radius:18px;overflow:hidden;background:radial-gradient(ellipse at 50% 28%,rgba(14,30,54,0.92),rgba(5,9,20,0.97));margin-bottom:14px;box-shadow:inset 0 0 50px rgba(0,0,0,0.55),0 0 26px rgba(0,229,212,0.06)}
+  /* position:relative+inset:auto overrides the global canvas{position:fixed;inset:0} rule */
+  .fnet-canvas{position:relative;inset:auto;display:block;width:100%;height:clamp(154px,23vh,214px)}
+  .fnet-overlay{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:13px 15px}
+  .fnet-title{font-family:var(--disp);font-size:11px;letter-spacing:.26em;color:#bff7e4;text-transform:uppercase;text-shadow:0 0 12px rgba(108,255,208,.45)}
+  .fnet-pulse{display:flex;gap:20px}
+  .fnet-pulse .fp{display:flex;flex-direction:column}
+  .fnet-pulse .fp .v{font-family:var(--disp);font-weight:800;font-size:19px;color:#fff;line-height:1;text-shadow:0 0 14px rgba(0,229,212,.4)}
+  .fnet-pulse .fp .l{font-family:var(--ui);font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase;margin-top:3px}
+  .fnet-pulse .fp .v.rk{font-size:14px}
+  /* friend cards grid */
+  .fgrid{display:grid;grid-template-columns:1fr;gap:10px}
+  @media(min-width:660px){.fgrid{grid-template-columns:1fr 1fr}}
+  .fcard{position:relative;display:flex;align-items:center;gap:12px;padding:12px 13px 12px 15px;border-radius:15px;border:1px solid rgba(255,255,255,0.08);background:linear-gradient(120deg,rgba(18,30,52,0.72),rgba(10,18,32,0.72));cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .2s;overflow:hidden}
+  .fcard:hover{transform:translateY(-2px);border-color:rgba(108,255,208,0.4);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+  .fcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--pc,#5a6a85);box-shadow:0 0 10px var(--pc,#5a6a85)}
+  .fcard .fav{flex:none;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:23px;color:#fff;background:linear-gradient(145deg,var(--ac,#9b6dff),#0b1830);box-shadow:0 0 18px var(--acg,rgba(155,109,255,.45));position:relative;overflow:hidden}
+  .fcard .fav img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .fcard .fmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .fcard .fnm{font-family:var(--disp);font-weight:700;font-size:14.5px;letter-spacing:.03em;color:#eaf2ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fcard .fpres{font-family:var(--ui);font-size:11px;letter-spacing:.03em;display:flex;align-items:center;gap:6px;color:var(--dim)}
+  .fcard .fdot{width:8px;height:8px;border-radius:50%;flex:none}
+  .fcard .fbest{font-family:var(--ui);font-size:10px;letter-spacing:.06em;color:var(--dim)}
+  .fcard .fbest b{color:#cde4ff;font-weight:700}
+  .fcard .fright{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+  .fcard .fchev{position:absolute;right:11px;bottom:9px;color:var(--dim);font-size:15px;opacity:.6}
+  /* captain rank chip (compact, everywhere) */
+  .caprank{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:20px;border:1px solid var(--rc,#00e5d4);background:rgba(0,0,0,.3);box-shadow:0 0 12px -3px var(--rcg,rgba(0,229,212,.55)),inset 0 0 8px -4px var(--rc,#00e5d4)}
+  .caprank .cgem{width:10px;height:10px;border-radius:2px;transform:rotate(45deg);background:linear-gradient(135deg,var(--rc,#00e5d4),var(--rc2,#5cd0ff));box-shadow:0 0 8px var(--rc,#00e5d4);flex:none}
+  .caprank .clv{font-family:var(--disp);font-weight:800;font-size:12.5px;color:#fff;line-height:1}
+  .caprank .ctt{font-family:var(--ui);font-weight:800;letter-spacing:.1em;font-size:8.5px;color:var(--rc2,#5cd0ff);text-transform:uppercase;white-space:nowrap}
+  .caprank.dim{opacity:.5}
+  /* compact animated captain emblem (profiles) */
+  .capbadge{position:relative;width:108px;height:108px;flex:none}
+  .capbadge .cbh{position:absolute;inset:-14px;border-radius:50%;background:radial-gradient(circle,var(--glow,rgba(0,229,212,.4)) 0%,transparent 66%);filter:blur(5px);animation:caphalo 3.4s ease-in-out infinite}
+  .capbadge .cb-ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4) 70%,#fff,var(--c1,#00e5d4));-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,#0000 calc(100% - 5px),#000 calc(100% - 4px));filter:drop-shadow(0 0 9px var(--c1,#00e5d4));animation:capspin 8s linear infinite}
+  .capbadge .cb-ring2{position:absolute;inset:9px;border-radius:50%;opacity:.45;background:conic-gradient(from 180deg,var(--c2,#5cd0ff),var(--c1,#00e5d4),var(--c2,#5cd0ff));-webkit-mask:radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,#0000 calc(100% - 3px),#000 calc(100% - 2px));animation:capspin 13s linear infinite reverse}
+  .capbadge .cb-core{position:absolute;inset:13px;border-radius:50%;background:radial-gradient(120% 120% at 50% 18%,rgba(22,33,60,.97),rgba(6,10,20,1));border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 0 22px rgba(0,0,0,.7),0 0 22px var(--glow,rgba(0,229,212,.4));display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .capbadge .cb-lv{font-family:var(--disp);font-weight:900;font-size:36px;line-height:.86;color:#fff;text-shadow:0 0 15px var(--c1,#00e5d4),0 0 5px #fff}
+  .capbadge .cb-lbl{font-family:var(--ui);font-weight:700;letter-spacing:.36em;font-size:7px;color:var(--c2,#5cd0ff);margin-top:4px;padding-left:.36em}
+  .caphead{display:flex;align-items:center;gap:16px}
+  .caphead .ci{flex:1;min-width:0}
+  .caphead .crank{font-family:var(--disp);font-weight:800;font-size:clamp(17px,4.6vw,23px);letter-spacing:.08em;background:linear-gradient(100deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4));background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px var(--glow,rgba(0,229,212,.5)));animation:capflow 4s linear infinite}
+  .caphead .ctier{font-family:var(--ui);font-weight:800;letter-spacing:.14em;font-size:10px;color:var(--dim);text-transform:uppercase;margin-top:6px}
+  .caphead .cxp{font-family:var(--ui);font-size:11px;color:var(--dim);margin-top:9px}
+  .caphead .cxp b{color:var(--c2,#5cd0ff);font-weight:800}
+  .capmini-bar{height:9px;border-radius:6px;background:rgba(108,131,176,.13);border:1px solid var(--line);overflow:hidden;margin-top:8px}
+  .capmini-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--c1,#00e5d4),var(--c2,#5cd0ff),var(--c1,#00e5d4));background-size:200% auto;box-shadow:0 0 12px var(--glow,rgba(0,229,212,.55));animation:capflow 3s linear infinite}
+  /* presence dots */
+  .dot-on{background:#6cffb0;box-shadow:0 0 9px #6cffb0;animation:fbeat 1.5s ease-in-out infinite}
+  .dot-act{background:#5cd0ff;box-shadow:0 0 9px #5cd0ff}
+  .dot-rec{background:#7b9bff;box-shadow:0 0 7px rgba(123,155,255,.6)}
+  .dot-away{background:#6c83b0}
+  .dot-dorm{background:#46546f}
+  @keyframes fbeat{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.45);opacity:1}}
+  /* VS YOU comparison */
+  .vstally{display:flex;justify-content:center;align-items:baseline;gap:16px;margin:2px 0 12px;font-family:var(--disp);letter-spacing:.05em}
+  .vstally .you{color:#5cd0ff}.vstally .them{color:#ff7a9b}.vstally .sep{color:var(--dim);font-size:12px}
+  .vsrow{display:flex;align-items:center;gap:9px;margin:9px 0;font-family:var(--ui)}
+  .vsrow .vl{width:78px;flex:none;color:var(--dim);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;text-align:center;line-height:1.2}
+  .vsbar{flex:1;height:20px;border-radius:7px;background:rgba(8,13,26,.6);position:relative;overflow:hidden;border:1px solid var(--line)}
+  .vsbar .vyou{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#00e5d4,#5cd0ff);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .vsbar .vthem{position:absolute;right:0;top:0;bottom:0;background:linear-gradient(270deg,#ff7a9b,#b06bff);transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  .vsbar .vmid{position:absolute;left:50%;top:-1px;bottom:-1px;width:2px;background:rgba(255,255,255,.3);z-index:2}
+  .vsbar .vyv{position:absolute;left:7px;top:50%;transform:translateY(-50%);font-family:var(--disp);font-size:10.5px;color:#eafffd;z-index:3;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .vsbar .vtv{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-family:var(--disp);font-size:10.5px;color:#fff0f4;z-index:3;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+  .vscrown{position:absolute;top:50%;transform:translateY(-50%);font-size:10px;z-index:4}
+  .fp-syncED{font-family:var(--ui);font-size:10px;letter-spacing:.08em;color:var(--dim);margin-top:5px}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -1302,6 +1374,11 @@ let player,enemies,pjs,epjs,orbs,drops,particles,texts,arcs,fx,hazards,chests;
 let time=0,kills=0,gold=0,spawnTimer=0,screenShake=0,shakeX=0,shakeY=0;
 let camZoom=1,camZoomTarget=1,camPunch=0,camCX=0,camCY=0;
 let pendingLevels=0,pendingBoons=0,pendingChests=0,bestTime=0,runOver=false;
+// Grace delay before a level-up / boon choice menu interrupts active play. A menu that
+// pops the instant you level up can freeze you to death in a hazard. menuArmT is the base
+// countdown; menuMaxT is a hard cap so it always eventually opens even if you stay in danger.
+let menuArmT=0,menuMaxT=0,_menuPend=0;
+const MENU_DELAY=1.0,MENU_MAX=2.8;
 let legendaryArmed=false,legendaryFirstLevel=5,legendaryWindowT=0,surgeEnded=false,chestCdT=0;
 let endgame=false,corruption=0,eliteTimer=75,meteorT=8,stampT=170,lastBombT=-999;
 let swarmT=150,swarmCount=0,bigT=200,alertText='',alertTime=0,swarmMax=150,trails=[],obj=null,objT=75,recycleT=0.5,megaCount=0,leviathanLock=false,triVolleyT=18;
@@ -1636,6 +1713,7 @@ function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  chosenChar=charDef;player=makePlayer(charDef);
  enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];
  time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;camCX=0;camCY=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
+ menuArmT=0;menuMaxT=0;_menuPend=0;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
  rs={dmg:0,taken:0,elite:0,boss:0,peak:0,acc:0,t:0,dodges:0,reacts:{}};
  endgame=false;corruption=0;corrFrozen=false;corrFreezeTime=0;corrScaleStep=0;corrScaleMul=1;corpses=[];eliteTimer=75;meteorT=8;shards=[];roadShown=false;stampT=170;lastBombT=-999;swarmT=150;swarmCount=0;bigT=200;triVolleyT=18;alertText='';alertTime=0;swarmMax=150;trails=[];obj=null;objT=75;recycleT=0.5;megaCount=0;leviathanLock=false;corruptMods={speed:0,explode:false,double:false,meteors:false,bless:0,bossUp:0};
@@ -2035,8 +2113,18 @@ function update(dt){
  // resolve end-of-frame events (order matters; chest is non-skippable)
  if(runOver==='dead'){gameOver();return;}
  if(runOver==='victory'){victory();return;}
- if(pendingLevels>0){openLevelUp();return;}
- if(pendingBoons>0){openBoon();return;}
+ // Arm the grace timer the instant a choice first becomes pending during play.
+ {const _np=pendingLevels+pendingBoons;if(_np>0&&_menuPend<=0){menuArmT=MENU_DELAY;menuMaxT=MENU_MAX;}_menuPend=_np;}
+ if(pendingLevels>0||pendingBoons>0){
+  if(menuArmT>0)menuArmT-=dt;if(menuMaxT>0)menuMaxT-=dt;
+  const _now=performance.now();
+  const inDanger=player._inBlackhole||(_now-(player._lastHitT||0)<450)||(_now-(player._lastHazardT||0)<450)||(_now-(player._lastBurnT||0)<450);
+  // open once the base delay elapses AND you're momentarily safe — or the hard cap forces it.
+  if(menuArmT<=0&&(!inDanger||menuMaxT<=0)){
+   if(pendingLevels>0){openLevelUp();return;}
+   if(pendingBoons>0){openBoon();return;}
+  }
+ }
 }
 
 function resumeOrNext(){
@@ -2059,7 +2147,7 @@ function hapDamage(kind){try{if(!OPT.vibration||!TG||!TG.HapticFeedback)return;c
  else { // normal contact
   H.impactOccurred('medium');}
 }catch(e){}}
-function hitPlayer(dmg,srcType,pct){if(obj&&obj.kind==='nohit')obj.fail=true;
+function hitPlayer(dmg,srcType,pct){if(obj&&obj.kind==='nohit')obj.fail=true;player._lastHitT=performance.now();
  // percentage-of-max-hull contact damage: touching mobs costs a slice of your hull, so stacking
  // max HP or healing can't trivialize positioning. pct is a fraction (0.08 = 8% of max hull).
  if(pct){dmg=Math.max(dmg*0.35, player.maxHp*pct);}
@@ -2194,6 +2282,7 @@ function render(){
   ctx.fillStyle='rgba(108,255,176,0.16)';ctx.fillRect(ox-pw/2+10,oy+ph/2-11,pw-20,5);
   ctx.fillStyle=urgent?'#ff5a6e':'#6cffb0';ctx.fillRect(ox-pw/2+10,oy+ph/2-11,(pw-20)*Math.min(1,prog),5);
   ctx.restore();}
+ drawMenuArmBanner();
  if(alertTime>0){ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);const a=Math.min(1,alertTime/0.4)*Math.min(1,(2.6-alertTime)/0.3+0.3);const cy=H*(IS_TOUCH?0.36:0.28);
   ctx.globalAlpha=a*0.16;ctx.fillStyle=alertColor;ctx.fillRect(0,cy-34,W,68);
   ctx.globalAlpha=a;ctx.strokeStyle=alertColor;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,cy-34);ctx.lineTo(W,cy-34);ctx.moveTo(0,cy+34);ctx.lineTo(W,cy+34);ctx.stroke();
@@ -2216,6 +2305,37 @@ function drawRoads(camX,camY,VW,VH){VW=VW||W;VH=VH||H;ctx.save();
    else{for(let x=camX-64+off;x<camX+VW;x+=64){ctx.beginPath();ctx.moveTo(x+12,p+w/2-9);ctx.lineTo(x,p+w/2);ctx.lineTo(x+12,p+w/2+9);ctx.lineTo(x+7,p+w/2);ctx.closePath();ctx.fill();}}}};
  lane(true,ROAD.px,ROAD.w);lane(false,ROAD.py,ROAD.w);ctx.restore();}
 function glowDot(x,y,r,color,blur){ctx.save();ctx.shadowColor=color;ctx.shadowBlur=blur;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.restore();}
+// Banner shown during the grace window before a level-up / boon menu opens, so the
+// player knows a reward is queued and can dash clear of danger before play freezes.
+function drawMenuArmBanner(){
+ if(state!=='playing'||(pendingLevels<=0&&pendingBoons<=0))return;
+ const lvl=pendingLevels>0;const col=lvl?'#ffd24b':'#c77bff';
+ const label=lvl?'LEVEL UP':'WARDEN BOON';
+ const frac=Math.max(0,Math.min(1,menuArmT/MENU_DELAY));
+ const _now=performance.now();
+ const inDanger=player._inBlackhole||(_now-(player._lastHitT||0)<450)||(_now-(player._lastHazardT||0)<450)||(_now-(player._lastBurnT||0)<450);
+ const sub=(menuArmT<=0&&inDanger)?'GET TO SAFETY':'CHOOSE YOUR REWARD';
+ ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.textAlign='center';ctx.textBaseline='middle';
+ const small=W<560,pw=small?Math.min(320,W-26):360,ph=small?46:52;
+ const ox=W/2,oy=(small?150:128);
+ const pulse=0.6+0.4*Math.sin(_now*0.012);
+ // soft top vignette flash so it reads even in a busy fight
+ ctx.globalAlpha=0.10*pulse;ctx.fillStyle=col;ctx.fillRect(0,0,W,oy+ph);
+ // panel
+ ctx.globalAlpha=0.9;ctx.fillStyle='rgba(8,14,28,0.9)';
+ ctx.beginPath();const rr=12,x0=ox-pw/2,y0=oy-ph/2;ctx.moveTo(x0+rr,y0);ctx.arcTo(x0+pw,y0,x0+pw,y0+ph,rr);ctx.arcTo(x0+pw,y0+ph,x0,y0+ph,rr);ctx.arcTo(x0,y0+ph,x0,y0,rr);ctx.arcTo(x0,y0,x0+pw,y0,rr);ctx.closePath();ctx.fill();
+ ctx.globalAlpha=pulse;ctx.lineWidth=2;ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=16;ctx.stroke();ctx.shadowBlur=0;
+ // text
+ ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.font='800 '+(small?15:17)+'px Orbitron,sans-serif';
+ ctx.fillText('\u25c6 '+label+' \u25c6',ox,oy-(small?7:8));
+ ctx.fillStyle=col;ctx.font='600 '+(small?9.5:10.5)+'px Orbitron,sans-serif';
+ ctx.fillText(sub,ox,oy+(small?9:10));
+ // countdown bar
+ const bw=pw-24,bx=ox-bw/2,by=oy+ph/2-6;
+ ctx.globalAlpha=0.3;ctx.fillStyle=col;ctx.fillRect(bx,by,bw,3);
+ ctx.globalAlpha=0.95;ctx.fillRect(bx,by,bw*(1-frac),3);
+ ctx.restore();
+}
 function drawProjectile(p){
  const glow=QX&&QX.glow;const spd=Math.hypot(p.vx,p.vy)||1;const ux=p.vx/spd,uy=p.vy/spd;
  ctx.save();
@@ -2585,7 +2705,8 @@ function loop(now){requestAnimationFrame(loop);const dt=Math.min((now-lastT)/100
  try{if(player)render();}
  catch(err){console.error('ABYSS render error:',err);sanitizeState();}
  try{if(state==='menu'||state==='profile'||state==='credits'||state==='codex')menuFX(dt);}catch(err){}
- try{if(state==='cosmetics')cosPreviewTick(dt);}catch(err){}}
+ try{if(state==='cosmetics')cosPreviewTick(dt);}catch(err){}
+ try{if(state==='social')socialFXTick(dt);}catch(err){}}
 requestAnimationFrame(loop);
 
 /* ===== CORRUPTION ENDGAME ===== */
@@ -2994,25 +3115,30 @@ function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return
 function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 // ---- DIVE NETWORK: presence + friends relay ----
-let NET={online:false,friends:[],inbox:0,lastSync:0,gamesPlayed:0,stats:null};
+let NET={online:false,friends:[],inbox:0,lastSync:0,gamesPlayed:0,stats:null,fcache:{}};
+let _sfx={t:0};
 // Merge runs the server returns into the local archive (server is the durable source of truth).
 // Dedup by date; keep local copies (which carry the full build snapshot) when a run exists on both sides.
 function mergeServerRuns(sr){try{if(!Array.isArray(sr)||!sr.length)return false;const byDate={};for(const r of (runArchive||[]))if(r&&r.date!=null)byDate[r.date]=r;let added=false;for(const r of sr){if(!r||r.date==null)continue;if(!byDate[r.date]){byDate[r.date]=r;added=true;}}if(!added)return false;runArchive=Object.values(byDate).sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,30);saveRuns();return true;}catch(e){return false;}}
 function netId(){return TG_USER&&TG_USER.id!=='guest'?String(TG_USER.id):'';}
 async function netSync(){const id=netId();if(!id)return;
- try{const s=computeStats();const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver},runs:(runArchive||[]).slice(0,8).map(r=>({date:r.date,result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))})});
+ try{const s=computeStats();let _cxp=0,_clv=1;try{_cxp=captainTotalXP();_clv=captainLevelInfo(_cxp).level;}catch(e){}const r=await fetch('/api/social?action=sync',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver,cap:_clv,capXp:_cxp},runs:(runArchive||[]).slice(0,8).map(r=>({date:r.date,result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))})});
   const j=await r.json();if(j&&j.ok){NET.online=true;NET.friends=j.friends||[];const wasInbox=NET.inbox;NET.inbox=j.inboxCount||0;NET.lastSync=Date.now();
    // Durable stats: the server holds the real games-played count (Redis, survives relaunches).
    if(j.stats){NET.stats=j.stats;if(typeof j.stats.total==='number')NET.gamesPlayed=Math.max(NET.gamesPlayed||0,j.stats.total|0);}
    const changed=mergeServerRuns(j.runs);
    try{refreshNavHead();}catch(e){}
    if(state==='captain'){try{openCaptain();}catch(e){}}
+   if(state==='social'){try{const ft=document.getElementById('friendgrid');if(ft)hydrateFriends();}catch(e){}}
    if((changed)&&state==='profile'){const ae=document.activeElement;if(!ae||ae.id!=='pname')openProfile();}
    if(NET.inbox>wasInbox)toast('NEW FRIEND REQUEST \u00b7 check Social');updateSocialBadge();}
   else NET.online=false;
  }catch(e){NET.online=false;}}
 function updateSocialBadge(){try{const b=document.getElementById('socialbtn');if(b){const base='\u21c4 Social';b.textContent=NET.inbox>0?base+' ('+NET.inbox+')':base;}}catch(e){}}
 setInterval(()=>{if(netId())netSync();},45000);
+// Keep presence + runs fresh: sync the moment the app regains focus / becomes visible.
+try{document.addEventListener('visibilitychange',()=>{if(!document.hidden&&netId()&&Date.now()-NET.lastSync>8000){netSync();if(state==='social')hydrateFriends();}});}catch(e){}
+try{window.addEventListener('focus',()=>{if(netId()&&Date.now()-NET.lastSync>8000)netSync();});}catch(e){}
 setTimeout(()=>{if(netId())netSync();},2500);
 function tgHideShare(){try{if(TG)TG.MainButton.hide();}catch(e){}}
 let profName='SURVIVOR',profColor='',profShape='orb',profLogo='⌖';
@@ -3089,8 +3215,11 @@ function openProfile(){hideAllScreens();state='profile';
  const swatches=NEONS.map(c=>`<span class="csw${profColor===c?' on':''}" data-c="${c}" style="background:${c};box-shadow:0 0 10px ${c}66"></span>`).join('');
  const shapeBtns=PSHAPES.map(s=>`<span class="pshapeb${profShape===s?' on':''}" data-s="${s}">${s==='orb'?'\u25cf':s==='diamond'?'\u25c6':s==='hex'?'\u2b22':'\u25b2'}</span>`).join('');
  const logoBtns=PLOGOS.map(l=>`<span class="plogob${profLogo===l?' on':''}" data-l="${l}">${l}</span>`).join('');
+ let _myXp=0,_myInfo=null;try{_myXp=captainTotalXP();_myInfo=captainLevelInfo(_myXp);}catch(e){}
+ const capCard=_myInfo?`<div class="pcard">${capEmblem(_myInfo.level,_myInfo)}<div style="display:flex;gap:18px;margin-top:13px;flex-wrap:wrap;align-items:center"><div><div style="font-family:var(--disp);font-weight:800;font-size:16px;color:#eafffd">${fmtN(_myInfo.total)}</div><div style="font-family:var(--ui);font-size:9px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase;margin-top:2px">Lifetime XP</div></div><button class="btn ghost" id="capView" style="margin-left:auto;padding:9px 18px;font-size:11px">View Ascension \u203a</button></div></div>`:'';
  document.getElementById('profilebody').innerHTML=
   `<div class="pcard"><div class="pname-row"><div class="pavatar" id="pavatar" style="border-color:${profColor||'#b06bff'};box-shadow:0 0 22px ${(profColor||'#b06bff')}66">${profLogo}</div><div><input id="pname" maxlength="14" value="${profName}"><div style="font-size:12px;color:var(--dim);margin-top:5px">Main Diver: <b style="color:${mc?mc.color:'#cde4ff'}">${mc?mc.glyph+' ':''}${main}</b>${mn?` \u00b7 ${mn} run${mn===1?'':'s'}`:''} \u00b7 Style: <b style="color:#b06bff">${styleName}</b></div></div></div></div>`+
+  capCard+
   `<div class="pcard"><div class="ptitle">Identity \u00b7 your light in the deep</div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px"><div id="pball" style="width:42px;height:42px;border-radius:50%;background:${profColor||'#00e5d4'};box-shadow:0 0 24px ${profColor||'#00e5d4'}"></div><span style="font-size:12px;color:var(--dim)">live preview \u00b7 this is your diver in game</span></div>
     <div class="ptitle" style="margin-top:8px">Neon</div><div class="cswgrid">${swatches}<span class="csw reset${profColor?'':' on'}" data-c="">\u00d8</span></div>
@@ -3113,6 +3242,8 @@ function openProfile(){hideAllScreens();state='profile';
  document.getElementById('profilebody').querySelectorAll('.plogob').forEach(el=>{el.onclick=()=>{profLogo=el.dataset.l;try{window.storage.set('abyss_logo',profLogo);}catch(e){}openProfile();};});
  const pi=document.getElementById('pname');
  pi.onchange=()=>{profName=(pi.value||'SURVIVOR').toUpperCase().slice(0,14);pi.value=profName;try{window.storage.set('abyss_name',profName);}catch(e){}};
+ const cvw=document.getElementById('capView');if(cvw)cvw.onclick=()=>openCaptain();
+ if(netId()&&Date.now()-NET.lastSync>15000)netSync();
  document.getElementById('profile').classList.remove('hidden');}
 /* ===== MENU FX: The Deep ===== */
 const mfx={p:[],sil:[],frag:[],t:0,lines:['SIGNAL LOST...','DEPTH: 18,492m','OXYGEN: UNKNOWN','RUNNER LINK STABLE','SOMETHING MOVED BELOW','TRANSMISSION 7 OF ?','DO NOT FOLLOW THE LIGHT','HULL INTEGRITY: FINE. PROBABLY.'],li:0,lt:0};
@@ -3177,16 +3308,24 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
    const styleName=s.total?styles[axes.indexOf(Math.max(...axes))]:'UNWRITTEN';
    const mc=CHARS.find(c=>c.name===s.main);
    const online=(Date.now()-(p.seen||0)<70000);
+   const tier=presenceTier(p.seen||0,false);
+   try{NET.fcache[fid]={_t:Date.now(),cap:st.cap||0,best:st.level||0,seen:p.seen||0,wins:st.wins||0,total:st.total||0};}catch(e){}
+   let fInfo=null;if(st.capXp!=null){try{fInfo=captainLevelInfo(st.capXp);}catch(e){}}
+   const fcap=st.cap||(fInfo?fInfo.level:0);
    const av=(p.photo||fphoto)?`<img src="${p.photo||fphoto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #b06bff">`:`<div class="pavatar" style="border-color:#b06bff;width:72px;height:72px">\ud83d\udc64</div>`;
    const stat=(v,l)=>`<div class="dstat"><div class="v">${v}</div><div class="l">${l}</div></div>`;
    let html='<button class="btn ghost" id="fpback" style="margin-bottom:14px">\u2039 Back to Friends</button>';
    // header
-   html+=`<div class="pcard"><div class="pname-row" style="gap:16px">${av}<div><div style="font-family:var(--disp);font-size:20px;letter-spacing:.08em;color:#eaf2ff">${p.name||fname||'Diver'}</div><div style="font-size:12.5px;color:var(--dim);margin-top:6px">${online?'<span style="color:#6cffb0">\u25cf ONLINE NOW</span>':'\u25cb last seen '+fmtAgo(p.seen||0)}</div><div style="font-size:12.5px;color:var(--dim);margin-top:4px">Main <b style="color:${mc?mc.color:'#cde4ff'}">${mc?mc.glyph+' ':''}${s.main}</b> \u00b7 Style <b style="color:#b06bff">${styleName}</b></div></div></div></div>`;
+   html+=`<div class="pcard"><div class="pname-row" style="gap:16px">${av}<div><div style="font-family:var(--disp);font-size:20px;letter-spacing:.08em;color:#eaf2ff">${p.name||fname||'Diver'}</div><div style="font-size:12.5px;margin-top:6px;display:flex;align-items:center;gap:7px"><span class="fdot ${tier.cls}"></span><span style="color:${tier.color}">${tier.label}</span></div><div style="font-size:12.5px;color:var(--dim);margin-top:5px">Main <b style="color:${mc?mc.color:'#cde4ff'}">${mc?mc.glyph+' ':''}${s.main}</b> \u00b7 Style <b style="color:#b06bff">${styleName}</b></div></div></div></div>`;
+   // captain rank emblem
+   html+=`<div class="pcard">${capEmblem(fcap,fInfo)}</div>`;
    // wide grid: stats + radar
    html+='<div class="fp-grid">';
    html+=`<div class="pcard"><div class="ptitle">Career Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'\u2014','Highest Level')+stat(fmtT(s.timeIn),'Time in Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'\u2014','Max Corruption')+`</div></div>`;
    html+=`<div class="pcard"><div class="ptitle">Playstyle</div>${svgRadar(axes,['MOBILITY','AGGRESSION','TANK','PRECISION','GREED','ENDURANCE'])}</div>`;
    html+='</div>';
+   // head-to-head comparison vs you
+   html+=vsCard(st,p.name||fname||'They');
    // favorite diver banner (from synced main)
    if(mc){html+=`<div class="pcard"><div class="ptitle">Favorite Diver</div><div style="display:flex;align-items:center;gap:12px"><div style="font-size:30px;color:${mc.color};text-shadow:0 0 14px ${mc.color}">${mc.glyph}</div><div><div style="font-family:var(--disp);font-size:16px;letter-spacing:.06em;color:${mc.color}">${mc.name}</div><div style="font-size:11.5px;color:var(--dim)">${(st.mainRuns||0)} run${(st.mainRuns||0)===1?'':'s'} \u00b7 most played</div></div></div></div>`;}
    // loadout affinity (favorite elements / reactions / gear), synced
@@ -3211,6 +3350,118 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
   }else{B.innerHTML='<div class="pcard"><div style="color:var(--dim)">Could not load this diver. The relay may be offline.</div></div><button class="btn ghost" id="fpback2">Back</button>';const b2=document.getElementById('fpback2');if(b2)b2.onclick=()=>openSocial('friends');}
  }).catch(()=>{B.innerHTML='<div class="pcard"><div style="color:var(--dim)">Relay offline.</div></div><button class="btn ghost" id="fpback3">Back</button>';const b3=document.getElementById('fpback3');if(b3)b3.onclick=()=>openSocial('friends');});}
 function fmtAgo(ts){if(!ts)return 'unknown';const d=Date.now()-ts,m=Math.floor(d/60000),h2=Math.floor(d/3600000),dy=Math.floor(d/86400000);if(dy>0)return dy+(dy===1?' day ago':' days ago');if(h2>0)return h2+'h ago';if(m>0)return m+'m ago';return 'moments ago';}
+/* ===================== DIVE NETWORK v2 helpers ===================== */
+function hashStr(s){let h=0;s=String(s);for(let i=0;i<s.length;i++){h=(h*31+s.charCodeAt(i))|0;}return h;}
+// presence tier from a last-seen timestamp (ms). Honest tiers, nicer than raw "11d ago".
+function presenceTier(seen,onlineFlag){
+ const d=Date.now()-(seen||0);
+ if(onlineFlag||d<70000)return{cls:'dot-on',label:'ONLINE NOW',color:'#6cffb0',glow:'#6cffb0',rank:5};
+ if(d<600000)return{cls:'dot-act',label:'active '+fmtAgo(seen),color:'#5cd0ff',glow:'#5cd0ff',rank:4};
+ if(d<86400000)return{cls:'dot-rec',label:fmtAgo(seen),color:'#7b9bff',glow:'#7b9bff',rank:3};
+ if(d<604800000)return{cls:'dot-away',label:fmtAgo(seen),color:'#8aa0c0',glow:'#6c83b0',rank:2};
+ return{cls:'dot-dorm',label:fmtAgo(seen),color:'#6a7a98',glow:'#46546f',rank:1};
+}
+// compact Captain rank chip (used in friend cards + lists)
+function capChip(level){
+ const lv=level||0;
+ if(!lv)return '<span class="caprank dim" style="--rc:#6c83b0;--rc2:#9fb4d6;--rcg:rgba(108,131,176,.4)"><span class="cgem"></span><span class="clv">?</span><span class="ctt">unsynced</span></span>';
+ const rk=captainRank(lv);
+ return '<span class="caprank" style="--rc:'+rk.c1+';--rc2:'+rk.c2+';--rcg:'+rk.glow+'"><span class="cgem"></span><span class="clv">'+lv+'</span><span class="ctt">'+rk.name+'</span></span>';
+}
+// full animated Captain emblem + rank head (used in own + friend profile)
+function capEmblem(level,info){
+ const lv=level||0,rk=captainRank(lv);
+ let xpLine='',bar='';
+ if(info){
+  if(info.max){xpLine='<div class="cxp" style="color:'+rk.c1+';font-weight:800;letter-spacing:.16em;text-transform:uppercase">Maximum Depth Reached</div>';bar='<div class="capmini-bar"><div class="capmini-fill" style="width:100%"></div></div>';}
+  else{xpLine='<div class="cxp"><b>'+fmtN(Math.max(0,info.need-info.into))+'</b> XP to Level '+(lv+1)+'</div>';bar='<div class="capmini-bar"><div class="capmini-fill" style="width:'+(info.pct*100).toFixed(1)+'%"></div></div>';}
+ }
+ let ci=0;for(let i=0;i<CAP_TIERS.length;i++)if(lv>=CAP_TIERS[i].lv)ci=i;
+ return '<div class="caphead" style="--c1:'+rk.c1+';--c2:'+rk.c2+';--glow:'+rk.glow+'">'+
+  '<div class="capbadge" style="--c1:'+rk.c1+';--c2:'+rk.c2+';--glow:'+rk.glow+'"><div class="cbh"></div><div class="cb-ring"></div><div class="cb-ring2"></div><div class="cb-core"><div class="cb-lv">'+lv+'</div><div class="cb-lbl">CAPTAIN</div></div></div>'+
+  '<div class="ci"><div class="crank">'+rk.name+'</div><div class="ctier">Tier '+(ci+1)+' / '+CAP_TIERS.length+'</div>'+xpLine+bar+'</div>'+
+ '</div>';
+}
+// lazily pull each friend's freshest synced profile so cards show real Captain level,
+// best level + accurate presence even if the friends-list endpoint is minimal. Caches 60s.
+function hydrateFriends(){
+ const fr=NET.friends||[];if(!fr.length)return;
+ const now=Date.now();let launched=0;
+ for(const f of fr){
+  const cached=NET.fcache[f.id];
+  if(cached&&now-cached._t<60000){applyFriendCard(f.id,cached);continue;}
+  if(launched>=14)continue;launched++;
+  (function(fid,fallback){fetch('/api/social?action=profile&id='+encodeURIComponent(fid)).then(r=>r.json()).then(j=>{
+   if(j&&j.ok&&j.profile){const p=j.profile,st=p.stats||{};const data={_t:Date.now(),cap:st.cap||0,best:st.level||0,seen:p.seen||fallback||0,wins:st.wins||0,total:st.total||0};NET.fcache[fid]=data;applyFriendCard(fid,data);}
+  }).catch(()=>{});})(f.id,f.lastSeen);
+ }
+}
+function applyFriendCard(id,data){try{
+ let card=null;document.querySelectorAll('.fcard').forEach(c=>{if(c.dataset.fid===String(id))card=c;});if(!card)return;
+ const chipEl=card.querySelector('.fcap');if(chipEl)chipEl.innerHTML=capChip(data.cap);
+ const bestEl=card.querySelector('.fbest');if(bestEl&&data.best)bestEl.innerHTML='Best Lv <b>'+data.best+'</b>';
+ if(data.seen){const tier=presenceTier(data.seen,false);const dotEl=card.querySelector('.fdot');if(dotEl)dotEl.className='fdot '+tier.cls;const lblEl=card.querySelector('.fpreslbl');if(lblEl){lblEl.textContent=tier.label;lblEl.style.color=tier.color;}card.style.setProperty('--pc',tier.glow);}
+}catch(e){}}
+// VS-You comparison: who leads each headline metric. The flex engine.
+function vsCard(theirStats,theirName){
+ const s=computeStats();let myCap=1;try{myCap=captainLevelInfo(captainTotalXP()).level;}catch(e){}
+ const t=theirStats||{};
+ const rows=[
+  {l:'CAPTAIN LV',me:myCap,them:t.cap||0,fmt:function(v){return v||'-';}},
+  {l:'HIGH LV',me:s.highLevel||0,them:t.level||0,fmt:function(v){return v||'-';}},
+  {l:'VICTORIES',me:s.wins||0,them:t.wins||0,fmt:function(v){return v;}},
+  {l:'KILLS',me:s.kills||0,them:t.kills||0,fmt:function(v){return fmtN(v);}},
+  {l:'BEST TIME',me:s.bestTime||0,them:t.best||0,fmt:function(v){return v?fmtT(v):'-';}},
+  {l:'TIME IN DEEP',me:s.timeIn||0,them:t.timeIn||0,fmt:function(v){return v?fmtT(v):'-';}}
+ ];
+ let youWins=0,themWins=0,html='';
+ for(const r of rows){const a=r.me||0,b=r.them||0,tot=(a+b)||1,yf=a/tot,tf=b/tot,youLead=a>b,tie=a===b;
+  if(youLead)youWins++;else if(b>a)themWins++;
+  html+='<div class="vsrow"><span class="vl">'+r.l+'</span><div class="vsbar">'+
+   '<div class="vyou" style="width:'+(yf*100).toFixed(1)+'%"></div>'+
+   '<div class="vthem" style="width:'+(tf*100).toFixed(1)+'%"></div>'+
+   '<div class="vmid"></div>'+
+   '<span class="vyv">'+r.fmt(a)+(youLead&&!tie?' \u25b4':'')+'</span>'+
+   '<span class="vtv">'+r.fmt(b)+(b>a?' \u25b4':'')+'</span>'+
+   '</div></div>';
+ }
+ const verdict=youWins>themWins?'<span class="you">YOU LEAD</span>':(themWins>youWins?'<span class="them">'+(theirName||'THEY').toUpperCase()+' LEADS</span>':'<span style="color:#ffd24b">DEAD EVEN</span>');
+ return '<div class="pcard"><div class="ptitle">VS You \u00b7 head to head</div>'+
+  '<div class="vstally"><span class="you">'+youWins+'</span><span class="sep">vs</span><span class="them">'+themWins+'</span></div>'+
+  '<div style="text-align:center;font-family:var(--disp);font-size:12px;letter-spacing:.08em;margin-bottom:10px">'+verdict+'</div>'+
+  html+'</div>';
+}
+// live "Dive Network" constellation: you at the centre, friends orbiting, coloured by presence
+let _sfxParts=[];
+function socialFXTick(dt){
+ const cv2=document.getElementById('fnetcanvas');if(!cv2)return;const scr=document.getElementById('social');if(!scr||scr.classList.contains('hidden'))return;
+ if(!isFinite(dt)||dt<0)dt=0.016;if(dt>0.05)dt=0.05;
+ const g=cv2.getContext('2d');if(!g)return;
+ const W2=cv2.clientWidth||600,H2=cv2.clientHeight||190,dpr=Math.min(2,window.devicePixelRatio||1);
+ const pw=Math.max(1,Math.round(W2*dpr)),ph=Math.max(1,Math.round(H2*dpr));
+ if(cv2.width!==pw||cv2.height!==ph){cv2.width=pw;cv2.height=ph;}
+ g.setTransform(dpr,0,0,dpr,0,0);g.globalAlpha=1;g.clearRect(0,0,W2,H2);
+ _sfx.t+=dt;const T=_sfx.t;
+ const cx=W2*0.5,cy=H2*0.52;
+ if(_sfxParts.length<60&&Math.random()<0.3)_sfxParts.push({x:Math.random()*W2,y:H2+5,vx:rand(-5,5),vy:rand(-16,-7),life:rand(2,3.5),r:rand(0.5,1.6)});
+ for(let i=_sfxParts.length-1;i>=0;i--){const p=_sfxParts[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt;if(p.life<=0)_sfxParts.splice(i,1);}
+ g.save();for(const p of _sfxParts){g.globalAlpha=Math.max(0,Math.min(0.55,p.life*0.4));g.fillStyle='rgba(130,185,235,0.6)';g.beginPath();g.arc(p.x,p.y,p.r,0,TAU);g.fill();}g.restore();
+ const fr=NET.friends||[],n=fr.length,ringR=Math.min(W2,H2)*0.36;
+ const nodes=[];
+ for(let i=0;i<n;i++){const f=fr[i];const seen=(NET.fcache[f.id]&&NET.fcache[f.id].seen)||f.lastSeen;const tier=presenceTier(seen,f.online);
+  const a=T*0.16+i/Math.max(1,n)*TAU,rr=ringR*(n>7?(0.72+0.36*(i%2)):1),bob=Math.sin(T*1.3+i)*4;
+  nodes.push({x:cx+Math.cos(a)*rr,y:cy+Math.sin(a)*rr*0.8+bob,c:tier.glow,on:tier.cls==='dot-on',act:tier.cls==='dot-on'||tier.cls==='dot-act'});}
+ g.save();for(const nd of nodes){g.globalAlpha=nd.act?0.4:0.15;g.strokeStyle=nd.c;g.lineWidth=nd.act?1.4:1;if(nd.on){g.shadowColor=nd.c;g.shadowBlur=6;}g.beginPath();g.moveTo(cx,cy);g.lineTo(nd.x,nd.y);g.stroke();g.shadowBlur=0;}g.restore();
+ g.save();for(const nd of nodes){const pz=nd.on?(0.6+0.4*Math.sin(T*4)):1;g.globalAlpha=nd.act?0.95:0.6;g.fillStyle=nd.c;g.shadowColor=nd.c;g.shadowBlur=nd.act?12:5;g.beginPath();g.arc(nd.x,nd.y,(nd.on?5:4)*pz,0,TAU);g.fill();}g.restore();
+ const myc=profColor||'#00e5d4';
+ g.save();const pz=0.5+0.5*Math.sin(T*2);
+ const grd=g.createRadialGradient(cx,cy,2,cx,cy,28);grd.addColorStop(0,hexA(myc,0.5));grd.addColorStop(1,hexA(myc,0));g.fillStyle=grd;g.beginPath();g.arc(cx,cy,28,0,TAU);g.fill();
+ g.globalAlpha=0.9;g.strokeStyle=myc;g.lineWidth=2;g.shadowColor=myc;g.shadowBlur=12;g.beginPath();g.arc(cx,cy,12+pz*2,0,TAU);g.stroke();
+ g.shadowBlur=18;g.fillStyle=myc;g.globalAlpha=1;g.beginPath();g.arc(cx,cy,7,0,TAU);g.fill();
+ g.restore();
+ g.save();g.globalAlpha=0.72;g.fillStyle='#cfe9ff';g.font='600 8px Orbitron,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText('YOU',cx,cy+24);g.restore();
+}
+
 function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
  const id=netId();
  document.querySelectorAll&&document.querySelectorAll('.stab').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
@@ -3221,15 +3472,32 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
   document.getElementById('social').classList.remove('hidden');return;
  }
  if(tab==='friends'){
-  s+=`<div class="pcard"><div class="ptitle">Party \u00b7 up to 3 divers</div>
+  // live network constellation header + pulse stats
+  let onlineN=0;(NET.friends||[]).forEach(f=>{const seen=(NET.fcache[f.id]&&NET.fcache[f.id].seen)||f.lastSeen;if(f.online||Date.now()-(seen||0)<70000)onlineN++;});
+  let myCap=1;try{myCap=captainLevelInfo(captainTotalXP()).level;}catch(e){}const myRk=captainRank(myCap);
+  s+=`<div class="fnet-hero"><canvas id="fnetcanvas" class="fnet-canvas"></canvas><div class="fnet-overlay">`+
+     `<div class="fnet-title">\u25c8 Dive Network</div>`+
+     `<div class="fnet-pulse">`+
+      `<div class="fp"><div class="v">${onlineN}</div><div class="l">Online</div></div>`+
+      `<div class="fp"><div class="v">${(NET.friends||[]).length}</div><div class="l">Friends</div></div>`+
+      `<div class="fp"><div class="v rk" style="color:${myRk.c1}">LV ${myCap}</div><div class="l">${myRk.name}</div></div>`+
+     `</div></div></div>`;
+  s+=`<div class="ptitle" style="margin:2px 2px 10px 4px">Your Divers <span style="color:var(--dim);font-weight:400">\u00b7 ${NET.online?'relay online':'relay offline'}</span></div>`;
+  if(NET.friends.length){
+   const sorted=NET.friends.slice().map(f=>{const seen=(NET.fcache[f.id]&&NET.fcache[f.id].seen)||f.lastSeen;return Object.assign({},f,{_tier:presenceTier(seen,f.online),_seen:seen});}).sort((a,b)=>(b._tier.rank-a._tier.rank)||((b._seen||0)-(a._seen||0)));
+   s+=`<div class="fgrid" id="friendgrid">`;
+   s+=sorted.map(f=>{const cached=NET.fcache[f.id]||{};const ac=NEONS[Math.abs(hashStr(f.id))%NEONS.length];const av=f.photo?`<img src="${f.photo}">`:(f.name||'?').slice(0,1).toUpperCase();const tier=f._tier;
+    return `<div class="fcard" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}" style="--pc:${tier.glow};--ac:${ac};--acg:${ac}66"><div class="fav">${av}</div><div class="fmid"><div class="fnm">${f.name||('Diver '+f.id)}</div><div class="fpres"><span class="fdot ${tier.cls}"></span><span class="fpreslbl" style="color:${tier.color}">${tier.label}</span></div><div class="fbest">${cached.best?('Best Lv <b>'+cached.best+'</b>'):'\u00b7 \u00b7 \u00b7'}</div></div><div class="fright"><span class="fcap">${capChip(cached.cap||0)}</span></div><span class="fchev">\u203a</span></div>`;
+   }).join('');
+   s+=`</div>`;
+  } else {
+   s+=`<div class="pcard"><div style="color:var(--dim);font-size:13px;line-height:1.65">No divers linked yet. Open the <b style="color:#5cd0ff">Add</b> tab, share your code, and watch your network light up. Every friend shows their <b style="color:#bff7e4">Captain rank</b>, live status, and how you stack up head to head.</div></div>`;
+  }
+  s+=`<div class="pcard" style="margin-top:12px"><div class="ptitle">Party \u00b7 up to 3 divers</div>
    <div class="pslot full"><span style="font-size:17px;color:${profColor||'#00e5d4'}">${profLogo}</span> ${profName} <span style="color:var(--dim);font-size:11px;margin-left:auto">you</span></div>
    <div class="pslot">\u2205 open slot</div><div class="pslot">\u2205 open slot</div>
    <button class="btn ghost" id="pinv" style="width:100%;margin-top:6px">\u29c9 Copy Party Invite Link</button>
    <div style="font-size:11.5px;color:var(--dim);margin-top:8px">Live co-diving arrives in a future patch. Invites already work.</div></div>`;
-  s+=`<div class="pcard"><div class="ptitle">Friends <span style="color:var(--dim);font-weight:400">\u00b7 ${NET.online?'relay online':'relay offline'}</span></div><div id="friendlist">`;
-  if(NET.friends.length){s+=NET.friends.map(f=>`<div class="frow" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}"><span class="fopen" style="cursor:pointer">${f.online?'<span style="color:#6cffb0">\u25cf</span>':'<span style="color:#5a6a85">\u25cb</span>'} ${f.name||f.id}</span><span style="color:var(--dim);font-size:11px">${f.online?'online':fmtAgo(f.lastSeen)}</span></div>`).join('');}
-  else s+=`<div style="color:var(--dim);font-size:12.5px">No friends linked yet. Use the Add Friend tab and share your code.</div>`;
-  s+=`</div></div>`;
  }else if(tab==='invites'){
   s+=`<div class="pcard"><div class="ptitle">Friend Requests</div><div id="inboxlist"><div style="color:var(--dim);font-size:12.5px">Loading...</div></div></div>`;
  }else{
@@ -3244,12 +3512,13 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
  const fg=document.getElementById('faddgo');if(fg)fg.onclick=async()=>{const v=(document.getElementById('fadd').value||'').trim();if(!v)return;try{const r=await fetch('/api/social?action=request',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,target:v})});const j=await r.json();if(j&&j.ok){if(j.already)showPopup('Already Friends','You and this diver are already linked.','\u2713','#3cc8ff');else showPopup('Request Sent','Your friend request is on its way. They will see it in their Invites tab and can accept or decline.','\u2713','#6cffb0');document.getElementById('fadd').value='';}else{showPopup('Could Not Send','Double check the diver code and try again.','!','#ff9b4b');}}catch(e){showPopup('Relay Offline','The friend network is unreachable right now. Try again in a moment.','!','#ff5a6e');}};
  const nd=document.getElementById('netdiag');if(nd){fetch('/api/social?action=health').then(r=>r.json()).then(j=>{if(j&&j.relay==='configured'&&j.ping&&j.ping.indexOf('OK')>=0)nd.innerHTML='\u25cf RELAY ONLINE \u00b7 friends active';else if(j&&j.relay==='offline')nd.innerHTML='\u25cb RELAY OFFLINE<br><span style="color:#ff9b4b">Add a Redis integration in Vercel, then redeploy</span>';else nd.innerHTML='\u25cb relay error';}).catch(()=>{nd.textContent='\u25cb relay unreachable';});}
  // friend rows -> profile
- B.querySelectorAll&&B.querySelectorAll('.frow .fopen').forEach(el=>{el.onclick=()=>{const row=el.closest('.frow');openFriendProfile(row.dataset.fid,row.dataset.fname,row.dataset.fphoto);};});
+ B.querySelectorAll&&B.querySelectorAll('.fcard').forEach(el=>{el.onclick=()=>{openFriendProfile(el.dataset.fid,el.dataset.fname,el.dataset.fphoto);};});
  // inbox load
  if(tab==='invites'){fetch('/api/social?action=inbox&id='+encodeURIComponent(id)).then(r=>r.json()).then(j=>{const box=document.getElementById('inboxlist');if(!box)return;const reqs=(j&&j.requests)||[];if(!reqs.length){box.innerHTML='<div style="color:var(--dim);font-size:12.5px">No pending requests.</div>';return;}box.innerHTML=reqs.map(rq=>`<div class="frow" data-from="${rq.id}"><span>\u25c8 ${rq.name||rq.id}</span><span><button class="btn ghost fac" style="padding:6px 12px;font-size:11px;color:#6cffb0;border-color:#6cffb0">Accept</button> <button class="btn ghost fde" style="padding:6px 12px;font-size:11px;color:#ff5a6e;border-color:#ff5a6e">Decline</button></span></div>`).join('');box.querySelectorAll('.frow').forEach(row=>{const from=row.dataset.from;row.querySelector('.fac').onclick=async()=>{await fetch('/api/social?action=respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,from,accept:true})});toast('FRIEND ADDED');hap('notify','success');netSync();openSocial('invites');};row.querySelector('.fde').onclick=async()=>{await fetch('/api/social?action=respond',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id,from,accept:false})});toast('DECLINED');openSocial('invites');};});}).catch(()=>{const box=document.getElementById('inboxlist');if(box)box.innerHTML='<div style="color:var(--dim)">Relay offline.</div>';});}
  // group roster
 
  if(id&&Date.now()-NET.lastSync>20000)netSync();
+ if(tab==='friends')hydrateFriends();
  document.getElementById('social').classList.remove('hidden');}
 function showPopup(title,sub,icon,color){const m=document.getElementById('popmodal');document.getElementById('poptitle').textContent=title;document.getElementById('popsub').textContent=sub||'';const ic=document.getElementById('popicon');ic.textContent=icon||'\u2713';ic.style.color=color||'#6cffb0';m.querySelector('.popbox').style.borderColor=color||'#6cffb0';m.querySelector('.popbox').style.boxShadow='0 0 40px '+(color||'#6cffb0')+'55';m.classList.remove('hidden');const ok=document.getElementById('popok');ok.onclick=()=>m.classList.add('hidden');try{hap('notify','success');}catch(e){}}
 function qLabel(q){return {potato:'Potato',low:'Low',medium:'Medium',ultra:'Ultra (Full)'}[q]||q;}
