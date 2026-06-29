@@ -519,12 +519,12 @@
   /* credits polish */
   .credit-foot{margin-top:4px;font-family:var(--ui);font-size:10.5px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase;opacity:.7;text-align:center}
   /* ===================== LORE (special menu button + screen) ===================== */
-  .lore-btn{position:absolute;top:14px;right:14px;z-index:6;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 13px 7px;border-radius:14px;border:1px solid rgba(255,194,75,0.42);background:radial-gradient(ellipse at 50% 0%,rgba(62,44,14,0.88),rgba(20,14,6,0.82));cursor:pointer;transition:transform .16s,box-shadow .2s,border-color .2s;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:loreGlow 3.6s ease-in-out infinite}
-  .lore-btn:hover{transform:translateY(-2px) scale(1.05);border-color:rgba(255,214,120,0.9)}
-  .lore-btn:active{transform:scale(.96)}
-  .lore-rune{font-size:21px;color:#ffd24b;filter:drop-shadow(0 0 8px rgba(255,194,75,0.9));line-height:1}
-  .lore-txt{font-family:var(--disp);font-weight:800;font-size:9px;letter-spacing:.26em;color:#ffe2a0;padding-left:.26em}
-  @keyframes loreGlow{0%,100%{box-shadow:0 0 20px -9px rgba(255,194,75,0.55),inset 0 0 16px -8px rgba(255,194,75,0.4)}50%{box-shadow:0 0 30px -5px rgba(255,194,75,0.85),inset 0 0 18px -6px rgba(255,194,75,0.65)}}
+  .lore-btn{position:absolute;right:0;top:34%;z-index:7;display:flex;flex-direction:column;align-items:center;gap:8px;padding:15px 9px 16px 11px;border:1px solid rgba(255,194,75,0.45);border-right:none;border-radius:16px 0 0 16px;background:linear-gradient(270deg,rgba(66,47,15,0.96),rgba(22,15,7,0.82));cursor:pointer;transition:transform .18s ease,box-shadow .25s,border-color .2s;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:loreGlow 3.6s ease-in-out infinite}
+  .lore-btn:hover{transform:translateX(-3px);border-color:rgba(255,214,120,0.9)}
+  .lore-btn:active{transform:translateX(-1px) scale(.98)}
+  .lore-rune{font-size:19px;color:#ffd24b;filter:drop-shadow(0 0 8px rgba(255,194,75,0.9));line-height:1}
+  .lore-txt{font-family:var(--disp);font-weight:800;font-size:10px;letter-spacing:.3em;color:#ffe2a0;writing-mode:vertical-rl;text-orientation:upright}
+  @keyframes loreGlow{0%,100%{box-shadow:-3px 0 20px -9px rgba(255,194,75,0.55),inset 6px 0 16px -10px rgba(255,194,75,0.4)}50%{box-shadow:-5px 0 30px -6px rgba(255,194,75,0.85),inset 7px 0 18px -8px rgba(255,194,75,0.65)}}
   #lore{background:radial-gradient(ellipse at 50% 38%,rgba(34,24,8,0.7),rgba(4,5,10,0.96))}
   .lore-wrap{display:flex;flex-direction:column;align-items:center;gap:17px;text-align:center;max-width:440px;padding:0 26px}
   .lore-sigil{font-size:62px;color:#ffd24b;filter:drop-shadow(0 0 22px rgba(255,194,75,0.8));animation:loreSpin 24s linear infinite}
@@ -2957,7 +2957,7 @@ function captainRunXP(r){
 }
 function captainTotalXP(){
  var sum=0;try{for(var i=0;i<runArchive.length;i++)sum+=captainRunXP(runArchive[i]);}catch(e){}
- var net=(typeof NET!=='undefined'&&NET&&NET.stats&&NET.stats.xp)||0;
+ var net=(typeof NET!=='undefined'&&NET&&NET.stats&&(NET.stats.capXp||NET.stats.xp))||0;
  return Math.max(sum,net|0);
 }
 // Deep curve: early levels arrive fast, L100 is a ~5000-hour pinnacle (cumulative ~25M XP).
@@ -2982,6 +2982,25 @@ function captainRank(lvl){
  return {name:'DRIFTER',c1:'#6cffb0',c2:'#00e5d4',glow:'rgba(108,255,176,.45)'};
 }
 var CAP_TIERS=[{lv:1,name:'DRIFTER'},{lv:4,name:'DEEP DIVER'},{lv:8,name:'TRENCH STALKER'},{lv:14,name:'ABYSS REAPER'},{lv:22,name:'HADAL WRAITH'},{lv:32,name:'VOIDBORNE'},{lv:45,name:'LEVIATHAN'},{lv:60,name:'NIGHTMARE SOVEREIGN'},{lv:78,name:'ELDER OF THE DEEP'},{lv:100,name:'THE DROWNED GOD'}];
+// Derive a Captain level from whatever a diver has synced. Precise cap / capXp always win; otherwise
+// we estimate from the durable counters (runs, kills, highest level, wins, time, corruption) that EVERY
+// synced profile carries - so a friend on an older client is never falsely shown as "unsynced".
+function capFromStats(st){
+ if(!st)return 0;
+ if(st.cap&&st.cap>0)return st.cap|0;
+ var xp=capXpFromStats(st);
+ if(!xp)return 0;
+ try{return Math.max(1,captainLevelInfo(xp).level);}catch(e){return 1;}
+}
+// Best estimate of a friend's captain XP (for the progress bar) when only aggregate stats synced.
+function capXpFromStats(st){
+ if(!st)return 0;
+ if(st.capXp&&st.capXp>0)return st.capXp|0;
+ var total=st.total||st.runs||0,kills=st.kills||0,hl=st.level||st.highLevel||st.best||0,wins=st.wins||0,timeIn=st.timeIn||0,corr=st.maxCorr||0;
+ if(!total&&!kills&&!hl&&!wins)return 0;
+ var n=Math.max(1,total);
+ return Math.round(n*hl*4.6 + kills*0.6 + timeIn/5 + wins*300 + corr*30*n*0.3);
+}
 /* ===================== COSMETICS UI (v7.4) ===================== */
 let _cosTab='palette';
 const COS_TABS=[['palette','Palette'],['trail','Trail'],['aura','Aura'],['proj','Projectile'],['death','Death FX']];
@@ -3400,6 +3419,10 @@ function openProfile(){hideAllScreens();state='profile';
  const gamesShown=Math.max(total,NET.gamesPlayed||0);
  const tk=runArchive.reduce((a,r)=>a+(r.kills||0),0),tt=runArchive.reduce((a,r)=>a+(r.time||0),0),tg=runArchive.reduce((a,r)=>a+(r.gold||0),0);
  const hl=runArchive.reduce((a,r)=>Math.max(a,r.level||0),0),hc=runArchive.reduce((a,r)=>Math.max(a,r.corruption||0),0);
+ // Fold in the DURABLE server totals: NET.stats holds the monotonic all-time numbers, while the local
+ // runArchive is capped at 30 runs - so without this the own profile under-reports lifetime stats.
+ const _ns=(typeof NET!=='undefined'&&NET&&NET.stats)||{};
+ const winsD=Math.max(wins,_ns.wins||0),tkD=Math.max(tk,_ns.kills||0),ttD=Math.max(tt,_ns.timeIn||0),tgD=Math.max(tg,_ns.gold||0),hlD=Math.max(hl,_ns.level||0),hcD=Math.max(hc,_ns.maxCorr||0);
  const per={};runArchive.forEach(r=>per[r.char]=(per[r.char]||0)+1);
  let main='\u2014',mn=0;for(const k in per)if(per[k]>mn){mn=per[k];main=k;}
  const mc=CHARS.find(c=>c.name===main);
@@ -3439,9 +3462,9 @@ function openProfile(){hideAllScreens();state='profile';
     <div class="ptitle" style="margin-top:10px">Shape</div><div class="shaperow">${shapeBtns}</div>
     <div class="ptitle" style="margin-top:10px">Sigil</div><div class="shaperow">${logoBtns}</div></div>`+
   `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+
-   stat(gamesShown,'Total Runs')+stat(wins,'Victories')+stat(total?Math.round(wins/total*100)+'%':'\u2014','Win Rate')+
-   stat(fmtT(bestTime),'Best Time')+stat(fmtN(tk),'Total Kills')+stat(hl||'\u2014','Highest Level')+
-   stat(fmtT(tt),'Time in the Deep')+stat(fmtN(tg),'Credits Earned')+stat(hc||'\u2014','Max Corruption')+
+   stat(gamesShown,'Total Runs')+stat(winsD,'Victories')+stat(gamesShown?Math.round(winsD/gamesShown*100)+'%':'\u2014','Win Rate')+
+   stat(fmtT(bestTime),'Best Time')+stat(fmtN(tkD),'Total Kills')+stat(hlD||'\u2014','Highest Level')+
+   stat(fmtT(ttD),'Time in the Deep')+stat(fmtN(tgD),'Credits Earned')+stat(hcD||'\u2014','Max Corruption')+
   `</div></div>`+
   `<div class="pcard"><div class="ptitle">Playstyle Analysis</div>${svgRadar(axesV,axesL)}</div>`+
   `<div class="pcard"><div class="ptitle">Loadout Affinity</div>
@@ -3522,9 +3545,10 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
    const mc=CHARS.find(c=>c.name===s.main);
    const online=(Date.now()-(p.seen||0)<70000);
    const tier=presenceTier(p.seen||0,false);
-   try{NET.fcache[fid]={_t:Date.now(),cap:st.cap||0,best:st.level||0,seen:p.seen||0,wins:st.wins||0,total:st.total||0};}catch(e){}
-   let fInfo=null;if(st.capXp!=null){try{fInfo=captainLevelInfo(st.capXp);}catch(e){}}
-   const fcap=st.cap||(fInfo?fInfo.level:0);
+   try{NET.fcache[fid]={_t:Date.now(),cap:st.cap||0,capXp:st.capXp||0,best:st.level||0,level:st.level||0,kills:st.kills||0,total:st.total||0,wins:st.wins||0,timeIn:st.timeIn||0,maxCorr:st.maxCorr||0,seen:p.seen||0};}catch(e){}
+   const fcap=capFromStats(st);let fInfo=null;
+   if(st.capXp&&st.capXp>0){try{fInfo=captainLevelInfo(st.capXp);}catch(e){}}
+   else if(!(st.cap&&st.cap>0)){const _ex=capXpFromStats(st);if(_ex>0){try{fInfo=captainLevelInfo(_ex);}catch(e){}}}
    const av=(p.photo||fphoto)?`<img src="${p.photo||fphoto}" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #b06bff">`:`<div class="pavatar" style="border-color:#b06bff;width:72px;height:72px">\ud83d\udc64</div>`;
    const stat=(v,l)=>`<div class="dstat"><div class="v">${v}</div><div class="l">${l}</div></div>`;
    let html='<button class="btn ghost" id="fpback" style="margin-bottom:14px">\u2039 Back to Friends</button>';
@@ -3605,13 +3629,13 @@ function hydrateFriends(){
   if(cached&&now-cached._t<60000){applyFriendCard(f.id,cached);continue;}
   if(launched>=14)continue;launched++;
   (function(fid,fallback){fetch('/api/social?action=profile&id='+encodeURIComponent(fid)).then(r=>r.json()).then(j=>{
-   if(j&&j.ok&&j.profile){const p=j.profile,st=p.stats||{};const data={_t:Date.now(),cap:st.cap||0,best:st.level||0,seen:p.seen||fallback||0,wins:st.wins||0,total:st.total||0};NET.fcache[fid]=data;applyFriendCard(fid,data);}
+   if(j&&j.ok&&j.profile){const p=j.profile,st=p.stats||{};const data={_t:Date.now(),cap:st.cap||0,capXp:st.capXp||0,best:st.level||0,level:st.level||0,kills:st.kills||0,total:st.total||0,wins:st.wins||0,timeIn:st.timeIn||0,maxCorr:st.maxCorr||0,seen:p.seen||fallback||0};NET.fcache[fid]=data;applyFriendCard(fid,data);}
   }).catch(()=>{});})(f.id,f.lastSeen);
  }
 }
 function applyFriendCard(id,data){try{
  let card=null;document.querySelectorAll('.fcard').forEach(c=>{if(c.dataset.fid===String(id))card=c;});if(!card)return;
- const chipEl=card.querySelector('.fcap');if(chipEl)chipEl.innerHTML=capChip(data.cap);
+ const chipEl=card.querySelector('.fcap');if(chipEl)chipEl.innerHTML=capChip(capFromStats(data));
  const bestEl=card.querySelector('.fbest');if(bestEl&&data.best)bestEl.innerHTML='Best Lv <b>'+data.best+'</b>';
  if(data.seen){const tier=presenceTier(data.seen,false);const dotEl=card.querySelector('.fdot');if(dotEl)dotEl.className='fdot '+tier.cls;const lblEl=card.querySelector('.fpreslbl');if(lblEl){lblEl.textContent=tier.label;lblEl.style.color=tier.color;}card.style.setProperty('--pc',tier.glow);}
 }catch(e){}}
@@ -3700,7 +3724,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
    const sorted=NET.friends.slice().map(f=>{const seen=(NET.fcache[f.id]&&NET.fcache[f.id].seen)||f.lastSeen;return Object.assign({},f,{_tier:presenceTier(seen,f.online),_seen:seen});}).sort((a,b)=>(b._tier.rank-a._tier.rank)||((b._seen||0)-(a._seen||0)));
    s+=`<div class="fgrid" id="friendgrid">`;
    s+=sorted.map(f=>{const cached=NET.fcache[f.id]||{};const ac=NEONS[Math.abs(hashStr(f.id))%NEONS.length];const av=f.photo?`<img src="${f.photo}">`:(f.name||'?').slice(0,1).toUpperCase();const tier=f._tier;
-    return `<div class="fcard" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}" style="--pc:${tier.glow};--ac:${ac};--acg:${ac}66"><div class="fav">${av}</div><div class="fmid"><div class="fnm">${f.name||('Diver '+f.id)}</div><div class="fpres"><span class="fdot ${tier.cls}"></span><span class="fpreslbl" style="color:${tier.color}">${tier.label}</span></div><div class="fbest">${(cached.best||f.best)?('Best Lv <b>'+(cached.best||f.best)+'</b>'):'\u00b7 \u00b7 \u00b7'}</div></div><div class="fright"><span class="fcap">${capChip(cached.cap||f.cap||0)}</span></div><span class="fchev">\u203a</span></div>`;
+    return `<div class="fcard" data-fid="${f.id}" data-fname="${(f.name||'').replace(/"/g,'')}" data-fphoto="${f.photo||''}" style="--pc:${tier.glow};--ac:${ac};--acg:${ac}66"><div class="fav">${av}</div><div class="fmid"><div class="fnm">${f.name||('Diver '+f.id)}</div><div class="fpres"><span class="fdot ${tier.cls}"></span><span class="fpreslbl" style="color:${tier.color}">${tier.label}</span></div><div class="fbest">${(cached.best||f.best)?('Best Lv <b>'+(cached.best||f.best)+'</b>'):'\u00b7 \u00b7 \u00b7'}</div></div><div class="fright"><span class="fcap">${capChip(capFromStats(cached||{cap:f.cap,capXp:f.capXp,level:f.best,total:f.total||0,kills:f.kills||0}))}</span></div><span class="fchev">\u203a</span></div>`;
    }).join('');
    s+=`</div>`;
   } else {
