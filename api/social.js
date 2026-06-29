@@ -46,6 +46,10 @@ function mergeStats(prev, incoming) {
     gold:     maxNum(prev.gold,     incoming.gold),
     maxCorr:  maxNum(prev.maxCorr,  incoming.maxCorr),
     mainRuns: maxNum(prev.mainRuns, incoming.mainRuns),
+    // Captain progression (monotonic: rank + lifetime XP only ever climb). Without these the
+    // friend system can never show anyone's Captain level - they all read as DRIFTER / level 0.
+    cap:      maxNum(prev.cap,      incoming.cap),
+    capXp:    maxNum(prev.capXp,    incoming.capXp),
     // descriptive fields: take the latest non-empty, else keep previous
     main:     incoming.main     != null ? incoming.main     : (prev.main || '\u2014'),
     axes:     incoming.axes     || prev.axes     || [],
@@ -142,7 +146,7 @@ module.exports = async (req, res) => {
       const friends = [];
       for (const fid of fids) {
         const fp = await jget('p:' + fid);
-        if (fp) friends.push({ id: fp.id, name: fp.name, username: fp.username, photo: fp.photo, online: (now - (fp.seen || 0)) < 70000, lastSeen: fp.seen || 0 });
+        if (fp) friends.push({ id: fp.id, name: fp.name, username: fp.username, photo: fp.photo, online: (now - (fp.seen || 0)) < 70000, lastSeen: fp.seen || 0, cap: (fp.stats && fp.stats.cap) || 0, capXp: (fp.stats && fp.stats.capXp) || 0, best: (fp.stats && fp.stats.level) || 0 });
       }
       const inbox = (await jget('r:' + me)) || [];
       // Return the durable numbers so the client can display + re-cache them.
