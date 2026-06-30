@@ -107,7 +107,7 @@
   .kf{font-family:var(--disp);font-size:12px;letter-spacing:.1em;padding:5px 12px;background:rgba(8,14,28,.78);border-right:3px solid var(--kc,#ffd24b);color:var(--kc,#ffd24b);text-shadow:0 0 10px var(--kc,#ffd24b);animation:kfin .25s ease-out,kfout .4s ease-in 2.2s forwards}
   @keyframes kfin{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
   @keyframes kfout{to{transform:translateX(18px);opacity:0}}
-  #threatwrap{position:absolute;left:50%;transform:translateX(-50%);bottom:9px;z-index:9;display:flex;align-items:center;gap:9px;width:min(680px,92vw);pointer-events:none}
+  #threatwrap{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(9px + var(--ins-bottom));z-index:9;display:flex;align-items:center;gap:9px;width:min(680px,92vw);pointer-events:none}
   #threatwrap .tlabel{font-family:var(--disp);font-size:10px;letter-spacing:.2em;color:var(--teal);text-shadow:0 0 8px rgba(0,229,212,.5)}
   #threatwrap .tbar{flex:1;height:13px;border:1px solid rgba(0,229,212,.45);clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);overflow:hidden;background:rgba(8,13,26,.85) repeating-linear-gradient(90deg,rgba(0,229,212,.10) 0 2px,transparent 2px 12px)}
   #threatfill{height:100%;width:0%;background:linear-gradient(90deg,#00e5d4,#ffe27a 55%,#ff5a6e 85%,#ff2d4e);box-shadow:0 0 14px rgba(255,90,110,.55);transition:width .3s linear}
@@ -135,7 +135,7 @@
   @keyframes heatpulse{from{opacity:.55;transform:scale(1)}to{opacity:1;transform:scale(1.25)}}
   .esb{height:5px;border:1px solid rgba(155,208,255,.4);border-radius:4px;background:rgba(8,13,26,.7);overflow:hidden}
   #esfill{height:100%;width:0%;background:linear-gradient(90deg,#5cd0ff,#9bd0ff);box-shadow:0 0 8px rgba(155,208,255,.6)}
-  #dodgebtn{position:fixed;right:22px;bottom:96px;z-index:40;width:96px;height:96px;border-radius:50%;border:2px solid var(--teal);background:rgba(0,229,212,0.12);color:var(--teal);font-family:var(--disp);font-size:15px;letter-spacing:.1em;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+  #dodgebtn{position:fixed;right:calc(22px + var(--ins-right));bottom:calc(96px + var(--ins-bottom));z-index:40;width:96px;height:96px;border-radius:50%;border:2px solid var(--teal);background:rgba(0,229,212,0.12);color:var(--teal);font-family:var(--disp);font-size:15px;letter-spacing:.1em;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
   #dodgebtn:active{background:rgba(0,229,212,0.3);transform:scale(0.94)}
   #dodgebtn.cooling{opacity:0.4;border-color:#6680a8;color:#6680a8}
   .deathline{max-width:520px;margin:6px 0 4px;font-family:var(--ui);font-style:italic;font-size:16px;color:#ff8a9b;letter-spacing:.02em;text-align:center;line-height:1.5}
@@ -292,13 +292,13 @@
   .chip .gold{color:var(--gold)}
   .chip .lvl{color:var(--mint)}
 
-  #topright{position:absolute;top:12px;right:16px;z-index:11;display:flex;gap:8px}
+  #topright{position:absolute;top:calc(12px + var(--ins-top));right:calc(16px + var(--ins-right));z-index:11;display:flex;gap:8px}
   .iconbtn{pointer-events:auto;width:38px;height:38px;border-radius:6px;border:1px solid var(--line);
     background:rgba(13,20,38,.7);color:var(--ink);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
   .iconbtn:hover{border-color:var(--teal);color:var(--teal)}
 
   /* weapon dock */
-  #dock{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap;justify-content:center;max-width:94vw}
+  #dock{position:absolute;bottom:calc(36px + var(--ins-bottom));left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap;justify-content:center;max-width:94vw}
   .slot{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:rgba(13,20,38,.72);
     display:flex;align-items:center;justify-content:center;font-size:21px;position:relative}
   .slot .pip{position:absolute;bottom:3px;right:4px;font-family:var(--disp);font-size:9px;font-weight:700;color:var(--mint)}
@@ -540,13 +540,23 @@
   .lore-side-title{font-family:var(--disp);font-weight:900;font-size:21px;letter-spacing:.22em;color:#ffe2a0;text-shadow:0 0 18px rgba(255,194,75,0.5)}
   .lore-side-sub{font-family:var(--ui);font-size:8px;letter-spacing:.26em;text-transform:uppercase;color:#7a6a4a;margin-top:4px}
   .lore-chaps{flex:1;overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:7px;-webkit-overflow-scrolling:touch}
-  .lore-chap{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:11px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.014);cursor:pointer;transition:background .18s,border-color .18s;position:relative}
+  .lore-chap{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:11px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.014);cursor:pointer;transition:background .18s,border-color .18s;position:relative;animation:loreTabBreath 4.6s ease-in-out infinite}
+  .lore-chap:nth-child(2){animation-delay:.45s}
+  .lore-chap:nth-child(3){animation-delay:.9s}
+  .lore-chap:nth-child(4){animation-delay:1.35s}
+  .lore-chap:nth-child(5){animation-delay:1.8s}
+  .lore-chap:nth-child(6){animation-delay:2.25s}
+  .lore-chap:nth-child(7){animation-delay:2.7s}
+  @keyframes loreTabBreath{0%,100%{box-shadow:0 0 0 -8px rgba(255,194,75,0)}50%{box-shadow:0 0 15px -8px rgba(255,194,75,0.34)}}
   .lore-chap:hover{background:rgba(255,194,75,0.06);border-color:rgba(255,194,75,0.25)}
-  .lore-chap.on{background:linear-gradient(90deg,rgba(255,194,75,0.17),rgba(255,194,75,0.03));border-color:rgba(255,194,75,0.5)}
-  .lore-chap.on::before{content:'';position:absolute;left:0;top:14%;height:72%;width:3px;border-radius:0 3px 3px 0;background:#ffd24b;box-shadow:0 0 10px #ffd24b}
+  .lore-chap.on{background:linear-gradient(90deg,rgba(255,194,75,0.17),rgba(255,194,75,0.03));border-color:rgba(255,194,75,0.5);animation:loreTabBreathOn 3.1s ease-in-out infinite}
+  @keyframes loreTabBreathOn{0%,100%{box-shadow:0 0 16px -7px rgba(255,194,75,0.45),inset 0 0 10px -8px rgba(255,194,75,0.3)}50%{box-shadow:0 0 30px -3px rgba(255,194,75,0.82),inset 0 0 16px -6px rgba(255,194,75,0.5)}}
+  .lore-chap.on::before{content:'';position:absolute;left:0;top:14%;height:72%;width:3px;border-radius:0 3px 3px 0;background:#ffd24b;animation:loreBarBreath 3.1s ease-in-out infinite}
+  @keyframes loreBarBreath{0%,100%{box-shadow:0 0 8px #ffd24b;opacity:.82}50%{box-shadow:0 0 16px #ffd24b,0 0 26px rgba(255,210,75,0.55);opacity:1}}
   .lore-num{flex:none;width:29px;height:29px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:800;font-size:11px;color:#ffd24b;border:1px solid rgba(255,194,75,0.4);border-radius:8px;background:rgba(255,194,75,0.06);transform:rotate(45deg)}
   .lore-num span{transform:rotate(-45deg);display:block}
-  .lore-chap.on .lore-num{background:rgba(255,194,75,0.2);box-shadow:0 0 12px -2px rgba(255,194,75,0.75)}
+  .lore-chap.on .lore-num{background:rgba(255,194,75,0.2);animation:loreNumBreath 3.1s ease-in-out infinite}
+  @keyframes loreNumBreath{0%,100%{box-shadow:0 0 9px -2px rgba(255,194,75,0.55)}50%{box-shadow:0 0 18px 0 rgba(255,194,75,0.88)}}
   .lore-cmeta{min-width:0}
   .lore-ckind{font-family:var(--ui);font-size:7.5px;letter-spacing:.2em;text-transform:uppercase;color:#8a7a58}
   .lore-ctitle{font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.02em;color:#e9dcc2;line-height:1.16;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:break-word;word-break:break-word}
@@ -654,7 +664,7 @@
     <button class="lore-btn" id="loreBtn" aria-label="Lore"><span class="lore-rune">&#10070;</span><span class="lore-txt">LORE</span></button>
     <div class="studiomark" style="position:relative;z-index:2">veil &amp; wire studio®</div>
     <div class="logo" style="position:relative;z-index:2">ABYSS<small>SURVIVORS</small></div>
-    <div class="msub">Bioluminescent deep &middot; 18,000m down &middot; it has noticed your light</div>
+    <div class="msub">The starless deep &middot; 18,000m down &middot; it has noticed your light</div>
     <div class="menu-hub" style="position:relative;z-index:2">
       <div class="mplayer" id="mplayer" style="display:none"></div>
       <button class="btn mdesc" id="startbtn">DESCEND</button>
@@ -1610,7 +1620,7 @@ function spawnEnemy(typeId){const def=ETYPES[typeId],ang=Math.random()*TAU,dr=Ma
 function spawnSpecial(id,hpMul){const def=ETYPES[id],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+90+def.r,sc=BAL.enemyHp(time)*(1+0.25*corruption+0.3*(corruptMods.bossUp||0))*corrScaleMul;
  enemies.push({type:id,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp:def.hp*sc*(hpMul||1),maxhp:def.hp*sc*(hpMul||1),speed:def.speed,dmg:(def.dmg||0)*BAL.enemyDmg(time),color:def.color,ranged:!!def.ranged,elite:!!def.elite,legendary:!!def.legendary,mage:!!def.mage,warden:!!def.warden,finalboss:!!def.finalboss,arch:def.arch||null,shape:def.shape||'ball',escortChecked:!!def.noEscort,mechTimer:rand(2.5,4),shootCd:rand(1,2),castCd:rand(1.5,3),hitFlash:0});if(corrScaleMul>1){const _e=enemies[enemies.length-1];_e.hp*=corrScaleMul;_e.maxhp*=corrScaleMul;_e.dmg=(_e.dmg||0)*corrScaleMul;}
  {const _se=enemies[enemies.length-1];if(_se&&_se.arch==='sun'&&Math.random()<0.35){_se.dying=true;_se.color='#ff5a3c';}}
- const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DROWNED SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD'};
+ const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DYING SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD'};
  if(id==='voidlord'){toast('THE VOID LORD AWAKENS');sfx('boss');screenShake=20;}
  else if(id==='omega'){toast('OMEGA PROTOCOL AWAKENS');sfx('boss');screenShake=18;}
  else if(def.warden){toast((names[id]||'A WARDEN')+' DESCENDS. SLAY IT FOR A BOON');sfx('boss');screenShake=12;}
@@ -3013,7 +3023,7 @@ function captainLevelInfo(xp){
  return {level:lvl,into:into,need:need,floor:floor,total:xp,pct:Math.max(0,Math.min(1,into/need)),max:false};
 }
 function captainRank(lvl){
- if(lvl>=100)return {name:'THE DROWNED GOD',c1:'#ffffff',c2:'#9beaff',glow:'rgba(180,240,255,.7)'};
+ if(lvl>=100)return {name:'THE HOLLOW GOD',c1:'#ffffff',c2:'#9beaff',glow:'rgba(180,240,255,.7)'};
  if(lvl>=78)return {name:'ELDER OF THE DEEP',c1:'#ffc24b',c2:'#ff8a3c',glow:'rgba(255,194,75,.6)'};
  if(lvl>=60)return {name:'NIGHTMARE SOVEREIGN',c1:'#ff6a8e',c2:'#ffb24b',glow:'rgba(255,106,142,.55)'};
  if(lvl>=45)return {name:'LEVIATHAN',c1:'#ff5cf0',c2:'#ff6ca8',glow:'rgba(255,92,240,.55)'};
@@ -3024,7 +3034,7 @@ function captainRank(lvl){
  if(lvl>=4)return {name:'DEEP DIVER',c1:'#00e5d4',c2:'#4fd0ff',glow:'rgba(0,229,212,.5)'};
  return {name:'DRIFTER',c1:'#6cffb0',c2:'#00e5d4',glow:'rgba(108,255,176,.45)'};
 }
-var CAP_TIERS=[{lv:1,name:'DRIFTER'},{lv:4,name:'DEEP DIVER'},{lv:8,name:'TRENCH STALKER'},{lv:14,name:'ABYSS REAPER'},{lv:22,name:'HADAL WRAITH'},{lv:32,name:'VOIDBORNE'},{lv:45,name:'LEVIATHAN'},{lv:60,name:'NIGHTMARE SOVEREIGN'},{lv:78,name:'ELDER OF THE DEEP'},{lv:100,name:'THE DROWNED GOD'}];
+var CAP_TIERS=[{lv:1,name:'DRIFTER'},{lv:4,name:'DEEP DIVER'},{lv:8,name:'TRENCH STALKER'},{lv:14,name:'ABYSS REAPER'},{lv:22,name:'HADAL WRAITH'},{lv:32,name:'VOIDBORNE'},{lv:45,name:'LEVIATHAN'},{lv:60,name:'NIGHTMARE SOVEREIGN'},{lv:78,name:'ELDER OF THE DEEP'},{lv:100,name:'THE HOLLOW GOD'}];
 // Derive a Captain level from whatever a diver has synced. Precise cap / capXp always win; otherwise
 // we estimate from the durable counters (runs, kills, highest level, wins, time, corruption) that EVERY
 // synced profile carries - so a friend on an older client is never falsely shown as "unsynced".
@@ -3323,10 +3333,10 @@ const CODEX_TABS={
   +codexEntry('\u25c7','#00e5d4','Dodge, Guard, Parry','Space or the dive button','Every diver has one survival tool. Learn yours first.','Every diver answers danger differently.\n\nMost divers blink a short distance with full invulnerability. Ranger blinks farthest and fastest, on the shortest cooldown in the game. Her whole life is dodge, shotgun, dodge.\n\nVanguard does not dodge. He plants his feet and raises an unbreakable Guard for over a second. While it holds, nothing hurts him and slows wash off his hull.\n\nYujin parries. Tap the button and a quarter second window opens where everything breaks against your fists: bullets, lasers, stampedes, even black hole cores. The parry has only a brief cooldown, so quick taps still open windows back to back. With perfect reads Yujin survives anything. And because he cannot dodge, a black hole would be a guaranteed death, so while caught in one his button instead blinks him out to safety. With lazy thumbs Yujin still dies fast.\n\nRhino charges. The dive button sends him barreling forward, untouchable the whole way, flinging every enemy he touches aside and trampling them for damage. When the charge ends a shockwave bursts out and scatters the rest. Slow on foot, unstoppable in motion.\n\nThe Sorcerer hexes. His button does not move him. Instead he becomes untouchable for a few seconds and mutates the whole swarm around him, turning fodder into richer loot and forcing them to flee. It is his survival button and his early treasure engine at once.')
   +codexEntry('\u23e3','#9b6dff','Shields','Vyper and Sentinel','A permanent field that eats incoming fire.','Vyper and Sentinel carry a permanent energy field that swallows every non boss projectile on contact. It does not block body slams, so keep moving.\n\nEvery other diver earns a recharging Barrier as they level. When the blue bar under your hull is up, you can afford one mistake. Watch it. Tank when it is full, run when it is empty.')
   +codexEntry('\u2605','#ffd24b','Wardens and Boons','Every 5 levels','Kill the giant, claim a permanent gift.','Every fifth level a Warden descends: a giant with a name and a trick. Fell it and you claim a Boon, a permanent change to your run that no draft can offer.\n\nIf a Warden drifts off your screen too long it calls escorts to push you back toward the fight. The deep does not let you ignore its champions.')
-  +codexEntry('\u2609','#ffd24b','The Three Suns','L20, L50, L80','Half screen titans that walk with you for entire levels.','Three times on the way down, something the size of half your screen arrives and simply refuses to die fast.\n\nHelios, the Drowned Sun. A burning sphere at level 20 that alternates radial rings with aimed bursts.\n\nThe Monolith. A rotating fortress square at level 50, firing cross volleys from its corners and birthing drones.\n\nThe Spear of the Deep. A fast triangle at level 80 that fires from its tip and lunges across the floor at you.\n\nThey are built to last five or more levels beside you. That is on purpose. Fighting a Sun while the horde presses in is the heart of this game. Past level 70 the cycle continues every five levels, and each new Sun arrives with double the hull of the last.')
+  +codexEntry('\u2609','#ffd24b','The Three Suns','L20, L50, L80','Half screen titans that walk with you for entire levels.','Three times on the way down, something the size of half your screen arrives and simply refuses to die fast.\n\nHelios, the Dying Sun. A burning sphere at level 20 that alternates radial rings with aimed bursts.\n\nThe Monolith. A rotating fortress square at level 50, firing cross volleys from its corners and birthing drones.\n\nThe Spear of the Deep. A fast triangle at level 80 that fires from its tip and lunges across the floor at you.\n\nThey are built to last five or more levels beside you. That is on purpose. Fighting a Sun while the horde presses in is the heart of this game. Past level 70 the cycle continues every five levels, and each new Sun arrives with double the hull of the last.')
   +codexEntry('\u265b','#5cd0ff','Named Wardens','The rotation','Learn their faces. They do not change their tricks.','The Collector vacuums your resonance orbs into a hoard while it lives. Kill it and everything it stole erupts back, magnetized to you with interest.\n\nThe Judge marks you with a gold sigil. While judged you take thirty percent more from everything. Kill it fast or play like a coward for five seconds.\n\nThe Twin divides at half health into two faster copies. The Boon comes when the last one falls.\n\nThe Shepherd never stops calling its flock, with something Epic every third call.\n\nTitan, the Solar Construct, and the Singularity round out the rotation with raw violence, sun fields, and black holes.')
   +codexEntry('\u29d6','#ff3df0','The Leviathan','Level 90','The biggest thing in the game. Everything stops for it.','At level 90 the deep holds its breath. Leveling freezes. The horde stops spawning. And a circle nearly a thousand pixels wide rises to meet you.\n\nThe Leviathan births one of the original Suns every sixty seconds while it lives. Kill it and the deep exhales: ascent resumes, the horde returns, and level 100 waits.\n\nThis is the wall before the door. Bring your whole build.')
-  +codexEntry('\u26a0','#8a6bd8','Hazards of the Floor','Read the telegraphs','Tar, black holes, solar fields, meteors. The floor itself fights you.','Tar Fields ripple for a moment before they set. Step in one and your thrusters drown: movement drops hard until you escape. Vanguard, Sentinel and Yujin resist the pull. Vanguard inside his Guard ignores it completely.\n\nBlack Holes drag everything toward a crushing core, and the Singularity likes to drop them ahead of where you are running, not behind.\n\nSolar fields burn anything that lingers. Meteors mark the ground before they land. Every hazard in this game announces itself once. After that, it assumes you were listening.')
+  +codexEntry('\u26a0','#8a6bd8','Hazards of the Floor','Read the telegraphs','Tar, black holes, solar fields, meteors. The floor itself fights you.','Tar Fields ripple for a moment before they set. Step in one and your thrusters bog down: movement drops hard until you escape. Vanguard, Sentinel and Yujin resist the pull. Vanguard inside his Guard ignores it completely.\n\nBlack Holes drag everything toward a crushing core, and the Singularity likes to drop them ahead of where you are running, not behind.\n\nSolar fields burn anything that lingers. Meteors mark the ground before they land. Every hazard in this game announces itself once. After that, it assumes you were listening.')
   +codexEntry('\u23f3','#6cffb0','The Pace of the Deep','How leveling works','The deep feeds you on its own schedule. About 18 minutes to the floor.','Resonance is not a faucet you can force open. The deep meters what it feeds you.\n\nThe first 20 levels come one choice at a time and you will feel the grind. After that, a draft opens every fifth level, with your final pick at 95. Push your build hard and you will run a little ahead of schedule. The deep notices, and tightens the flow until the floor catches up.\n\nA full descent to level 100 takes fifteen to twenty minutes. At level 40 the Seal breaks and kills feed you directly, no orbs on the floor. Objectives, Wardens and the Suns are how you get rich faster than the schedule allows.')
   +codexEntry('\u2630','#3cc8ff','Reading Your Build','Tab or the corner button','One panel that shows everything you are.','Press Tab, or the small corner button on touch, and your whole run opens in one card: every weapon with its stars and evolution tier, every augment, every element you carry, and which Reactions are live right now.\n\nCheck it before every draft. The best pick is usually the one that completes a pair, not the one with the biggest number.')
   +codexEntry('\u2620','#ff3df0','The Corruption','Past level 100','Beat the deep, then let it rewrite itself.','Reach level 100, watch the victory, then choose to keep going. The Corruption rewrites the rules: every level past 100 raises the tier, stacks a brutal modifier, and sends another named Warden down after you.\n\nA fresh draft opens every 10 corrupted levels and a Boon lands every 20. The level counter itself starts to lie to you. Words appear that should not.\n\nThe floor of the world sits at C100. Nothing descends further. Nothing needs to.');}
@@ -3940,13 +3950,13 @@ function openCredits(){hideAllScreens();state='credits';document.getElementById(
 // ===== LORE: chapter codex (left sidebar reader). Panels arrays are empty for now;
 // future hand-drawn comic panels drop straight into each chapter's `panels`: {img, text}. =====
 var LORE_CHAPTERS=[
- {id:'interlude',num:'0',kind:'Interlude',title:'The Light We Carried',epi:'Every diver brings a light. The dark below has been waiting a very long time to see one.',panels:[]},
- {id:'act1',num:'I',kind:'Act I',title:'The Descent',epi:'Eighteen thousand metres down, past the last warmth, the pressure stops trying to crush you - and starts trying to learn your shape.',panels:[]},
- {id:'act2',num:'II',kind:'Act II',title:'Bioluminescence',epi:'Beautiful things glow down here. You will want to swim toward them. That is exactly what they are counting on.',panels:[]},
+ {id:'interlude',num:'0',kind:'Interlude',title:'The Light We Carried',epi:'Every diver carries a light out into the dark. The void has been waiting a very long time to see one.',panels:[]},
+ {id:'act1',num:'I',kind:'Act I',title:'The Descent',epi:'Past the last star, where the light finally gives out, the dark stops pressing on your hull - and starts learning the shape of you.',panels:[]},
+ {id:'act2',num:'II',kind:'Act II',title:'Bioluminescence',epi:'Beautiful things glow out in the black. You will want to drift toward them. That is exactly what they are counting on.',panels:[]},
  {id:'act3',num:'III',kind:'Act III',title:'The Watchers',epi:'You are not lost. You were never lost. From the moment your lamp first flickered on, you were seen.',panels:[]},
- {id:'act4',num:'IV',kind:'Act IV',title:'Corruption',epi:'The deep does not kill the ones it likes. It rewrites them - slowly, gently - until they forget they were ever afraid of it.',panels:[]},
- {id:'act5',num:'V',kind:'Act V',title:'The Drowned God',epi:'At the bottom of everything, beneath the trenches beneath the trenches, something the size of a sky opens a single eye.',panels:[]},
- {id:'epilogue',num:'\u2756',kind:'Epilogue',title:'The Surface Forgets',epi:'You came back. The lights came back. Only you can feel that something stayed below, wearing your name like a borrowed coat.',panels:[]}
+ {id:'act4',num:'IV',kind:'Act IV',title:'Corruption',epi:'The void does not kill the ones it likes. It rewrites them - slowly, gently - until they forget they were ever afraid of it.',panels:[]},
+ {id:'act5',num:'V',kind:'Act V',title:'The Hollow God',epi:'At the bottom of everything, past the dark behind the dark, something the size of a sky opens a single eye.',panels:[]},
+ {id:'epilogue',num:'\u2756',kind:'Epilogue',title:'The Surface Forgets',epi:'You came back. The lights came back. Only you can feel that something out there stayed behind, wearing your name like a borrowed coat.',panels:[]}
 ];
 var _loreSel='interlude';
 function openLore(){hideAllScreens();state='lore';document.getElementById('lore').classList.remove('hidden');renderLoreSide();selectLore(_loreSel);}
