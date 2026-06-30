@@ -241,15 +241,9 @@
 
   /* level up */
   #levelup{background:radial-gradient(100% 100% at 50% 40%, rgba(10,16,32,.55), rgba(5,7,15,.85))}
-  .lvl-header{background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
-    border:1px solid rgba(255,255,255,0.1);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.13);
-    padding:18px 32px 16px;margin-bottom:22px;display:flex;flex-direction:column;align-items:center;
-    animation:hudIn .4s cubic-bezier(.2,1,.3,1)}
   .lvl-title{font-family:var(--disp);font-weight:900;letter-spacing:.2em;font-size:clamp(20px,4vw,30px);
     color:var(--gold);text-shadow:0 0 28px rgba(255,194,75,.4);margin-bottom:6px}
   .lvl-sub{color:var(--dim);letter-spacing:.3em;font-size:12px;margin-bottom:26px;text-transform:uppercase}
-  .lvl-header .lvl-title,.lvl-header .lvl-sub{margin-bottom:0}
-  .lvl-header .lvl-title{margin-bottom:4px}
   .cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:780px;max-height:64vh;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:4px 4px 18px}
   .card{width:222px;min-height:188px;background:rgba(16,23,42,0.55);-webkit-backdrop-filter:blur(18px) saturate(1.35);backdrop-filter:blur(18px) saturate(1.35);
     border:1px solid rgba(255,255,255,0.1);border-radius:15px;padding:20px;cursor:pointer;display:flex;flex-direction:column;
@@ -321,23 +315,8 @@
   .iconbtn:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,229,212,0.12)}
   .iconbtn:active{transform:scale(.88)}
 
-  /* bottom-center HULL bar — sits directly above the weapon/passive dock */
-  #hudHullBar{position:absolute;left:50%;bottom:calc(108px + var(--ins-bottom));transform:translateX(-50%);
-    z-index:10;display:flex;flex-direction:column;align-items:center;gap:3px;pointer-events:none;
-    width:min(78vw,360px);font-family:var(--ui);animation:hullIn .4s cubic-bezier(.2,1,.3,1)}
-  @keyframes hullIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-  .hull-panel{width:100%;display:flex;align-items:center;gap:9px;background:rgba(14,20,38,0.5);
-    -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
-    border:1px solid rgba(255,255,255,0.1);border-radius:13px;padding:7px 13px;
-    box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.13)}
-  .hull-panel .vlabel{flex-shrink:0}
-  .hull-panel .vbar{flex:1;margin:0}
-  .hull-panel .vnum{flex-shrink:0;min-width:62px;text-align:right}
-  #hudHullBar .vsh{width:100%}
-  #hudHullBar .vsh .vbar{margin:0}
-
-  /* weapon dock — nudged up to clear the hull bar above it */
-  #dock{position:absolute;bottom:calc(54px + var(--ins-bottom));left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap;justify-content:center;max-width:94vw}
+  /* weapon dock */
+  #dock{position:absolute;bottom:calc(36px + var(--ins-bottom));left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:8px;pointer-events:none;flex-wrap:wrap;justify-content:center;max-width:94vw}
   .slot{width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:rgba(13,20,38,.72);
     display:flex;align-items:center;justify-content:center;font-size:21px;position:relative}
   .slot .pip{position:absolute;bottom:3px;right:4px;font-family:var(--disp);font-size:9px;font-weight:700;color:var(--mint)}
@@ -637,6 +616,9 @@
   <!-- HUD -->
   <div id="hud" class="hidden">
     <div class="hud-vitals">
+      <div class="vline"><span class="vlabel">HULL</span><span class="vnum" id="hptext">110 / 110</span></div>
+      <div class="vbar"><div id="hpfill" class="vfill vhp"></div></div>
+      <div class="vsh hidden" id="esbarwrap"><div class="vbar shbar"><div id="esfill" class="vfill ves"></div></div></div>
       <div class="vline"><span class="vlabel">REZ</span><span class="vnum" id="xptext">0 / 5</span></div>
       <div class="vbar"><div id="xpfill" class="vfill vxp"></div></div>
       <div class="hud-stats">
@@ -646,16 +628,6 @@
         <span class="hstat"><i>CR</i><b id="goldnum" class="gold">0</b></span>
       </div>
     </div>
-  </div>
-
-  <!-- Bottom-center vitals: HULL + active loadout, stacked just above the dock -->
-  <div id="hudHullBar" class="hidden">
-    <div class="hull-panel">
-      <span class="vlabel">HULL</span>
-      <div class="vbar hullbar"><div id="hpfillB" class="vfill vhp"></div></div>
-      <span class="vnum" id="hptextB">110 / 110</span>
-    </div>
-    <div class="vsh hidden" id="esbarwrapB"><div class="vbar shbar hullbar"><div id="esfillB" class="vfill ves"></div></div></div>
   </div>
   <div id="topright" class="hidden">
     <button class="iconbtn" id="buildbtn" title="Build (Tab)">&#8801;</button>
@@ -836,10 +808,8 @@
 
   <!-- Level up -->
   <div class="screen hidden" id="levelup">
-    <div class="lvl-header">
-      <div class="lvl-title" id="lvltitle">LEVEL UP</div>
-      <div class="lvl-sub" id="lvlsub">Choose an augment</div>
-    </div>
+    <div class="lvl-title" id="lvltitle">LEVEL UP</div>
+    <div class="lvl-sub" id="lvlsub">Choose an augment</div>
     <div class="cards" id="cardlist"></div>
     <button class="btn ghost" id="rerollbtn" style="margin-top:16px">⟳ Reroll</button>
   </div>
@@ -2816,12 +2786,12 @@ function drawPlayer(){const p=player;
  ctx.save();ctx.globalAlpha=0.05;ctx.strokeStyle='#00e5d4';ctx.beginPath();ctx.arc(p.x,p.y,p.pickupRange,0,TAU);ctx.stroke();ctx.restore();}
 
 /* ===== HUD ===== */
-function showHUD(on){if(IS_TOUCH&&document.getElementById('dodgebtn')){const db=document.getElementById('dodgebtn');const cid=player&&player.char?player.char.id:'';db.textContent=cid==='yujin'?'PARRY':(cid==='vanguard'?'GUARD':(cid==='rhino'?'CHARGE':(cid==='sorcerer'?'HEX':(cid==='sentinel'?'':'DODGE'))));db.classList.toggle('hidden',!on||cid==='sentinel');}['hud','hudHullBar','topright','dock','threatwrap'].forEach(id=>document.getElementById(id).classList.toggle('hidden',!on));}
+function showHUD(on){if(IS_TOUCH&&document.getElementById('dodgebtn')){const db=document.getElementById('dodgebtn');const cid=player&&player.char?player.char.id:'';db.textContent=cid==='yujin'?'PARRY':(cid==='vanguard'?'GUARD':(cid==='rhino'?'CHARGE':(cid==='sorcerer'?'HEX':(cid==='sentinel'?'':'DODGE'))));db.classList.toggle('hidden',!on||cid==='sentinel');}['hud','topright','dock','threatwrap'].forEach(id=>document.getElementById(id).classList.toggle('hidden',!on));}
 function updateHUD(){
  const tf=document.getElementById('threatfill');if(tf){const pct=Math.max(0,Math.min(100,(1-swarmT/Math.max(1,swarmMax))*100));tf.style.width=pct+'%';const tw=document.getElementById('threatwrap');if(tw)tw.classList.toggle('hot',pct>85);const hh=document.getElementById('threatheat');if(hh)hh.style.opacity=String(0.35+pct/150);}
- document.getElementById('hpfillB').style.width=(player.hp/player.maxHp*100)+'%';
- const ewB=document.getElementById('esbarwrapB');if(ewB){ewB.classList.toggle('hidden',!(player.esMax>0));if(player.esMax>0)document.getElementById('esfillB').style.width=(player.es/player.esMax*100)+'%';}
- document.getElementById('hptextB').textContent=`${Math.ceil(player.hp)} / ${player.maxHp}`+(player.esMax>0?`  ◈ ${Math.ceil(player.es)}`:'');
+ document.getElementById('hpfill').style.width=(player.hp/player.maxHp*100)+'%';
+ const ew=document.getElementById('esbarwrap');if(ew){ew.classList.toggle('hidden',!(player.esMax>0));if(player.esMax>0)document.getElementById('esfill').style.width=(player.es/player.esMax*100)+'%';}
+ document.getElementById('hptext').textContent=`${Math.ceil(player.hp)} / ${player.maxHp}`+(player.esMax>0?`  ◈ ${Math.ceil(player.es)}`:'');
  document.getElementById('xpfill').style.width=(player.xp/player.xpNext*100)+'%';
  document.getElementById('xptext').textContent=`${player.xp} / ${player.xpNext}`;
  const m=Math.floor(time/60),s=Math.floor(time%60);
