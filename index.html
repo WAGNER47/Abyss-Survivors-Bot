@@ -103,14 +103,14 @@
   #buildcard .bw{display:flex;justify-content:space-between;font-size:12.5px;color:#dbe8ff;padding:3px 0}
   #buildcard .bw .st{color:#ffd24b;letter-spacing:1px}
   #buildcard .syn{color:#9bff5c;font-family:var(--disp);font-size:10px;letter-spacing:.14em;padding:2px 0}
-  #killfeed{position:absolute;right:calc(12px + var(--ins-right));top:calc(var(--ins-top) + 158px);z-index:8;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none}
+  #killfeed{position:absolute;left:calc(12px + var(--ins-left));top:calc(var(--ins-top) + 62px);z-index:8;display:flex;flex-direction:column;gap:6px;align-items:flex-start;pointer-events:none}
   .kf{font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:.08em;padding:6px 11px;border-radius:11px;
     background:rgba(14,20,38,0.46);-webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);
-    border:1px solid rgba(255,255,255,0.08);border-right:2px solid var(--kc,#ffd24b);color:var(--kc,#ffd24b);
+    border:1px solid rgba(255,255,255,0.08);border-left:2px solid var(--kc,#ffd24b);color:var(--kc,#ffd24b);
     text-shadow:0 0 8px var(--kc,#ffd24b);box-shadow:0 4px 16px rgba(0,0,0,0.36),inset 0 1px 0 rgba(255,255,255,0.08);
     animation:kfin .34s cubic-bezier(.2,1.3,.3,1),kfout .45s ease-in 2.25s forwards}
-  @keyframes kfin{0%{transform:translateX(34px) scale(.82);opacity:0}55%{opacity:1}100%{transform:translateX(0) scale(1);opacity:1}}
-  @keyframes kfout{to{transform:translateX(22px) scale(.95);opacity:0}}
+  @keyframes kfin{0%{transform:translateX(-34px) scale(.82);opacity:0}55%{opacity:1}100%{transform:translateX(0) scale(1);opacity:1}}
+  @keyframes kfout{to{transform:translateX(-22px) scale(.95);opacity:0}}
   #threatwrap{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(9px + var(--ins-bottom));z-index:9;display:flex;align-items:center;gap:9px;width:min(680px,92vw);pointer-events:none}
   #threatwrap .tlabel{font-family:var(--disp);font-size:10px;letter-spacing:.2em;color:var(--teal);text-shadow:0 0 8px rgba(0,229,212,.5)}
   #threatwrap .tbar{flex:1;height:13px;border:1px solid rgba(0,229,212,.45);clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);overflow:hidden;background:rgba(8,13,26,.85) repeating-linear-gradient(90deg,rgba(0,229,212,.10) 0 2px,transparent 2px 12px)}
@@ -137,7 +137,7 @@
    #menu .transmission{display:none}
   }
   @keyframes heatpulse{from{opacity:.55;transform:scale(1)}to{opacity:1;transform:scale(1.25)}}
-  #dodgebtn{position:fixed;right:calc(22px + var(--ins-right));bottom:calc(96px + var(--ins-bottom));z-index:40;width:96px;height:96px;border-radius:50%;border:2px solid var(--teal);background:rgba(0,229,212,0.12);color:var(--teal);font-family:var(--disp);font-size:15px;letter-spacing:.1em;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
+  #dodgebtn{position:fixed;right:calc(22px + var(--ins-right));bottom:calc(140px + var(--ins-bottom));z-index:40;width:96px;height:96px;border-radius:50%;border:2px solid var(--teal);background:rgba(0,229,212,0.12);color:var(--teal);font-family:var(--disp);font-size:15px;letter-spacing:.1em;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;touch-action:none;user-select:none}
   #dodgebtn:active{background:rgba(0,229,212,0.3);transform:scale(0.94)}
   #dodgebtn.cooling{opacity:0.4;border-color:#6680a8;color:#6680a8}
   .deathline{max-width:520px;margin:6px 0 4px;font-family:var(--ui);font-style:italic;font-size:16px;color:#ff8a9b;letter-spacing:.02em;text-align:center;line-height:1.5}
@@ -289,28 +289,40 @@
 
   .go-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 
-  /* ===== IN-GAME HUD (glass redesign) ===== */
-  #hud{position:absolute;top:0;left:0;z-index:10;padding:calc(10px + var(--ins-top)) 0 0 calc(10px + var(--ins-left));pointer-events:none;font-family:var(--ui)}
-  .hud-vitals{width:min(52vw,290px);background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.1);border-radius:15px;box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.13);padding:9px 11px 8px;display:flex;flex-direction:column;gap:3px;animation:hudIn .4s cubic-bezier(.2,1,.3,1)}
-  @keyframes hudIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+  /* ===== IN-GAME HUD (glass, 3-zone) ===== */
+  /* shared bar bits */
   .vline{display:flex;justify-content:space-between;align-items:baseline;line-height:1}
   .vlabel{font-family:var(--disp);font-size:8.5px;font-weight:700;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
-  .vnum{font-family:var(--disp);font-size:10.5px;font-weight:700;color:var(--ink);letter-spacing:.01em;font-variant-numeric:tabular-nums}
-  .vbar{height:8px;border-radius:5px;background:rgba(4,8,18,0.72);overflow:hidden;position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,0.45);margin:2px 0 3px}
-  .vbar.shbar{height:5px;margin:0 0 2px}
+  .vnum{font-family:var(--disp);font-size:10px;font-weight:700;color:var(--ink);letter-spacing:.01em;font-variant-numeric:tabular-nums}
+  .vbar{height:8px;border-radius:5px;background:rgba(4,8,18,0.72);overflow:hidden;position:relative;box-shadow:inset 0 1px 2px rgba(0,0,0,0.45)}
+  .vbar.shbar{height:5px}
   .vfill{position:absolute;left:0;top:0;height:100%;width:0%;border-radius:5px;transition:width .14s linear}
   .vhp{background:linear-gradient(90deg,#ff3d56,#ff8a6e);box-shadow:0 0 10px rgba(255,90,110,.55)}
   .vxp{background:linear-gradient(90deg,#3ddc97,#6cffb0);box-shadow:0 0 10px rgba(108,255,176,.5)}
   .ves{background:linear-gradient(90deg,#5cd0ff,#bfe9ff);box-shadow:0 0 9px rgba(155,208,255,.6)}
-  .hud-stats{display:flex;align-items:center;gap:9px;margin-top:3px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.08);flex-wrap:wrap}
-  .hstat{display:flex;align-items:center;gap:4px}
-  .hstat i{font-style:normal;font-size:7.5px;letter-spacing:.1em;color:var(--dim);font-weight:700;font-family:var(--disp)}
-  .hstat b{font-size:12px;font-weight:800;color:var(--ink);font-family:var(--disp);font-variant-numeric:tabular-nums}
-  .hstat.hdepth b{font-size:14.5px;color:#eaf4ff;text-shadow:0 0 14px rgba(0,229,212,.4)}
   #goldnum.gold{color:var(--gold)}
   #lvlnum{color:var(--mint)}
-  /* control cluster (glass) */
-  #topright{position:absolute;top:calc(10px + var(--ins-top));right:calc(10px + var(--ins-right));z-index:11;display:flex;gap:5px;padding:5px;border-radius:14px;background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.12)}
+  /* HP + shield: centered, just above the dock */
+  #hud{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(84px + var(--ins-bottom));z-index:10;pointer-events:none;font-family:var(--ui);width:min(70vw,340px)}
+  #hud .hud-vitals{background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.1);border-radius:14px;box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.13);padding:7px 12px;display:flex;flex-direction:column;gap:3px;animation:hudInUp .4s cubic-bezier(.2,1,.3,1)}
+  #hud .vbar{margin-top:2px}
+  #hud .vbar.shbar{margin-top:2px}
+  @keyframes hudInUp{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+  /* stats + resonance: top-right glass */
+  #hudstats{position:absolute;top:calc(10px + var(--ins-top));right:calc(10px + var(--ins-right));z-index:10;pointer-events:none;font-family:var(--ui);width:min(52vw,262px);
+    background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.13);border-radius:14px;padding:8px 11px;display:flex;flex-direction:column;gap:5px;animation:hudIn .4s cubic-bezier(.2,1,.3,1)}
+  @keyframes hudIn{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+  .st-top{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+  .st-depth{margin-right:auto}
+  .st-depth b{font-family:var(--disp);font-size:16px;font-weight:800;color:#eaf4ff;text-shadow:0 0 14px rgba(0,229,212,.4);font-variant-numeric:tabular-nums}
+  .st-chip{display:flex;align-items:baseline;gap:4px}
+  .st-chip i{font-style:normal;font-size:7.5px;letter-spacing:.1em;color:var(--dim);font-weight:700;font-family:var(--disp)}
+  .st-chip b{font-size:12px;font-weight:800;color:var(--ink);font-family:var(--disp);font-variant-numeric:tabular-nums}
+  .st-rez{display:flex;align-items:center;gap:7px}
+  .st-rez .vbar{flex:1}
+  .st-rez .vnum{min-width:46px;text-align:right}
+  /* control cluster (glass): top-left */
+  #topright{position:absolute;top:calc(10px + var(--ins-top));left:calc(10px + var(--ins-left));z-index:11;display:flex;gap:5px;padding:5px;border-radius:14px;background:rgba(14,20,38,0.5);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 26px rgba(0,0,0,0.42),inset 0 1px 0 rgba(255,255,255,0.12)}
   .iconbtn{pointer-events:auto;width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.045);color:var(--ink);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .12s,background .15s,border-color .15s}
   .iconbtn:hover{border-color:var(--teal);color:var(--teal);background:rgba(0,229,212,0.12)}
   .iconbtn:active{transform:scale(.88)}
@@ -323,7 +335,7 @@
   .slot.pass{border-style:dashed;opacity:.92}
 
   #pausemsg{font-family:var(--disp);letter-spacing:.3em;color:var(--teal);font-size:22px}
-  #toast{position:fixed;top:calc(var(--ins-top) + 134px);left:50%;transform:translateX(-50%);z-index:12;
+  #toast{position:fixed;top:calc(var(--ins-top) + 84px);left:50%;transform:translateX(-50%);z-index:12;
     max-width:min(76vw,400px);text-align:center;font-family:var(--disp);font-weight:700;letter-spacing:.13em;
     font-size:12px;line-height:1.32;color:#ffe7b0;text-transform:uppercase;padding:9px 17px;border-radius:14px;
     background:rgba(26,21,8,0.46);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);
@@ -619,14 +631,19 @@
       <div class="vline"><span class="vlabel">HULL</span><span class="vnum" id="hptext">110 / 110</span></div>
       <div class="vbar"><div id="hpfill" class="vfill vhp"></div></div>
       <div class="vsh hidden" id="esbarwrap"><div class="vbar shbar"><div id="esfill" class="vfill ves"></div></div></div>
-      <div class="vline"><span class="vlabel">REZ</span><span class="vnum" id="xptext">0 / 5</span></div>
+    </div>
+  </div>
+  <div id="hudstats" class="hidden">
+    <div class="st-top">
+      <span class="st-depth"><b id="clock">0m</b></span>
+      <span class="st-chip"><i id="lvlk">LV</i><b id="lvlnum">1</b></span>
+      <span class="st-chip"><i>KILLS</i><b id="killnum">0</b></span>
+      <span class="st-chip"><i>CR</i><b id="goldnum" class="gold">0</b></span>
+    </div>
+    <div class="st-rez">
+      <span class="vlabel">REZ</span>
       <div class="vbar"><div id="xpfill" class="vfill vxp"></div></div>
-      <div class="hud-stats">
-        <span class="hstat hdepth"><b id="clock">0m</b></span>
-        <span class="hstat"><i id="lvlk">LV</i><b id="lvlnum">1</b></span>
-        <span class="hstat"><i>KILLS</i><b id="killnum">0</b></span>
-        <span class="hstat"><i>CR</i><b id="goldnum" class="gold">0</b></span>
-      </div>
+      <span class="vnum" id="xptext">0 / 5</span>
     </div>
   </div>
   <div id="topright" class="hidden">
@@ -2553,7 +2570,7 @@ function render(){
   else ctx.fillText(t.val,t.x,t.y);ctx.restore();}
  ctx.restore();
  if(obj&&state==='playing'){ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);
-  const small=W<560,pw=small?Math.min(340,W-20):420,ph=small?58:64,ox=W/2,oy=TGINS.top+196+ph/2;
+  const small=W<560,pw=small?Math.min(340,W-20):420,ph=small?58:64,ox=W/2,oy=TGINS.top+144+ph/2;
   const urgent=obj.t<6&&obj.kind!=='nohit',pulse=urgent?0.5+0.5*Math.sin(time*14):1;
   const prog=obj.kind==='nohit'?Math.max(0,obj.t)/18:Math.min(1,obj.count/obj.target);
   ctx.globalAlpha=0.82;ctx.fillStyle='rgba(8,16,30,0.85)';ctx.fillRect(ox-pw/2,oy-ph/2,pw,ph);
@@ -2602,10 +2619,10 @@ function drawMenuArmBanner(){
  const sub=(menuArmT<=0&&inDanger)?'GET TO SAFETY':'CHOOSE YOUR REWARD';
  ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.textAlign='center';ctx.textBaseline='middle';
  const small=W<560,pw=small?Math.min(320,W-26):360,ph=small?46:52;
- const ox=W/2,oy=TGINS.top+268+ph/2;
+ const ox=W/2,oy=TGINS.top+210+ph/2;
  const pulse=0.6+0.4*Math.sin(_now*0.012);
- // soft top vignette flash so it reads even in a busy fight
- ctx.globalAlpha=0.10*pulse;ctx.fillStyle=col;ctx.fillRect(0,0,W,oy+ph);
+ // soft full-canvas wash (top + bottom vignette in the banner colour) so it reads in a busy fight
+ {const _fg=ctx.createLinearGradient(0,0,0,H);_fg.addColorStop(0,hexA(col,0.16*pulse));_fg.addColorStop(0.42,hexA(col,0.02*pulse));_fg.addColorStop(0.58,hexA(col,0.02*pulse));_fg.addColorStop(1,hexA(col,0.16*pulse));ctx.globalAlpha=1;ctx.fillStyle=_fg;ctx.fillRect(0,0,W,H);}
  // panel
  ctx.globalAlpha=0.9;ctx.fillStyle='rgba(8,14,28,0.9)';
  ctx.beginPath();const rr=12,x0=ox-pw/2,y0=oy-ph/2;ctx.moveTo(x0+rr,y0);ctx.arcTo(x0+pw,y0,x0+pw,y0+ph,rr);ctx.arcTo(x0+pw,y0+ph,x0,y0+ph,rr);ctx.arcTo(x0,y0+ph,x0,y0,rr);ctx.arcTo(x0,y0,x0+pw,y0,rr);ctx.closePath();ctx.fill();
@@ -2786,7 +2803,7 @@ function drawPlayer(){const p=player;
  ctx.save();ctx.globalAlpha=0.05;ctx.strokeStyle='#00e5d4';ctx.beginPath();ctx.arc(p.x,p.y,p.pickupRange,0,TAU);ctx.stroke();ctx.restore();}
 
 /* ===== HUD ===== */
-function showHUD(on){if(IS_TOUCH&&document.getElementById('dodgebtn')){const db=document.getElementById('dodgebtn');const cid=player&&player.char?player.char.id:'';db.textContent=cid==='yujin'?'PARRY':(cid==='vanguard'?'GUARD':(cid==='rhino'?'CHARGE':(cid==='sorcerer'?'HEX':(cid==='sentinel'?'':'DODGE'))));db.classList.toggle('hidden',!on||cid==='sentinel');}['hud','topright','dock','threatwrap'].forEach(id=>document.getElementById(id).classList.toggle('hidden',!on));}
+function showHUD(on){if(IS_TOUCH&&document.getElementById('dodgebtn')){const db=document.getElementById('dodgebtn');const cid=player&&player.char?player.char.id:'';db.textContent=cid==='yujin'?'PARRY':(cid==='vanguard'?'GUARD':(cid==='rhino'?'CHARGE':(cid==='sorcerer'?'HEX':(cid==='sentinel'?'':'DODGE'))));db.classList.toggle('hidden',!on||cid==='sentinel');}['hud','hudstats','topright','dock','threatwrap'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.toggle('hidden',!on);});}
 function updateHUD(){
  const tf=document.getElementById('threatfill');if(tf){const pct=Math.max(0,Math.min(100,(1-swarmT/Math.max(1,swarmMax))*100));tf.style.width=pct+'%';const tw=document.getElementById('threatwrap');if(tw)tw.classList.toggle('hot',pct>85);const hh=document.getElementById('threatheat');if(hh)hh.style.opacity=String(0.35+pct/150);}
  document.getElementById('hpfill').style.width=(player.hp/player.maxHp*100)+'%';
