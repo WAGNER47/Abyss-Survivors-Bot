@@ -1072,7 +1072,7 @@ const ELEMENTS={kinetic:{name:'Kinetic',icon:'◆',color:'#cdd6e8',st:'bleed',po
 const STATUS={inferno:{dps:13,color:'#ff9b3c'},plaguefire:{dps:24,color:'#b6ff5c'},burn:{dps:4,color:'#ff7a3c'},bleed:{dps:2.2,color:'#ff3b5e'},shock:{dps:1.6,color:'#ffe27a'},corr:{dps:2,color:'#9bff5c'},rad:{dps:1.8,color:'#b6ff3c'},chill:{dps:0,color:'#7fdfff'},mark:{dps:0,color:'#b8a3ff'},weak:{dps:0.5,color:'#ff5cf0'}};
 const STEL={inferno:'fire',plaguefire:'toxic',burn:'fire',chill:'ice',shock:'lightning',mark:'void',weak:'plasma',corr:'toxic',rad:'radiation',bleed:'kinetic'};
 function eSt(e){return e.st||(e.st={});}
-function addSt(e,key,amt){if(key==='chill'&&player&&player.chillExtra>0&&!isBig(e))amt+=player.chillExtra;const s=eSt(e),o=s[key]||(s[key]={n:0,t:0});o.n=Math.min(600,o.n+amt);o.t=4;
+function addSt(e,key,amt){if(key==='chill'&&player&&player.chillExtra>0&&!isBig(e))amt+=player.chillExtra;const s=eSt(e),fresh=!s[key],o=s[key]||(s[key]={n:0,t:0});o.n=Math.min(600,o.n+amt);o.t=4;if(fresh&&amt>=1){const _el=STEL[key];if(_el&&ELEMENTS[_el]&&particles.length<430)burst(e.x,e.y,ELEMENTS[_el].color,3);}
  if(key==='burn'&&o.n>=12&&!s.inferno){const inf=s.inferno=(s.inferno||{n:0,t:0});inf.n=Math.min(200,Math.ceil(o.n/3));inf.t=5;delete s.burn;spawnText(e.x,e.y-e.r-16,'INFERNO','#ff9b3c',true);ring(e.x,e.y,40,'#ff9b3c');}
  if(key==='burn'&&o.n>=300&&!e._ignited){e._ignited=true;toast('THE SCREEN IGNITES');screenShake=10;for(const x of enemies)if(!x._dead)addSt(x,'burn',60);}}
 function applyEl(e,el,amt){const E=ELEMENTS[el];if(!E||e._dead)return;
@@ -1270,7 +1270,7 @@ function drawZones(){
    if(QX&&QX.glow){ctx.globalAlpha=0.3*a;ctx.strokeStyle=col;ctx.shadowColor=col;ctx.shadowBlur=10;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(z.x,z.y,z.r*(0.7+0.3*Math.sin(time*3)),0,TAU);ctx.stroke();}}
   ctx.restore();}
 }
-function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO','fire|lightning':'SWIRL','kinetic|void':'CRYSTALLIZE','plasma|toxic':'BLOOM','ice|toxic':'CORROSIVE MIST','lightning|void':'MAGNETIZE','fire|radiation':'IRRADIATE'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult*(player.reactAmp||1)*1.6,partner=eSt(e)[bKey],used=Math.max(1,partner.n*0.45);
+function tryReact(e,a,b,bKey){const key=[a,b].sort().join('|'),__k=key;if(rs){rs.reacts=rs.reacts||{};rs.reacts[__k]=(rs.reacts[__k]||0)+1;}if(feedReactT<=0){feedReactT=0.9;const __RN={'fire|ice':'THERMAL SHOCK','fire|toxic':'COMBUSTION','lightning|toxic':'CHAIN STORM','lightning|plasma':'OVERLOAD','fire|void':'ENTROPY','radiation|toxic':'MUTATION','ice|lightning':'SUPERCONDUCT','ice|void':'ABSOLUTE ZERO','fire|lightning':'SWIRL','kinetic|void':'CRYSTALLIZE','plasma|toxic':'BLOOM','ice|toxic':'CORROSIVE MIST','lightning|void':'MAGNETIZE','fire|radiation':'IRRADIATE'};if(__RN[__k])pushFeed(__RN[__k],'#9bff5c');}const _nowR=performance.now();if(_nowR>=_reactFbT){_reactFbT=_nowR+120;sfx('react');screenShake=Math.max(screenShake,3.5);let _grp=0;for(const _n of queryNear(e.x,e.y,90)){if(!_n._dead)_grp++;if(_grp>=4)break;}if(_grp>=4)hapPop();}const __unused=0,dm=player.damageMult*(player.reactAmp||1)*1.6,partner=eSt(e)[bKey],used=Math.max(1,partner.n*0.45);
  const R={
  'fire|ice':()=>{const fr=(e.frozenT>0||(e.st&&e.st.chill&&e.st.chill.n>=8));const R0=fr?70:50;dealDamage(e,(14+6*used)*dm*(fr?1.6:1));ring(e.x,e.y,R0,'#bfeaff');ring(e.x,e.y,R0*0.6,'#fff');radialImpulse(e.x,e.y,R0+30,fr?1200:700);if(e.frozenT>0)e.frozenT=0;burst(e.x,e.y,'#bfeaff',fr?18:8);spawnText(e.x,e.y-e.r-16,fr?'SHATTER':'THERMAL SHOCK','#bfeaff',true);},
  'fire|toxic':()=>{ring(e.x,e.y,95,'#ff7a3c');for(const x of queryNear(e.x,e.y,95)){if(x._dead)continue;dealDamage(x,(10+3*used)*dm,{tick:x!==e});addSt(x,'burn',4);}addZone({type:'firepool',x:e.x,y:e.y,r:78,life:4.5,el:'fire',elAmt:3,dps:(10+player.level*0.7)*dm,color:'#ff7a3c'});spawnText(e.x,e.y-e.r-16,'COMBUSTION','#ff7a3c',true);},
@@ -1410,7 +1410,7 @@ const EVOS={
  beam:{names:['Twin Beam','Prism Beam','Gamma Beam','Annihilator'],els:['radiation','fire']},
  iceaoe:{names:['Shard Nova','Glacier Nova','Cryo Storm','Absolute Nova'],els:['void','lightning']},
 };
-function wEls(w){const out=[WEAPON_EL[w.id]||'kinetic'];if(w.inf)out.push(...w.inf);const ev=w.evo||0,g=(EVOS[w.id]&&EVOS[w.id].els)||['plasma','void'];if(ev>=3)out.push(g[0]);if(ev>=4)out.push(g[1]);return out;}
+function wEls(w){return [(w.inf&&w.inf[0])||WEAPON_EL[w.id]||'kinetic'];}
 function evoName(id,tier){const n=EVOS[id]&&EVOS[id].names;return n?n[tier-1]:WEAPONS[id].name+' '+['Mk II','Mk III','Prime','Omega'][tier-1];}
 let CURW=null,CURP=null,DT=0;
 const DODGE={vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.85},sniper:{d:340,cd:1.4},vyper:{d:300,cd:1.3},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99}};
@@ -1521,7 +1521,7 @@ const BOONS=[
 {name:'+40 Energy Shield',desc:'One more layer of \'not today.\' +40 shield.',color:'#9bd0ff',apply(){player.perm.es+=40;}},
 {name:'Heal 1.2% per Kill',desc:'Kill, heal, repeat. The deep pays its debts.',color:'#ff5a6e',apply(){player.perm.killHeal+=0.012;}},
 {name:'Evolution Catalyst',desc:'Push a maxed gun past its limits. Watch it become something else.',color:'#ffd24b',can(){return player.weapons.some(w=>w.level>=WEAPONS[w.id].max&&(w.evo||0)<4);},apply(){const c=player.weapons.filter(w=>w.level>=WEAPONS[w.id].max&&(w.evo||0)<4);if(c.length){const w=pick(c);w.evo=(w.evo||0)+1;toast('EVOLVED: '+evoName(w.id,w.evo).toUpperCase());}}},
-{name:'Elemental Graft',desc:'Splice a new element into the chamber. Mix something dangerous.',color:'#9bff5c',can(){return player.weapons.some(w=>(w.inf||[]).length<2);},apply(){const c=player.weapons.filter(w=>(w.inf||[]).length<2);if(c.length){const w=pick(c);const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate&&!(w.inf||[]).includes(el));if(opts.length)(w.inf||(w.inf=[])).push(pick(opts));}}},
+{name:'Elemental Graft',desc:'Lock an element into a weapon that has none. Choose your reactions.',color:'#9bff5c',can(){return player.weapons.some(w=>!(w.inf&&w.inf.length));},apply(){const c=player.weapons.filter(w=>!(w.inf&&w.inf.length));if(c.length){const w=pick(c);const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate);if(opts.length)w.inf=[pick(opts)];}}},
 {name:'Phoenix Protocol',desc:'Die once, get up anyway. The dark isn\'t done with you. Revive at 50%.',color:'#ff7a3c',can(){return !player.phoenix;},apply(){player.phoenix=true;}},
 {name:'Titan Slayer',desc:'The big ones bleed too. +35% to anything that thinks it\'s a boss.',color:'#c77bff',can(){return (player.perm.titanMul||1)<1.8;},apply(){player.perm.titanMul=(player.perm.titanMul||1)*1.35;}},
 {name:'Event Ward',desc:'Stand in the storm and grin. 35% less hazard pain, 40% less black hole pull.',color:'#b07bff',can(){return (player.perm.hazardRes||0)<0.7;},apply(){player.perm.hazardRes=Math.min(0.7,(player.perm.hazardRes||0)+0.35);}},
@@ -2840,7 +2840,7 @@ function buildOffers(){const pool=[];
  player.weapons.forEach(w=>{
   if(w.level<WEAPONS[w.id].max)pool.push({type:'wlvl',id:w.id});
   else if((w.evo||0)<4)pool.push({type:'evo',id:w.id},{type:'evo',id:w.id});
-  if((w.inf||[]).length<2){const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate&&!(w.inf||[]).includes(el));if(opts.length){pool.push({type:'infuse',id:w.id,el:pick(opts)});pool.push({type:'infuse',id:w.id,el:pick(opts)});}}});
+  if(!(w.inf&&w.inf.length)){const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate);if(opts.length){const _e1=pick(opts),_e2=pick(opts.filter(x=>x!==_e1));pool.push({type:'infuse',id:w.id,el:_e1});if(_e2)pool.push({type:'infuse',id:w.id,el:_e2});}}});
  if(player.weapons.length<BAL.weaponSlots)for(const id in WEAPONS){if(!player.weapons.find(w=>w.id===id))pool.push({type:'wnew',id});}
  for(const id in player.passives){if(player.passives[id]<PASSIVES[id].max)pool.push({type:'plvl',id});}
  if(Object.keys(player.passives).length<BAL.passiveSlots)for(const id in PASSIVES){if(!(id in player.passives))pool.push({type:'pnew',id});}
@@ -2848,19 +2848,19 @@ for(let i=pool.length-1;i>0;i--){const j=randi(0,i);[pool[i],pool[j]]=[pool[j],p
  // EARLY GAME: teach builds. Before level 12, float new weapons/passives to the front so
  // players see variety. After that, normal shuffled odds (vets get no special treatment).
  if(player.level<20){pool.sort((a,b)=>{const av=(a.type==='infuse')?0:((a.type==='wnew'||a.type==='pnew')?1:2);const bv=(b.type==='infuse')?0:((b.type==='wnew'||b.type==='pnew')?1:2);return av-bv;});}
- const out=[];let _infN=0;for(const o of pool){if(out.length>=3)break;if(o.type==='infuse'){if(_infN>=2)continue;_infN++;}out.push(o);}
+ const out=[];let _infN=0;const _seen=new Set();for(const o of pool){if(out.length>=3)break;const _sig=o.type+':'+(o.id||'')+':'+(o.el||'');if(_seen.has(_sig))continue;if(o.type==='infuse'){if(_infN>=2||_seen.has('EL:'+o.el))continue;_infN++;_seen.add('EL:'+o.el);}_seen.add(_sig);out.push(o);}
  if(out.length)while(out.length<3)out.push(Math.random()<0.5?{type:'heal'}:{type:'gold'});return out;}
 function offerCard(o){
  if(o.type==='wlvl'||o.type==='wnew'){const d=WEAPONS[o.id],lv=o.type==='wlvl'?player.weapons.find(w=>w.id===o.id).level+1:1;const el=ELEMENTS[WEAPON_EL[o.id]||'kinetic'];return{color:d.color,icon:d.icon,tag:o.type==='wnew'?'NEW':'WEAPON',name:d.name,lvtxt:(o.type==='wnew'?'Acquire':`Lv ${lv-1} → ${lv}`)+' · '+el.name,desc:d.desc(lv)};}
- if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id),tier=(w.evo||0)+1,g=(EVOS[o.id]&&EVOS[o.id].els)||['plasma','void'];let extra='+35% power, +1 projectile, faster & wider.';if(tier===3)extra+=` Gains ${ELEMENTS[g[0]].name}.`;if(tier===4)extra+=` Gains ${ELEMENTS[g[1]].name}.`;return{color:'#ffd24b',icon:WEAPONS[o.id].icon,tag:'EVOLVE',name:evoName(o.id,tier),lvtxt:`Evolution ${tier} / 4`,desc:extra};}
- if(o.type==='infuse'){const E=ELEMENTS[o.el],d=WEAPONS[o.id];return{color:E.color,icon:E.icon,tag:'INFUSE',name:`${E.name} ${d.name}`,lvtxt:'Element Infusion',desc:`${d.name} now applies ${E.name} on hit. Fuels elemental reactions with other statuses.`};}
+ if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id),tier=(w.evo||0)+1;let extra='+35% power, +1 projectile, faster & wider.';return{color:'#ffd24b',icon:WEAPONS[o.id].icon,tag:'EVOLVE',name:evoName(o.id,tier),lvtxt:`Evolution ${tier} / 4`,desc:extra};}
+ if(o.type==='infuse'){const E=ELEMENTS[o.el],d=WEAPONS[o.id];return{color:E.color,icon:E.icon,tag:'INFUSE',name:`${E.name} ${d.name}`,lvtxt:'Locks Element (permanent)',desc:`${d.name} is now permanently ${E.name} \u2014 its only element. Pair it with a different element on another weapon to trigger reactions.`};}
  if(o.type==='plvl'||o.type==='pnew'){const d=PASSIVES[o.id],lv=o.type==='plvl'?player.passives[o.id]+1:1;return{color:d.color,icon:d.icon,tag:o.type==='pnew'?'NEW':'PASSIVE',name:d.name,lvtxt:o.type==='pnew'?'Acquire':`Lv ${lv-1} → ${lv}`,desc:d.desc(lv)};}
  if(o.type==='heal')return{color:'#ff8a6e',icon:'❤',tag:'RECOVER',name:'Repair Kit',lvtxt:'Instant',desc:'Restore 30% of your max hull.'};
  return{color:'#ffc24b',icon:'◈',tag:'SALVAGE',name:'Credit Cache',lvtxt:'Instant',desc:'Gain 25 credits.'};}
 function applyOffer(o){
  const ri=o.rar?RARITY.indexOf(o.rar):0;
  const heal=p=>player.hp=clamp(player.hp+player.maxHp*p,0,player.maxHp);
- const randEl=w=>{const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate&&!(w.inf||[]).includes(el));if(opts.length)(w.inf||(w.inf=[])).push(pick(opts));};
+ const randEl=w=>{if(w.inf&&w.inf.length)return;const innate=WEAPON_EL[w.id]||'kinetic';const opts=Object.keys(ELEMENTS).filter(el=>el!=='kinetic'&&el!==innate);if(opts.length)w.inf=[pick(opts)];};
  const gains=[1,1,2,2,3,2,2,3][ri];
  if(o.type==='wlvl'||o.type==='wnew'){
   let w;if(o.type==='wnew'){w={id:o.id,level:0,timer:0,orbAngle:0};player.weapons.push(w);}else w=player.weapons.find(x=>x.id===o.id);
@@ -2872,7 +2872,7 @@ function applyOffer(o){
   if(ri===6){w.cosmic=true;toast('COSMIC: '+WEAPONS[o.id].name.toUpperCase()+' FIRES TWIN VOLLEYS');}
   if(ri===7){w.evo=Math.min(4,(w.evo||0)+1);randEl(w);randEl(w);heal(1);toast('TRANSCENDENT ASCENSION');}}
  else if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id);w.evo=(w.evo||0)+1;toast('EVOLVED: '+evoName(o.id,w.evo).toUpperCase());if(ri>=5)w.level=WEAPONS[o.id].max;}
- else if(o.type==='infuse'){const w=player.weapons.find(x=>x.id===o.id);(w.inf||(w.inf=[])).push(o.el);if(ri>=5)randEl(w);}
+ else if(o.type==='infuse'){const w=player.weapons.find(x=>x.id===o.id);if(w&&!(w.inf&&w.inf.length)){w.inf=[o.el];toast(ELEMENTS[o.el].name.toUpperCase()+' LOCKED \u00b7 '+WEAPONS[o.id].name.toUpperCase());}}
  else if(o.type==='plvl'||o.type==='pnew'){
   const max=PASSIVES[o.id].max,cur=player.passives[o.id]||0;
   player.passives[o.id]=Math.min(max+(ri>=5?1:0),cur+gains);
