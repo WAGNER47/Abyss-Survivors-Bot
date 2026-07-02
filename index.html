@@ -2845,10 +2845,15 @@ function buildOffers(){const pool=[];
  for(const id in player.passives){if(player.passives[id]<PASSIVES[id].max)pool.push({type:'plvl',id});}
  if(Object.keys(player.passives).length<BAL.passiveSlots)for(const id in PASSIVES){if(!(id in player.passives))pool.push({type:'pnew',id});}
 for(let i=pool.length-1;i>0;i--){const j=randi(0,i);[pool[i],pool[j]]=[pool[j],pool[i]];}
- // EARLY GAME: teach builds. Before level 12, float new weapons/passives to the front so
- // players see variety. After that, normal shuffled odds (vets get no special treatment).
- if(player.level<20){pool.sort((a,b)=>{const av=(a.type==='infuse')?0:((a.type==='wnew'||a.type==='pnew')?1:2);const bv=(b.type==='infuse')?0:((b.type==='wnew'||b.type==='pnew')?1:2);return av-bv;});}
- const out=[];let _infN=0;const _seen=new Set();for(const o of pool){if(out.length>=3)break;const _sig=o.type+':'+(o.id||'')+':'+(o.el||'');if(_seen.has(_sig))continue;if(o.type==='infuse'){if(_infN>=2||_seen.has('EL:'+o.el))continue;_infN++;_seen.add('EL:'+o.el);}_seen.add(_sig);out.push(o);}
+ // RANDOM DRAWS with a safety net: the pool stays fully shuffled (variety every level),
+ // at most ONE element offer per draw, and before level 20 - while the player cannot yet
+ // trigger a reaction (fewer than 2 elemented weapons) - one element offer is guaranteed.
+ const out=[];let _infN=0;const _seen=new Set();for(const o of pool){if(out.length>=3)break;const _sig=o.type+':'+(o.id||'')+':'+(o.el||'');if(_seen.has(_sig))continue;if(o.type==='infuse'){if(_infN>=1||_seen.has('EL:'+o.el))continue;_infN++;_seen.add('EL:'+o.el);}_seen.add(_sig);out.push(o);}
+ if(player.level<20&&_infN===0){
+  const _elw=player.weapons.filter(w=>w.inf&&w.inf.length).length;
+  if(_elw<2){const g=pool.find(o=>o.type==='infuse'&&!_seen.has(o.type+':'+(o.id||'')+':'+(o.el||'')));
+   if(g){if(out.length>=3)out[out.length-1]=g;else out.push(g);}}
+ }
  if(out.length)while(out.length<3)out.push(Math.random()<0.5?{type:'heal'}:{type:'gold'});return out;}
 function offerCard(o){
  if(o.type==='wlvl'||o.type==='wnew'){const d=WEAPONS[o.id],lv=o.type==='wlvl'?player.weapons.find(w=>w.id===o.id).level+1:1;const el=ELEMENTS[WEAPON_EL[o.id]||'kinetic'];return{color:d.color,icon:d.icon,tag:o.type==='wnew'?'NEW':'WEAPON',name:d.name,lvtxt:(o.type==='wnew'?'Acquire':`Lv ${lv-1} → ${lv}`)+' · '+el.name,desc:d.desc(lv)};}
@@ -2872,7 +2877,7 @@ function applyOffer(o){
   if(ri===6){w.cosmic=true;toast('COSMIC: '+WEAPONS[o.id].name.toUpperCase()+' FIRES TWIN VOLLEYS');}
   if(ri===7){w.evo=Math.min(4,(w.evo||0)+1);randEl(w);randEl(w);heal(1);toast('TRANSCENDENT ASCENSION');}}
  else if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id);w.evo=(w.evo||0)+1;toast('EVOLVED: '+evoName(o.id,w.evo).toUpperCase());if(ri>=5)w.level=WEAPONS[o.id].max;}
- else if(o.type==='infuse'){const w=player.weapons.find(x=>x.id===o.id);if(w&&!(w.inf&&w.inf.length)){w.inf=[o.el];toast(ELEMENTS[o.el].name.toUpperCase()+' LOCKED \u00b7 '+WEAPONS[o.id].name.toUpperCase());}}
+ else if(o.type==='infuse'){const w=player.weapons.find(x=>x.id===o.id);if(w&&!(w.inf&&w.inf.length)){w.inf=[o.el];toast(ELEMENTS[o.el].name.toUpperCase()+' LOCKED \u00b7 '+WEAPONS[o.id].name.toUpperCase());if(ri>=1)heal(0.10);if(ri>=3)w.level=Math.min(WEAPONS[o.id].max,w.level+1);if(ri>=5){w.level=Math.min(WEAPONS[o.id].max,w.level+1);toast('RESONANT ELEMENT: '+WEAPONS[o.id].name.toUpperCase()+' SURGES');}}}
  else if(o.type==='plvl'||o.type==='pnew'){
   const max=PASSIVES[o.id].max,cur=player.passives[o.id]||0;
   player.passives[o.id]=Math.min(max+(ri>=5?1:0),cur+gains);
@@ -2893,7 +2898,7 @@ function openLevelUp(){
  document.getElementById('lvltitle').textContent=`LEVEL ${player.level}`;
  document.getElementById('lvlsub').textContent=pendingLevels>1?`Choose an augment · ${pendingLevels} pending`:'Choose an augment';
  sfx('levelup');
- offers.forEach((o,i)=>{o.rar=rollRarity();const c=offerCard(o),el=document.createElement('div');el.className='card';
+ offers.forEach((o,i)=>{o.rar=rollRarity();if(o.type==='infuse'&&player.level<20){const b=rollRarity();if(RARITY.indexOf(b)>RARITY.indexOf(o.rar))o.rar=b;}const c=offerCard(o),el=document.createElement('div');el.className='card';
   el.style.setProperty('--c',o.rar.color);el.style.animationDelay=(i*0.06)+'s';
   if(o.rar.id==='transcendent')el.style.boxShadow='0 0 34px rgba(255,255,255,.35)';
   el.innerHTML=`<div class="tag">${o.rar.name.toUpperCase()}</div><div class="ic">${c.icon}</div><h4>${c.name}</h4><div class="lv">${c.tag} · ${c.lvtxt}</div><p>${c.desc}</p>`;
@@ -2963,7 +2968,7 @@ async function gameOver(){
  document.getElementById('go-kills').textContent=kills;
  const bm=Math.floor(bestTime/60),bs=Math.floor(bestTime%60);
  document.getElementById('go-best').textContent=`${bm}:${String(bs).padStart(2,'0')}`;
- showHUD(false);recordRun(endgame?'Victory':'Defeat');
+ showHUD(false);try{recordRun(endgame?'Victory':'Defeat');}catch(e){}
  document.getElementById('gameover').classList.remove('hidden');
  }
 async function victory(){
@@ -2976,7 +2981,7 @@ async function victory(){
  document.getElementById('vy-level').textContent=player.level;
  document.getElementById('vy-kills').textContent=kills;
  document.getElementById('vy-gold').textContent=gold;
- showHUD(false);recordRun('Victory');
+ showHUD(false);try{recordRun('Victory');}catch(e){}
  document.getElementById('victory').classList.remove('hidden');
  }
 
@@ -3052,8 +3057,8 @@ function enterEndgame(){hideAllScreens();showHUD(true);endgame=true;runOver=fals
 function buildSnapshot(){
  const cores=[];for(const w of player.weapons){const e=WEAPON_EL[w.id];if(e&&CORE_NAME[e]&&!cores.includes(CORE_NAME[e]))cores.push(CORE_NAME[e]);for(const el of (w.inf||[]))if(CORE_NAME[el]&&!cores.includes(CORE_NAME[el]))cores.push(CORE_NAME[el]);}
  return{
-  weapons:player.weapons.map(w=>({name:w.evo?evoName(w.id,w.evo):WEAPONS[w.id].name,level:w.level,evo:w.evo||0,inf:(w.inf||[]).map(el=>ELEMENTS[el].name)})),
-  passives:Object.entries(player.passives).map(([id,lv])=>({name:PASSIVES[id].name,lv})),
+  weapons:player.weapons.map(w=>{const D=WEAPONS[w.id]||{};let nm;try{nm=w.evo?evoName(w.id,w.evo):(D.name||String(w.id));}catch(e){nm=D.name||String(w.id);}return{name:nm,level:w.level,evo:w.evo||0,inf:(w.inf||[]).map(el=>(ELEMENTS[el]&&ELEMENTS[el].name)||String(el))};}),
+  passives:Object.entries(player.passives).map(([id,lv])=>({name:(PASSIVES[id]&&PASSIVES[id].name)||String(id),lv})),
   relics:Object.keys(player.relics).map(id=>{const R=RELICS.find(r=>r.id===id);return R?R.name:id;}),
   boons:player.boonNames.slice(),
   cores};
@@ -3275,6 +3280,7 @@ function openCaptain(){
 }
 
 function recordRun(result){
+ let __snap=null;try{__snap=buildSnapshot();}catch(e){__snap=null;}
  const rec={
   date:Date.now(),result,char:chosenChar.name,
   time:Math.round(time),level:player.level,kills,
@@ -3282,7 +3288,7 @@ function recordRun(result){
   peak:Math.round(rs?rs.peak:0),total:Math.round(rs?rs.dmg:0),taken:Math.round(rs?rs.taken:0),
   gold,corruption:corruption||Math.floor(time/210),
   reacts:rs?Object.assign({},rs.reacts):{},
-  build:buildSnapshot()};
+  build:__snap};
  lastRecord=rec;runArchive.unshift(rec);if(runArchive.length>30)runArchive.length=30;saveRuns();
  NET.gamesPlayed=Math.max((NET.gamesPlayed||0)+1,runArchive.length);
  try{refreshNavHead();}catch(e){}
