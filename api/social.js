@@ -1,4 +1,8 @@
-// api/social.js  ·  ABYSS // SURVIVORS  ·  Friend system + presence + DURABLE STATS relay (V6)
+// api/social.js  ·  ABYSS // SURVIVORS  ·  Friend system + presence + DURABLE STATS relay (V7)
+// V7: durable CAPTAIN XP. The server now accrues captain XP per unique run (same ledger that
+// counts games played), stores it in stats.capXp / stats.cap, and returns light stats with the
+// friends list so ranks render instantly. Fixes: captain progression was silently dropped by
+// the V6 stats whitelist, so it never persisted and never reached friends.
 
 const URL_CANDIDATES = ['KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL', 'REDIS_REST_API_URL'];
 const TOK_CANDIDATES = ['KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN', 'REDIS_REST_API_TOKEN'];
@@ -33,6 +37,15 @@ function send(res, obj) {
 
 const maxNum = (a, b) => Math.max(Number(a) || 0, Number(b) || 0);
 
+// Captain XP for one run — MUST mirror the client's captainRunXP() formula exactly.
+function runXP(r) {
+  if (!r) return 0;
+  const lvl = Number(r.level) || 1, kills = Number(r.kills) || 0, boss = Number(r.boss) || 0,
+        elite = Number(r.elite) || 0, corr = Number(r.corruption) || 0, t = Number(r.time) || 0,
+        win = (r.result === 'Victory') ? 1 : 0;
+  return Math.round(lvl * 9 + kills * 0.6 + boss * 45 + elite * 7 + corr * 30 + t / 5 + win * 300);
+}
+
 // Merge incoming stats over stored stats. Cumulative / best-ever counters never go down,
 // so a stale client (e.g. after a relaunch where its local cache reset) can never erase progress.
 function mergeStats(prev, incoming) {
@@ -46,10 +59,9 @@ function mergeStats(prev, incoming) {
     gold:     maxNum(prev.gold,     incoming.gold),
     maxCorr:  maxNum(prev.maxCorr,  incoming.maxCorr),
     mainRuns: maxNum(prev.mainRuns, incoming.mainRuns),
-    // Captain progression (monotonic: rank + lifetime XP only ever climb). Without these the
-    // friend system can never show anyone's Captain level - they all read as DRIFTER / level 0.
-    cap:      maxNum(prev.cap,      incoming.cap),
-    capXp:    maxNum(prev.capXp,    incoming.capXp),
+    cap:      maxNum(prev.cap,      incoming.cap),      // captain LEVEL (monotonic)
+    // capXp is OWNED by the sync accrual below (ledger-based); mergeStats only carries it forward.
+    capXp:    Number(prev.capXp) || 0,
     // descriptive fields: take the latest non-empty, else keep previous
     main:     incoming.main     != null ? incoming.main     : (prev.main || '\u2014'),
     axes:     incoming.axes     || prev.axes     || [],
@@ -106,6 +118,14 @@ module.exports = async (req, res) => {
       const firstContact = (prev.gamesPlayed == null); // pre-V6 / brand-new record
       let gamesPlayed = Number(prev.gamesPlayed) || 0;
 
+      // ---- DURABLE CAPTAIN XP (ledger-accrued) ----
+      // Seed once from the client's best-known total (which already includes the runs in this
+      // payload), then grow incrementally: every genuinely NEW run id adds its exact run XP.
+      // Finally floor at the client's number so no legitimate local progress is ever lost.
+      const capSeeding = ((prev.stats && prev.stats.capXp) == null); // first time V7 sees this profile
+      let capXp = Number(prev.stats && prev.stats.capXp) || 0;
+      if (capSeeding) capXp = Number(inStats.capXp) || 0;
+
       const inRuns = Array.isArray(body.runs) ? body.runs : [];
       if (firstContact) {
         // Seed ONCE from the client's local sample (which already includes the runs being sent),
@@ -115,8 +135,12 @@ module.exports = async (req, res) => {
         for (const r of inRuns) { const d = r && r.date != null ? String(r.date) : null; if (d && !ridSet.has(d)) { ridSet.add(d); rids.push(d); } }
       } else {
         // Every genuinely new run date increments the durable counter exactly once.
-        for (const r of inRuns) { const d = r && r.date != null ? String(r.date) : null; if (d && !ridSet.has(d)) { ridSet.add(d); rids.push(d); gamesPlayed++; } }
+        for (const r of inRuns) { const d = r && r.date != null ? String(r.date) : null; if (d && !ridSet.has(d)) { ridSet.add(d); rids.push(d); gamesPlayed++; if (!capSeeding) capXp += runXP(r); } }
       }
+      // A client can legitimately know MORE XP than the ledger (e.g. runs older than its sync
+      // window, or the profile predates V7): take the max. Never additive, so never double-counts.
+      capXp = Math.max(capXp, Number(inStats.capXp) || 0);
+      mergedStats.capXp = capXp;
 
       // Merge the run records themselves (newest first), preferring the richer copy on collision.
       const byDate = {};
@@ -146,7 +170,11 @@ module.exports = async (req, res) => {
       const friends = [];
       for (const fid of fids) {
         const fp = await jget('p:' + fid);
-        if (fp) friends.push({ id: fp.id, name: fp.name, username: fp.username, photo: fp.photo, online: (now - (fp.seen || 0)) < 70000, lastSeen: fp.seen || 0, cap: (fp.stats && fp.stats.cap) || 0, capXp: (fp.stats && fp.stats.capXp) || 0, best: (fp.stats && fp.stats.level) || 0 });
+        if (fp) {
+          const fs = fp.stats || {};
+          friends.push({ id: fp.id, name: fp.name, username: fp.username, photo: fp.photo, online: (now - (fp.seen || 0)) < 70000, lastSeen: fp.seen || 0,
+            stats: { cap: fs.cap || 0, capXp: fs.capXp || 0, level: fs.level || 0, kills: fs.kills || 0, wins: fs.wins || 0, total: fs.total || 0, timeIn: fs.timeIn || 0, maxCorr: fs.maxCorr || 0 } });
+        }
       }
       const inbox = (await jget('r:' + me)) || [];
       // Return the durable numbers so the client can display + re-cache them.
