@@ -75,6 +75,18 @@
   .nav-link .ni{font-size:17px;width:24px;text-align:center;color:var(--teal);opacity:.85;transition:.16s}
   .nav-link:hover,.nav-link:active{background:rgba(0,229,212,.1);color:#fff;transform:translateX(3px)}
   .nav-link:hover .ni{opacity:1;text-shadow:0 0 10px rgba(0,229,212,.7)}
+  /* language selector (sidebar) */
+  .nav-lang{padding:10px 14px 4px;border-top:1px solid rgba(120,180,255,.1)}
+  .nl-t{display:block;font-family:var(--ui);font-size:10.5px;letter-spacing:.2em;color:#5f7aa3;text-transform:uppercase;margin:0 8px 7px}
+  .nl-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 6px}
+  .nl-chip{font-family:var(--ui);font-size:12.5px;font-weight:600;color:#9fb6d6;background:rgba(13,20,38,.7);
+    border:1px solid rgba(120,180,255,.18);border-radius:9px;padding:5px 10px;cursor:pointer;transition:.15s}
+  .nl-chip:active{transform:scale(.95)}
+  .nl-chip.on{color:#04121a;background:var(--teal);border-color:var(--teal);box-shadow:0 0 12px rgba(0,229,212,.45)}
+  /* Persian: menu screens read right-to-left; gameplay HUD stays fixed */
+  .rtl-ui .screen{direction:rtl}
+  .rtl-ui #navDrawer .nav-links,.rtl-ui .nav-lang{direction:rtl}
+  .rtl-ui .nav-link{text-align:right}
   .nav-foot{padding:16px 22px 22px;font-family:var(--ui);font-size:10px;letter-spacing:.24em;
     text-transform:uppercase;color:var(--dim);text-align:center}
 
@@ -713,6 +725,9 @@
       <button class="nav-link" data-nav="guide"><span class="ni">☷</span> Guides</button>
       <button class="nav-link" data-nav="settings"><span class="ni">⚙</span> Settings</button>
       <button class="nav-link" data-nav="credits"><span class="ni">♡</span> Credits</button>
+    </div>
+    <div class="nav-lang" id="navLang"><span class="nl-t">Language</span>
+      <div class="nl-chips"><button class="nl-chip on" data-lang="en">EN</button><button class="nl-chip" data-lang="fa">فارسی</button><button class="nl-chip" data-lang="zh">中文</button><button class="nl-chip" data-lang="hi">हिंदी</button><button class="nl-chip" data-lang="es">ES</button><button class="nl-chip" data-lang="ru">RU</button></div>
     </div>
     <div class="nav-foot">veil &amp; wire studio®</div>
   </nav>
@@ -1681,7 +1696,7 @@ function spawnSpecial(id,hpMul){const def=ETYPES[id],ang=Math.random()*TAU,dr=Ma
  const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DYING SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD'};
  if(id==='voidlord'){toast('THE VOID LORD AWAKENS');sfx('boss');screenShake=20;}
  else if(id==='omega'){toast('OMEGA PROTOCOL AWAKENS');sfx('boss');screenShake=18;}
- else if(def.warden){toast((names[id]||'A WARDEN')+' DESCENDS. SLAY IT FOR A BOON');sfx('boss');screenShake=12;}
+ else if(def.warden){toast(t(names[id]||'A WARDEN')+t(' DESCENDS. SLAY IT FOR A BOON'));sfx('boss');screenShake=12;}
  else if(id==='legendary'){toast('A LEGENDARY HORROR ARRIVES');sfx('boss');screenShake=12;}
  else if(id==='epic'){toast('AN EPIC FOE APPROACHES');sfx('boss');}}
 function hazardHit(v){if(player.parryActive)return;player._lastHazardT=performance.now();hapDamage('field');v*=(1-(player.perm.hazardRes||0));if(rs)rs.taken+=v;player.esDelay=2*player.esRecMul;if(player.es>0){const ab=Math.min(player.es,v);player.es-=ab;v-=ab;}if(v>0)player.hp-=v;player.hurtFlash=Math.max(player.hurtFlash,0.1);
@@ -1702,7 +1717,7 @@ function startObjective(){
  pool.push({kind:'nohit',label:'TAKE NO HULL DAMAGE',target:0,t:18});
  const o=pool[Math.floor(Math.random()*pool.length)];
  let rw=Math.random()*80,rew=OBJ_REWARDS[0];for(const R of OBJ_REWARDS){rw-=R.w;if(rw<=0){rew=R;break;}}
- obj={kind:o.kind,etype:o.etype||null,label:o.label.replace('{N}',o.target),target:o.target,count:0,t:o.t,fail:false,reward:rew};
+ obj={kind:o.kind,etype:o.etype||null,label:t(o.label).replace('{N}',o.target),target:o.target,count:0,t:o.t,fail:false,reward:rew};
  gameAlert('NEW OBJECTIVE');sfx('levelup');}
 function objReward(){
  const id=obj.reward.id;
@@ -1721,7 +1736,7 @@ let corpses=[];
 function pushFeed(txt,color){const kf=document.getElementById('killfeed');if(!kf)return;
  const d=document.createElement('div');d.className='kf';d.style.setProperty('--kc',color||'#ffd24b');d.textContent=txt;
  kf.prepend(d);while(kf.children.length>5)kf.removeChild(kf.lastChild);setTimeout(()=>{if(d.parentNode)d.parentNode.removeChild(d);},2700);}
-function gameAlert(txt,color,sub){alertText=txt;alertColor=color||'#ff5a6e';alertSub=sub||'';alertTime=2.8;sfx('boss');screenShake=Math.max(screenShake,8);}
+function gameAlert(txt,color,sub){alertText=t(txt);alertColor=color||'#ff5a6e';alertSub=t(sub||'');alertTime=2.8;sfx('boss');screenShake=Math.max(screenShake,8);}
 function spawnTriVolley(){
  const lv=player.level;if(lv<12)return;
  const eg=endgame||lv>=100;
@@ -1983,7 +1998,7 @@ function spawnShards(e){if(shards.length>160)return;const n=(e.boss||e.legendary
   shards.push({x:e.x,y:e.y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,rot:rand(0,TAU),vr:rand(-9,9),size:Math.max(3,e.r*rand(0.3,0.55)),life:rand(0.5,0.9),max:0.9,color:e.color});}}
 function burst(x,y,color,n0){let n=Math.ceil(n0*QX.particleMul*(particles.length>QX.maxParticles*0.65?0.4:1));if(n<1&&n0>0)n=1;return __burst(x,y,color,n);}
 function __burst(x,y,color,n){if(particles.length>=QX.maxParticles)return;if(particles.length>QX.maxParticles*0.75)n=Math.min(n,3);for(let i=0;i<n;i++){const a=Math.random()*TAU,s=rand(40,220);particles.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s,life:rand(.25,.6),color,r:rand(1.5,3.5)});}}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;clearTimeout(toast._t);clearTimeout(toast._h);t.style.display='block';t.classList.remove('show');void t.offsetWidth;t.classList.add('show');toast._t=setTimeout(()=>{t.classList.remove('show');toast._h=setTimeout(()=>{t.style.display='none';},420);},1700);}
+function toast(msg){const t0=document.getElementById('toast');t0.textContent=t(msg);clearTimeout(toast._t);clearTimeout(toast._h);t0.style.display='block';t0.classList.remove('show');void t0.offsetWidth;t0.classList.add('show');toast._t=setTimeout(()=>{t0.classList.remove('show');toast._h=setTimeout(()=>{t0.style.display='none';},420);},1700);}
 
 /* ===== START ===== */
 function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
@@ -2641,8 +2656,8 @@ function drawMenuArmBanner(){
  if(ma){
   if(ma.classList.contains('hidden'))ma.classList.remove('hidden');
   ma.style.setProperty('--mac',col);
-  const lb=document.getElementById('malabel');if(lb&&lb.textContent!==(lvl?'LEVEL UP':'WARDEN BOON'))lb.textContent=lvl?'LEVEL UP':'WARDEN BOON';
-  const sb=document.getElementById('masub');if(sb&&sb.textContent!==sub)sb.textContent=sub;
+  const lb=document.getElementById('malabel');const _lt=t(lvl?'LEVEL UP':'WARDEN BOON');if(lb&&lb.textContent!==_lt)lb.textContent=_lt;
+  const sb=document.getElementById('masub');const _st=t(sub);if(sb&&sb.textContent!==_st)sb.textContent=_st;
   const mf=document.getElementById('mafill');if(mf)mf.style.width=((1-frac)*100).toFixed(1)+'%';
  }
 }
@@ -2856,12 +2871,12 @@ for(let i=pool.length-1;i>0;i--){const j=randi(0,i);[pool[i],pool[j]]=[pool[j],p
  }
  if(out.length)while(out.length<3)out.push(Math.random()<0.5?{type:'heal'}:{type:'gold'});return out;}
 function offerCard(o){
- if(o.type==='wlvl'||o.type==='wnew'){const d=WEAPONS[o.id],lv=o.type==='wlvl'?player.weapons.find(w=>w.id===o.id).level+1:1;const el=ELEMENTS[WEAPON_EL[o.id]||'kinetic'];return{color:d.color,icon:d.icon,tag:o.type==='wnew'?'NEW':'WEAPON',name:d.name,lvtxt:(o.type==='wnew'?'Acquire':`Lv ${lv-1} → ${lv}`)+' · '+el.name,desc:d.desc(lv)};}
- if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id),tier=(w.evo||0)+1;let extra='+35% power, +1 projectile, faster & wider.';return{color:'#ffd24b',icon:WEAPONS[o.id].icon,tag:'EVOLVE',name:evoName(o.id,tier),lvtxt:`Evolution ${tier} / 4`,desc:extra};}
- if(o.type==='infuse'){const E=ELEMENTS[o.el],d=WEAPONS[o.id];return{color:E.color,icon:E.icon,tag:'INFUSE',name:`${E.name} ${d.name}`,lvtxt:'Locks Element (permanent)',desc:`${d.name} is now permanently ${E.name} \u2014 its only element. Pair it with a different element on another weapon to trigger reactions.`};}
- if(o.type==='plvl'||o.type==='pnew'){const d=PASSIVES[o.id],lv=o.type==='plvl'?player.passives[o.id]+1:1;return{color:d.color,icon:d.icon,tag:o.type==='pnew'?'NEW':'PASSIVE',name:d.name,lvtxt:o.type==='pnew'?'Acquire':`Lv ${lv-1} → ${lv}`,desc:d.desc(lv)};}
- if(o.type==='heal')return{color:'#ff8a6e',icon:'❤',tag:'RECOVER',name:'Repair Kit',lvtxt:'Instant',desc:'Restore 30% of your max hull.'};
- return{color:'#ffc24b',icon:'◈',tag:'SALVAGE',name:'Credit Cache',lvtxt:'Instant',desc:'Gain 25 credits.'};}
+ if(o.type==='wlvl'||o.type==='wnew'){const d=WEAPONS[o.id],lv=o.type==='wlvl'?player.weapons.find(w=>w.id===o.id).level+1:1;const el=ELEMENTS[WEAPON_EL[o.id]||'kinetic'];return{color:d.color,icon:d.icon,tag:t(o.type==='wnew'?'NEW':'WEAPON'),name:t(d.name),lvtxt:(o.type==='wnew'?t('Acquire'):`Lv ${lv-1} → ${lv}`)+' · '+t(el.name),desc:faWD(o.id,lv)};}
+ if(o.type==='evo'){const w=player.weapons.find(x=>x.id===o.id),tier=(w.evo||0)+1;let extra=t('+35% power, +1 projectile, faster & wider.');return{color:'#ffd24b',icon:WEAPONS[o.id].icon,tag:t('EVOLVE'),name:evoName(o.id,tier),lvtxt:`${t('Evolution')} ${tier} / 4`,desc:extra};}
+ if(o.type==='infuse'){const E=ELEMENTS[o.el],d=WEAPONS[o.id];return{color:E.color,icon:E.icon,tag:t('INFUSE'),name:`${t(E.name)} ${t(d.name)}`,lvtxt:t('Locks Element (permanent)'),desc:(LANG==='fa')?(t(d.name)+' \u062f\u06cc\u06af\u0631 \u0628\u0631\u0627\u06cc \u0647\u0645\u06cc\u0634\u0647 '+t(E.name)+' \u0627\u0633\u062a - \u062a\u0646\u0647\u0627 \u0639\u0646\u0635\u0631\u0634. \u0628\u0631\u0627\u06cc \u0628\u0631\u0627\u0641\u0631\u0648\u062e\u062a\u0646 \u0648\u0627\u06a9\u0646\u0634\u060c \u0622\u0646 \u0631\u0627 \u0628\u0627 \u0639\u0646\u0635\u0631\u06cc \u062f\u06cc\u06af\u0631 \u0628\u0631 \u0633\u0644\u0627\u062d\u06cc \u062f\u06cc\u06af\u0631 \u0647\u0645\u200c\u062c\u0641\u062a \u06a9\u0646.'):`${d.name} is now permanently ${E.name} - its only element. Pair it with a different element on another weapon to trigger reactions.`};}
+ if(o.type==='plvl'||o.type==='pnew'){const d=PASSIVES[o.id],lv=o.type==='plvl'?player.passives[o.id]+1:1;return{color:d.color,icon:d.icon,tag:t(o.type==='pnew'?'NEW':'PASSIVE'),name:t(d.name),lvtxt:o.type==='pnew'?t('Acquire'):`Lv ${lv-1} → ${lv}`,desc:faPD(o.id,lv)};}
+ if(o.type==='heal')return{color:'#ff8a6e',icon:'❤',tag:t('RECOVER'),name:t('Repair Kit'),lvtxt:t('Instant'),desc:t('Restore 30% of your max hull.')};
+ return{color:'#ffc24b',icon:'◈',tag:t('SALVAGE'),name:t('Credit Cache'),lvtxt:t('Instant'),desc:t('Gain 25 credits.')};}
 function applyOffer(o){
  const ri=o.rar?RARITY.indexOf(o.rar):0;
  const heal=p=>player.hp=clamp(player.hp+player.maxHp*p,0,player.maxHp);
@@ -2915,7 +2930,7 @@ function openBoon(){
  const pool=BOONS.filter(b=>!b.can||b.can());for(let i=pool.length-1;i>0;i--){const j=randi(0,i);[pool[i],pool[j]]=[pool[j],pool[i]];}
  sfx('levelup');
  pool.slice(0,3).forEach((b,i)=>{const el=document.createElement('div');el.className='card';el.style.setProperty('--c',b.color);el.style.animationDelay=(i*0.06)+'s';
-  el.innerHTML=`<div class="tag">BOON</div><div class="ic">★</div><h4>${b.name}</h4><div class="lv">Permanent</div><p>${b.desc||'A lasting power for slaying a Warden.'}</p>`;
+  el.innerHTML=`<div class="tag">${t('BOON')}</div><div class="ic">★</div><h4>${t(b.name)}</h4><div class="lv">${t('Permanent')}</div><p>${t(b.desc||'A lasting power for slaying a Warden.')}</p>`;
   el.onclick=()=>{b.apply();player.boonNames.push(b.name);recalc(player);refreshDock();pendingBoons--;document.getElementById('boon').classList.add('hidden');resumeOrNext();};
   list.appendChild(el);});
  document.getElementById('boon').classList.remove('hidden');}
@@ -2925,21 +2940,21 @@ function rollChest(){
  const r=Math.random();
  if(r<BAL.chestRarity.legendary){
   let avail=RELICS.filter(R=>R.stack||!player.relics[R.id]);if(!avail.length)avail=RELICS.filter(R=>R.stack);
-  if(avail.length){const R=pick(avail);return{rarity:'LEGENDARY',color:'#9bd0ff',icon:'❖',name:R.name,desc:R.desc,apply(){R.apply();player.relics[R.id]=(player.relics[R.id]||0)+1;recalc(player);refreshDock();toast('LEGENDARY RELIC');pushFeed('LEGENDARY DROP','#9bd0ff');}};}
-  return{rarity:'LEGENDARY',color:'#ffc24b',icon:'◈',name:'Vault of Credits',desc:'+400 credits.',apply(){gold+=400;}};
+  if(avail.length){const R=pick(avail);return{rarity:'LEGENDARY',color:'#9bd0ff',icon:'❖',name:t(R.name),desc:t(R.desc),apply(){R.apply();player.relics[R.id]=(player.relics[R.id]||0)+1;recalc(player);refreshDock();toast('LEGENDARY RELIC');pushFeed('LEGENDARY DROP','#9bd0ff');}};}
+  return{rarity:'LEGENDARY',color:'#ffc24b',icon:'◈',name:t('Vault of Credits'),desc:t('+400 credits.'),apply(){gold+=400;}};
  }
  if(r<BAL.chestRarity.legendary+BAL.chestRarity.rare){
   const upg=[];player.weapons.forEach(w=>{if(w.level<WEAPONS[w.id].max)upg.push({t:'wlvl',w});});
   if(player.weapons.length<BAL.weaponSlots)for(const id in WEAPONS){if(!player.weapons.find(w=>w.id===id))upg.push({t:'wnew',id});}
   if(upg.length){const o=pick(upg);
-   if(o.t==='wnew'){const d=WEAPONS[o.id];return{rarity:'RARE',color:d.color,icon:d.icon,name:d.name,desc:'New weapon: '+d.desc(1),apply(){player.weapons.push({id:o.id,level:1,timer:0,orbAngle:0});recalc(player);refreshDock();}};}
-   const d=WEAPONS[o.w.id];return{rarity:'RARE',color:d.color,icon:d.icon,name:d.name+' +2',desc:'This weapon gains two levels.',apply(){o.w.level=Math.min(d.max,o.w.level+2);recalc(player);refreshDock();}};}
-  return{rarity:'RARE',color:'#ffc24b',icon:'◈',name:'Credit Stash',desc:'+150 credits.',apply(){gold+=150;}};
+   if(o.t==='wnew'){const d=WEAPONS[o.id];return{rarity:'RARE',color:d.color,icon:d.icon,name:t(d.name),desc:t('New weapon:')+' '+faWD(o.id,1),apply(){player.weapons.push({id:o.id,level:1,timer:0,orbAngle:0});recalc(player);refreshDock();}};}
+   const d=WEAPONS[o.w.id];return{rarity:'RARE',color:d.color,icon:d.icon,name:t(d.name)+' +2',desc:t('This weapon gains two levels.'),apply(){o.w.level=Math.min(d.max,o.w.level+2);recalc(player);refreshDock();}};}
+  return{rarity:'RARE',color:'#ffc24b',icon:'◈',name:t('Credit Stash'),desc:t('+150 credits.'),apply(){gold+=150;}};
  }
  if(Math.random()<0.5){const all=player.weapons.filter(w=>w.level<WEAPONS[w.id].max);
-  if(all.length){const w=pick(all),d=WEAPONS[w.id];return{rarity:'COMMON',color:d.color,icon:d.icon,name:d.name+' +1',desc:'This weapon gains a level.',apply(){w.level++;recalc(player);refreshDock();}};}
-  return{rarity:'COMMON',color:'#ffc24b',icon:'◈',name:'Credits',desc:'+60 credits.',apply(){gold+=60;}};}
- return{rarity:'COMMON',color:'#ff8a6e',icon:'❤',name:'Repair Kit',desc:'Restore 35% of max hull.',apply(){player.hp=clamp(player.hp+player.maxHp*0.35,0,player.maxHp);}};
+  if(all.length){const w=pick(all),d=WEAPONS[w.id];return{rarity:'COMMON',color:d.color,icon:d.icon,name:t(d.name)+' +1',desc:t('This weapon gains a level.'),apply(){w.level++;recalc(player);refreshDock();}};}
+  return{rarity:'COMMON',color:'#ffc24b',icon:'◈',name:t('Credits'),desc:t('+60 credits.'),apply(){gold+=60;}};}
+ return{rarity:'COMMON',color:'#ff8a6e',icon:'❤',name:t('Repair Kit'),desc:t('Restore 35% of max hull.'),apply(){player.hp=clamp(player.hp+player.maxHp*0.35,0,player.maxHp);}};
 }
 function grantChest(){
  const prize=rollChest();prize.apply();sfx('chest');
@@ -2959,7 +2974,7 @@ function runStats(){return{time,level:player.level,kills,dodges:rs?rs.dodges:0,r
  relics:Object.keys(player.relics).map(id=>{const R=RELICS.find(r=>r.id===id);return R?R.name:id;})};}
 async function gameOver(){
  state='gameover';TG_SHARE=tgShareText();tgShowShare(); // TELEGRAM MINI APP
- try{const __dl=document.getElementById('deathline');if(__dl)__dl.textContent=corruption>0?'You will be remembered, champion. The deep keeps your light now.':"You didn't just fail. You disappointed me.";}catch(e){}runOver=false;
+ try{const __dl=document.getElementById('deathline');if(__dl)__dl.textContent=corruption>0?t('You will be remembered, champion. The deep keeps your light now.'):t("You didn't just fail. You disappointed me.");}catch(e){}runOver=false;
  if(time>bestTime){bestTime=time;saveBest();}
  cosDeathFx();screenShake=16;sfx('hurt');
  const m=Math.floor(time/60),s=Math.floor(time%60);
@@ -2987,6 +3002,10 @@ async function victory(){
 
 /* ===== AI REPORT ===== */
 function fallbackReport(s,mode){const m=Math.floor(s.time/60),sec=Math.floor(s.time%60);
+ if(LANG==='fa'){
+  if(mode==='victory')return`\u063a\u0648\u0627\u0635 ${t(s.char)} \u067e\u0633 \u0627\u0632 ${m} \u062f\u0642\u06cc\u0642\u0647 \u0648 ${sec} \u062b\u0627\u0646\u06cc\u0647\u060c \u0628\u0627 ${s.kills} \u0647\u06cc\u0648\u0644\u0627\u06cc \u0641\u0631\u0648\u0627\u0641\u062a\u0627\u062f\u0647\u060c \u0642\u0644\u0628\u0650 \u0645\u063a\u0627\u06a9 \u0631\u0627 \u0634\u06a9\u0627\u0641\u062a. \u0698\u0631\u0641\u0627 \u0627\u06a9\u0646\u0648\u0646 \u062e\u0627\u0645\u0648\u0634 \u0627\u0633\u062a - \u0628\u0647 \u062e\u0627\u0637\u0631\u0650 \u062a\u0648.`;
+  return`\u063a\u0648\u0627\u0635 ${t(s.char)} ${m} \u062f\u0642\u06cc\u0642\u0647 \u0648 ${sec} \u062b\u0627\u0646\u06cc\u0647 \u062f\u0631 \u0628\u0631\u0627\u0628\u0631\u0650 \u0645\u063a\u0627\u06a9 \u0627\u06cc\u0633\u062a\u0627\u062f \u0648 ${s.kills} \u0645\u0648\u062c\u0648\u062f \u0631\u0627 \u0627\u0632 \u067e\u0627 \u062f\u0631\u0622\u0648\u0631\u062f\u060c \u062a\u0627 \u0622\u0646\u200c\u06a9\u0647 \u062a\u0627\u0631\u06cc\u06a9\u06cc \u062f\u0631 \u0633\u0637\u062d\u0650 ${s.level} \u0641\u0631\u0648\u0628\u0633\u062a. \u0686\u0631\u0627\u063a\u200c\u0647\u0627 \u062e\u0627\u0645\u0648\u0634\u200c\u0627\u0646\u062f\u060c \u0627\u0645\u0627 \u0698\u0631\u0641\u0627 \u0622\u0646\u0627\u0646 \u0631\u0627 \u06a9\u0647 \u0631\u0648\u0634\u0646 \u0633\u0648\u062e\u062a\u0646\u062f \u0627\u0632 \u06cc\u0627\u062f \u0646\u0645\u06cc\u200c\u0628\u0631\u062f.`;
+ }
  if(mode==='victory')return`Diver ${s.char} pierced the Abyss Heart after ${m}m ${sec}s and ${s.kills} fallen horrors. The deep is quiet now, because of you.`;
  return`Diver ${s.char} held the abyss for ${m}m ${sec}s, felling ${s.kills} creatures before the dark closed in at Level ${s.level}. The lights are out, but the deep remembers those who burn brightly.`;}
 async function generateReport(s,mode,elId){
@@ -2994,15 +3013,16 @@ async function generateReport(s,mode,elId){
  const tone=mode==='victory'
   ?'a triumphant commendation for a diver who slew the Abyss Heart and conquered the deep'
   :'a short, vivid, slightly ominous field report about a diver\'s final run';
- const prompt=`You are the laconic archivist of a deep-sea survival expedition. Write ${tone} (2-3 sentences, second person addressing "you"). No markdown, headers, or bullets. Stats:
-- Diver class: ${s.char}
+ const _faNote=(LANG==='fa')?' Write the ENTIRE report in Persian (Farsi), in a literary, epic tone \u2014 the voice of the Shahnameh.':'';
+ const prompt=`You are the laconic archivist of a deep-sea survival expedition. Write ${tone} (2-3 sentences, second person addressing "you").${_faNote} No markdown, headers, or bullets. Stats:
+- Diver class: ${t(s.char)}
 - ${mode==='victory'?'Run length':'Survived'}: ${m}m ${sec}s
 - Level reached: ${s.level}
 - Creatures destroyed: ${s.kills}
 - Credits salvaged: ${s.gold}
-- Weapons: ${s.weapons.join(', ')||'none'}
-- Augments: ${s.passives.join(', ')||'none'}
-- Legendary relics: ${s.relics.join(', ')||'none'}
+- Weapons: ${s.weapons.map(x=>t(x)).join(', ')||'none'}
+- Augments: ${s.passives.map(x=>t(x)).join(', ')||'none'}
+- Legendary relics: ${s.relics.map(x=>t(x)).join(', ')||'none'}
 Be evocative and specific to these numbers. End on a memorable line.`;
  try{
   const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
@@ -3011,7 +3031,7 @@ Be evocative and specific to these numbers. End on a memorable line.`;
   const data=await res.json(),text=(data.content||[]).map(i=>i.type==='text'?i.text:'').join(' ').trim();
   setReport(elId,text||fallbackReport(s,mode));
  }catch(err){setReport(elId,fallbackReport(s,mode));}}
-function setReport(elId,txt){const el=document.getElementById(elId);el.textContent=txt;const sig=document.createElement('div');sig.className='reportsig';sig.textContent='written by Claude';el.appendChild(sig);}
+function setReport(elId,txt){const el=document.getElementById(elId);el.textContent=txt;const sig=document.createElement('div');sig.className='reportsig';sig.textContent=t('written by Claude');el.appendChild(sig);}
 
 /* ===== LOOP ===== */
 let lastT=performance.now();
@@ -3154,7 +3174,7 @@ function buildCosTabs(){
 }
 function openCosmetics(){
  hideAllScreens();state='cosmetics';
- const scr=document.getElementById('cosmetics');if(scr)scr.classList.remove('hidden');
+ const scr=document.getElementById('cosmetics');if(scr){scr.classList.remove('hidden');try{trDyn(scr);}catch(e){}}
  _cosTab='palette';buildCosTabs();buildCosGrid();
 }
 /* ---- live animated preview (v7.4.2: wider, richer, shows ALL five cosmetics) ---- */
@@ -3275,7 +3295,7 @@ function openCaptain(){
   '<div class="cap-laddertitle">Rank Ladder</div><div class="cap-ladder">'+ladder+'</div>';
  var host=document.getElementById('captainbody');if(host)host.innerHTML=body;
  var scr=document.getElementById('captain');
- if(scr){scr.style.setProperty('--c1',rk.c1);scr.style.setProperty('--c2',rk.c2);scr.style.setProperty('--glow',rk.glow);scr.classList.remove('hidden');}
+ if(scr){scr.style.setProperty('--c1',rk.c1);scr.style.setProperty('--c2',rk.c2);scr.style.setProperty('--glow',rk.glow);scr.classList.remove('hidden');try{trDyn(scr);}catch(e){}}
  showNavToggle();
 }
 
@@ -3305,7 +3325,7 @@ function openArchive(){
   const d=new Date(r.date),ds=`${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
   el.innerHTML=`<span class="res ${r.result==='Victory'?'win':'loss'}">${r.result==='Victory'?'VICTORY':'FELL'}</span><div class="meta">${r.char} · Lv ${r.level} · ${fmtN(r.kills)} kills<small>${fmtT(r.time)} · ${fmtN(r.total)} total dmg · ${ds}</small></div><span style="color:var(--dim);font-size:18px">›</span>`;
   el.onclick=()=>openDetail(r,'archive');list.appendChild(el);});
- document.getElementById('archive').classList.remove('hidden');
+ document.getElementById('archive').classList.remove('hidden');try{trDyn(document.getElementById('archive'));}catch(e){}
 }
 function openDetail(r,back){
  detailBack=back||'archive';state='rundetail';hideAllScreens();
@@ -3328,7 +3348,7 @@ function openDetail(r,back){
   `<div class="bsec"><h5>Relics</h5>${tags(b.relics)}</div>`+
   `<div class="bsec"><h5>Boons</h5>${tags(b.boons)}</div>`+
   `<div class="bsec"><h5>Core Type</h5>${tags(b.cores)}</div>`;
- document.getElementById('rundetail').classList.remove('hidden');
+ document.getElementById('rundetail').classList.remove('hidden');try{trDyn(document.getElementById('rundetail'));}catch(e){}
 }
 
 /* ===== UI WIRING (archive) ===== */
@@ -3383,15 +3403,16 @@ const MOD_INFO=[
  ['\ud83d\udd25','#ff7a3c','Infernal','Leaves a burning trail. Do not chase it through the fire.'],
  ['\ud83d\udc80','#b6ff3c','Necrotic','Rises once from death at half strength. Kill it twice.']];
 function codexEntry(swatch,color,title,tag,body,full){
+ title=t(title);if(tag)tag=t(tag);body=t(body);if(full)full=t(full);
  return `<div class="gentry clickable" style="--gc:${color}" data-sw="${swatch}" data-color="${color}" data-title="${encodeURIComponent(title)}" data-tag="${encodeURIComponent(tag||'')}" data-full="${encodeURIComponent(full||body)}"><div class="gswatch" style="color:${color}">${swatch}</div><div class="gtext"><h4>${title}${tag?`<span class="gtag">${tag}</span>`:''}</h4><p>${body}</p></div><span class="gchev">\u203a</span></div>`;}
 const CODEX_TABS={
- Items(){let s='<div class="gsectnote">Things the deep leaves behind. Most of it flies to you the moment you get close. Tap any card for the full read.</div>'+'<div class="gsectnote">Marked enemies: some foes spawn with a glyph overhead. Learn them fast:</div>'+MOD_INFO.map(m=>codexEntry(m[0],m[1],m[2],'Modifier',m[3])).join('');for(const[i,c,n,t,d] of ITEM_INFO)s+=codexEntry(i,c,n,t,d);s+='<div class="gsectnote" style="margin-top:8px">Hazards to avoid:</div>';for(const[i,c,n,d] of HAZ_INFO)s+=codexEntry(i,c,n,'Hazard',d);return s;}
- ,Weapons(){let s='<div class="gsectnote">Your guns fire on their own. Your job is choosing which ones grow. Max a weapon to unlock four Evolution tiers, then feed it elements in the draft. Tap any weapon for the full read.</div>';for(const id in WEAPONS){const w=WEAPONS[id],el=ELEMENTS[WEAPON_EL[id]||'kinetic'];s+=codexEntry(w.icon,w.color,w.name,el.name+' base',(typeof w.desc==='function'?w.desc(1):w.desc||'').replace(/`/g,''));}return s;}
- ,Divers(){let s='<div class="gsectnote">Six ways to descend. Each one plays a different game. Tap a diver to study them before your next run.</div>';for(const c of CHARS)s+=codexEntry(c.glyph,c.color,c.name,c.role,c.desc);return s;}
- ,Elements(){let s='<div class="gsectnote">Eight damage types. Every weapon has one built in and can be infused with two more, and infusions show up often in the draft. Landing just two different elements on the same enemy sets off a Reaction, so two-element builds come online fast.</div>';for(const id in ELEMENTS){const e=ELEMENTS[id],st=ST_INFO[e.st];s+=codexEntry(e.icon,e.color,e.name,'applies '+(st?st.name:e.st),st?st.txt:'');}return s;}
- ,Status(){let s='<div class="gsectnote">Effects stack as pips over an enemy. The more pips, the harder it bites.</div>';for(const k in ST_INFO){const si=ST_INFO[k],c=(STATUS[k]||{}).color||'#fff',e=ELEMENTS[si.el];s+=codexEntry(e.icon,c,si.name,'from '+e.name,si.txt);}return s;}
- ,Reactions(){let s='<div class="gsectnote">Land two different elements on the same enemy and the deep answers. There are 14 reactions, and most now leave something on the battlefield: fire pools, poison fog, pull rifts, frozen ground, freeze walls, even crystal shards you can grab. Reactions trigger from a single stack of a second element now, so they fire constantly once you carry two elements. This is where builds get broken.</div>';for(const[a,b,name,d] of REACT_INFO){const ea=ELEMENTS[a],eb=ELEMENTS[b];s+=`<div class="gentry" style="--gc:${eb.color}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${ea.color};border-color:${ea.color}">${ea.icon} ${ea.name}</span><span class="gplus">+</span><span class="gpill" style="color:${eb.color};border-color:${eb.color}">${eb.icon} ${eb.name}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}s+='<div class="gsectnote" style="margin-top:10px">Escalation chains. Stack deeper, burn brighter:</div>';for(const[from,name,d,c] of CHAIN_INFO){s+=`<div class="gentry" style="--gc:${c}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${c};border-color:${c}">${from}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}return s;}
- ,Combat(){return '<div class="gsectnote">How the deep actually works. Tap any card to read the whole thing before your next run.</div>'
+ Items(){let s='<div class="gsectnote">'+t('Things the deep leaves behind. Most of it flies to you the moment you get close. Tap any card for the full read.')+'</div>'+'<div class="gsectnote">'+t('Marked enemies: some foes spawn with a glyph overhead. Learn them fast:')+'</div>'+MOD_INFO.map(m=>codexEntry(m[0],m[1],m[2],'Modifier',m[3])).join('');for(const[i,c,n,t,d] of ITEM_INFO)s+=codexEntry(i,c,n,t,d);s+='<div class="gsectnote" style="margin-top:8px">'+t('Hazards to avoid:')+'</div>';for(const[i,c,n,d] of HAZ_INFO)s+=codexEntry(i,c,n,'Hazard',d);return s;}
+ ,Weapons(){let s='<div class="gsectnote">'+t('Your guns fire on their own. Your job is choosing which ones grow. Max a weapon to unlock four Evolution tiers, then feed it elements in the draft. Tap any weapon for the full read.')+'</div>';for(const id in WEAPONS){const w=WEAPONS[id],el=ELEMENTS[WEAPON_EL[id]||'kinetic'];s+=codexEntry(w.icon,w.color,w.name,t(el.name)+' '+t('base'),(typeof w.desc==='function'?faWD(id,1):w.desc||'').replace(/`/g,''));}return s;}
+ ,Divers(){let s='<div class="gsectnote">'+t('Six ways to descend. Each one plays a different game. Tap a diver to study them before your next run.')+'</div>';for(const c of CHARS)s+=codexEntry(c.glyph,c.color,c.name,c.role,c.desc);return s;}
+ ,Elements(){let s='<div class="gsectnote">'+t('Eight damage types. Every weapon carries exactly one element - its innate one, or the single element you lock in with an Infusion. Land two different elements on the same enemy, from two different weapons, and a Reaction fires.')+'</div>';for(const id in ELEMENTS){const e=ELEMENTS[id],st=ST_INFO[e.st];s+=codexEntry(e.icon,e.color,e.name,'applies '+(st?st.name:e.st),st?st.txt:'');}return s;}
+ ,Status(){let s='<div class="gsectnote">'+t('Effects stack as pips over an enemy. The more pips, the harder it bites.')+'</div>';for(const k in ST_INFO){const si=ST_INFO[k],c=(STATUS[k]||{}).color||'#fff',e=ELEMENTS[si.el];s+=codexEntry(e.icon,c,si.name,'from '+e.name,si.txt);}return s;}
+ ,Reactions(){let s='<div class="gsectnote">'+t('Land two different elements on the same enemy and the deep answers. There are 14 reactions, and most leave something on the battlefield: fire pools, poison fog, pull rifts, frozen ground, freeze walls, even crystal shards you can grab. Each weapon carries one element for the whole run, so reactions come from pairing different weapons. This is where builds get broken.')+'</div>';for(const[a,b,name,d] of REACT_INFO){const ea=ELEMENTS[a],eb=ELEMENTS[b];s+=`<div class="gentry" style="--gc:${eb.color}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${ea.color};border-color:${ea.color}">${ea.icon} ${ea.name}</span><span class="gplus">+</span><span class="gpill" style="color:${eb.color};border-color:${eb.color}">${eb.icon} ${eb.name}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}s+='<div class="gsectnote" style="margin-top:10px">'+t('Escalation chains. Stack deeper, burn brighter:')+'</div>';for(const[from,name,d,c] of CHAIN_INFO){s+=`<div class="gentry" style="--gc:${c}"><div class="gtext" style="width:100%"><div class="greact"><span class="gpill" style="color:${c};border-color:${c}">${from}</span><span class="gplus">=</span><b style="color:#eaf2ff">${name}</b></div><p>${d}</p></div></div>`;}return s;}
+ ,Combat(){return '<div class="gsectnote">'+t('How the deep actually works. Tap any card to read the whole thing before your next run.')+'</div>'
   +codexEntry('\u25c7','#00e5d4','Dodge, Guard, Parry','Space or the dive button','Every diver has one survival tool. Learn yours first.','Every diver answers danger differently.\n\nMost divers blink a short distance with full invulnerability. Ranger blinks farthest and fastest, on the shortest cooldown in the game. Her whole life is dodge, shotgun, dodge.\n\nVanguard does not dodge. He plants his feet and raises an unbreakable Guard for over a second. While it holds, nothing hurts him and slows wash off his hull.\n\nYujin parries. Tap the button and a quarter second window opens where everything breaks against your fists: bullets, lasers, stampedes, even black hole cores. The parry has only a brief cooldown, so quick taps still open windows back to back. With perfect reads Yujin survives anything. And because he cannot dodge, a black hole would be a guaranteed death, so while caught in one his button instead blinks him out to safety. With lazy thumbs Yujin still dies fast.\n\nRhino charges. The dive button sends him barreling forward, untouchable the whole way, flinging every enemy he touches aside and trampling them for damage. When the charge ends a shockwave bursts out and scatters the rest. Slow on foot, unstoppable in motion.\n\nThe Sorcerer hexes. His button does not move him. Instead he becomes untouchable for a few seconds and mutates the whole swarm around him, turning fodder into richer loot and forcing them to flee. It is his survival button and his early treasure engine at once.')
   +codexEntry('\u23e3','#9b6dff','Shields','Vyper and Sentinel','A permanent field that eats incoming fire.','Vyper and Sentinel carry a permanent energy field that swallows every non boss projectile on contact. It does not block body slams, so keep moving.\n\nEvery other diver earns a recharging Barrier as they level. When the blue bar under your hull is up, you can afford one mistake. Watch it. Tank when it is full, run when it is empty.')
   +codexEntry('\u2605','#ffd24b','Wardens and Boons','Every 5 levels','Kill the giant, claim a permanent gift.','Every fifth level a Warden descends: a giant with a name and a trick. Fell it and you claim a Boon, a permanent change to your run that no draft can offer.\n\nIf a Warden drifts off your screen too long it calls escorts to push you back toward the fight. The deep does not let you ignore its champions.')
@@ -3417,7 +3438,7 @@ function openCodex(){hideAllScreens();state='codex';const tabs=document.getEleme
   document.getElementById('codexdetail').onclick=e=>{if(e.target.id==='codexdetail')e.target.classList.add('hidden');};}catch(e){}
  Object.keys(CODEX_TABS).forEach(name=>{const b=document.createElement('div');b.className='ctab'+(name===codexCur?' on':'');b.textContent=name;b.onclick=()=>{codexCur=name;openCodex();};tabs.appendChild(b);});
  document.getElementById('codexbody').innerHTML=CODEX_TABS[codexCur]();
- document.getElementById('codex').classList.remove('hidden');}
+ document.getElementById('codex').classList.remove('hidden');try{trDyn(document.getElementById('codex'));}catch(e){}}
 // TELEGRAM MINI APP: init, identity, theme, main button
 let TG=null,TG_USER={id:'guest',username:'Guest',first_name:'Player'},TG_SHARE='';
 const TG_BOT='AbyssSurvivorsbot',TG_APP='play'; // TELEGRAM MINI APP: set TG_APP to your /newapp short name
@@ -3485,6 +3506,314 @@ function hap(kind,style){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback
  else if(kind==='select')TG.HapticFeedback.selectionChanged();
 }catch(e){}}
 function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return;TG.HapticFeedback.impactOccurred('soft');setTimeout(function(){try{TG.HapticFeedback.impactOccurred('light');}catch(e){}},55);}catch(e){}}
+/* ===== LOCALIZATION (i18n) =====
+   t(s): translate an English source string. Dictionaries keyed by the exact English text.
+   Proper nouns (weapon/boss/character names, ABYSS // SURVIVORS) intentionally stay English.
+   Deep encyclopedic screens (codex entries, lore pages, captain tier text) are English this
+   pass; all navigation, menus, HUD, core-loop and common callouts are fully localized. */
+let LANG='en';
+const LANG_LIST=[['en','EN'],['fa','فارسی'],['zh','中文'],['hi','हिंदी'],['es','ES'],['ru','RU']];
+const I18N={
+fa:{"Profile":"پروفایل","Captain":"کاپیتان","Cosmetics":"ظاهر","Social":"دوستان","Leaderboard":"جدول امتیازات","Run Archive":"آرشیو ران‌ها","Guides":"راهنماها","Settings":"تنظیمات","Credits":"سازندگان","view profile ›":"مشاهده پروفایل ›","Language":"زبان","DESCEND":"فرود","Customize":"شخصی‌سازی","Dive Network":"شبکه غواصان","Friends":"دوستان","Your record":"رکورد شما","Codex":"دانشنامه","Bestiary":"هیولانامه","Options":"تنظیمات","Thanks":"سپاس","LORE":"روایت","The starless deep · 18,000m down · it has noticed your light":"ژرفای بی‌ستاره · ۱۸٬۰۰۰ متر پایین · نورت را دیده است","HULL":"بدنه","LV":"سطح","KILLS":"شکار","CR":"اعتبار","REZ":"REZ","DODGE":"جاخالی","THREAT":"تهدید","DEPTH":"عمق","PARRY":"دفع","GUARD":"گارد","CHARGE":"یورش","HEX":"طلسم","LEVEL UP":"ارتقا","CHOOSE YOUR REWARD":"پاداشت را انتخاب کن","WARDEN BOON":"موهبت نگهبان","GET TO SAFETY":"به جای امن برو","SELECT YOUR DIVER":"غواصت را انتخاب کن","Tap a diver to begin the descent.":"برای شروع فرود، روی یک غواص بزن.","Choose an augment":"یک تقویت انتخاب کن","Reroll":"قرعه دوباره","PAUSED":"توقف","Resume":"ادامه","Abandon Run":"رها کردن ران","LIGHTS OUT":"خاموشی","Survived":"دوام آوردی","Level":"سطح","Kills":"شکارها","Best Time":"بهترین زمان","Descend Again":"فرود دوباره","Run Details":"جزئیات ران","Main Menu":"منوی اصلی","WARDEN FELLED":"نگهبان سقوط کرد","Claim a permanent boon":"یک موهبت دائمی بردار","SUPPLY CACHE":"محموله تدارکات","A reward from the deep":"پاداشی از اعماق","Claim":"برداشتن","VICTORY":"پیروزی","THE ABYSS YIELDS":"مغاک تسلیم شد","Enter the Corruption":"ورود به فساد","Back":"بازگشت","OK":"باشه","RUN ARCHIVE":"آرشیو ران‌ها","LEADERBOARD":"جدول امتیازات","global rankings":"رده‌بندی جهانی","OPTIONS":"تنظیمات","system":"سیستم","SOCIAL":"دوستان","dive network":"شبکه غواصان","Invites":"دعوت‌ها","Add Friend":"افزودن دوست","OPERATOR":"اپراتور","the one behind the diver":"کسی که پشت غواص است","CAPTAIN":"کاپیتان","account ascension":"صعود حساب","COSMETICS":"ظاهر","deep couture":"مد اعماق","CREDITS":"سازندگان","field manual":"دفترچه میدانی","THE DEEP, EXPLAINED":"اعماق، به زبان ساده","NEW":"جدید","WEAPON":"سلاح","PASSIVE":"پسیو","EVOLVE":"تکامل","INFUSE":"عنصر","RECOVER":"ترمیم","SALVAGE":"غنیمت","Instant":"فوری","Evolution":"تکامل","Locks Element (permanent)":"قفل عنصر (دائمی)","DEFLECTOR ONLINE":"دفلکتور فعال شد","DEFLECTOR OVERLOADED":"دفلکتور از کار افتاد","TRAPPED":"گیر افتادی","NEW FRIEND REQUEST · check Social":"درخواست دوستی جدید · بخش دوستان را ببین","Repair Kit":"کیت تعمیر","Credit Cache":"بسته اعتبار","Resume Run":"ادامه ران"},
+zh:{"Profile":"个人资料","Captain":"舰长","Cosmetics":"外观","Social":"好友","Leaderboard":"排行榜","Run Archive":"战绩存档","Guides":"指南","Settings":"设置","Credits":"制作人员","view profile ›":"查看资料 ›","Language":"语言","DESCEND":"下潜","Customize":"自定义","Dive Network":"潜航网络","Friends":"好友","Your record":"你的记录","Codex":"图鉴","Bestiary":"怪物图鉴","Options":"设置","Thanks":"鸣谢","LORE":"传说","The starless deep · 18,000m down · it has noticed your light":"无星深渊 · 下潜18,000米 · 它注意到了你的光","HULL":"船体","LV":"等级","KILLS":"击杀","CR":"信用点","REZ":"REZ","DODGE":"闪避","THREAT":"威胁","DEPTH":"深度","PARRY":"格挡","GUARD":"防御","CHARGE":"冲锋","HEX":"咒术","LEVEL UP":"升级","CHOOSE YOUR REWARD":"选择你的奖励","WARDEN BOON":"守望者恩赐","GET TO SAFETY":"快到安全处","SELECT YOUR DIVER":"选择你的潜航员","Tap a diver to begin the descent.":"点击潜航员开始下潜。","Choose an augment":"选择一项强化","Reroll":"重掷","PAUSED":"已暂停","Resume":"继续","Abandon Run":"放弃本局","LIGHTS OUT":"灯灭了","Survived":"存活","Level":"等级","Kills":"击杀","Best Time":"最佳时间","Descend Again":"再次下潜","Run Details":"本局详情","Main Menu":"主菜单","WARDEN FELLED":"守望者已陨落","Claim a permanent boon":"领取永久恩赐","SUPPLY CACHE":"补给箱","A reward from the deep":"来自深渊的奖励","Claim":"领取","VICTORY":"胜利","THE ABYSS YIELDS":"深渊臣服了","Enter the Corruption":"进入侵蚀","Back":"返回","OK":"确定","RUN ARCHIVE":"战绩存档","LEADERBOARD":"排行榜","global rankings":"全球排名","OPTIONS":"设置","system":"系统","SOCIAL":"好友","dive network":"潜航网络","Invites":"邀请","Add Friend":"添加好友","OPERATOR":"操作员","the one behind the diver":"潜航员背后的人","CAPTAIN":"舰长","account ascension":"账号升阶","COSMETICS":"外观","deep couture":"深渊时装","CREDITS":"制作人员","field manual":"战地手册","THE DEEP, EXPLAINED":"深渊解读","NEW":"新","WEAPON":"武器","PASSIVE":"被动","EVOLVE":"进化","INFUSE":"元素","RECOVER":"恢复","SALVAGE":"回收","Instant":"立即","Evolution":"进化","Locks Element (permanent)":"锁定元素（永久）","DEFLECTOR ONLINE":"偏导护盾已上线","DEFLECTOR OVERLOADED":"偏导护盾过载","TRAPPED":"被困住了","NEW FRIEND REQUEST · check Social":"新好友请求 · 查看好友页","Repair Kit":"维修包","Credit Cache":"信用点宝箱","Resume Run":"继续本局"},
+hi:{"Profile":"प्रोफ़ाइल","Captain":"कैप्टन","Cosmetics":"कॉस्मेटिक्स","Social":"मित्र","Leaderboard":"लीडरबोर्ड","Run Archive":"रन आर्काइव","Guides":"गाइड","Settings":"सेटिंग्स","Credits":"क्रेडिट्स","view profile ›":"प्रोफ़ाइल देखें ›","Language":"भाषा","DESCEND":"नीचे उतरो","Customize":"कस्टमाइज़","Dive Network":"डाइव नेटवर्क","Friends":"मित्र","Your record":"आपका रिकॉर्ड","Codex":"कोडेक्स","Bestiary":"जीव-सूची","Options":"विकल्प","Thanks":"धन्यवाद","LORE":"कथा","The starless deep · 18,000m down · it has noticed your light":"तारों-रहित गहराई · 18,000 मीटर नीचे · उसने आपकी रोशनी देख ली है","HULL":"हल","LV":"लेवल","KILLS":"किल्स","CR":"क्रेडिट","REZ":"REZ","DODGE":"डॉज","THREAT":"खतरा","DEPTH":"गहराई","PARRY":"पैरी","GUARD":"गार्ड","CHARGE":"चार्ज","HEX":"हेक्स","LEVEL UP":"लेवल अप","CHOOSE YOUR REWARD":"अपना इनाम चुनें","WARDEN BOON":"वार्डन का वरदान","GET TO SAFETY":"सुरक्षित जगह जाओ","SELECT YOUR DIVER":"अपना डाइवर चुनें","Tap a diver to begin the descent.":"उतरना शुरू करने के लिए डाइवर पर टैप करें।","Choose an augment":"एक ऑगमेंट चुनें","Reroll":"फिर से रोल","PAUSED":"रुका हुआ","Resume":"जारी रखें","Abandon Run":"रन छोड़ें","LIGHTS OUT":"बत्ती गुल","Survived":"जीवित रहे","Level":"लेवल","Kills":"किल्स","Best Time":"सर्वश्रेष्ठ समय","Descend Again":"फिर से उतरो","Run Details":"रन विवरण","Main Menu":"मुख्य मेनू","WARDEN FELLED":"वार्डन गिर गया","Claim a permanent boon":"स्थायी वरदान लें","SUPPLY CACHE":"सप्लाई कैश","A reward from the deep":"गहराई से एक इनाम","Claim":"लें","VICTORY":"विजय","THE ABYSS YIELDS":"अगाध झुक गया","Enter the Corruption":"करप्शन में प्रवेश","Back":"वापस","OK":"ठीक है","RUN ARCHIVE":"रन आर्काइव","LEADERBOARD":"लीडरबोर्ड","global rankings":"वैश्विक रैंकिंग","OPTIONS":"विकल्प","system":"सिस्टम","SOCIAL":"मित्र","dive network":"डाइव नेटवर्क","Invites":"निमंत्रण","Add Friend":"मित्र जोड़ें","OPERATOR":"ऑपरेटर","the one behind the diver":"डाइवर के पीछे वाला","CAPTAIN":"कैप्टन","account ascension":"खाता उन्नति","COSMETICS":"कॉस्मेटिक्स","deep couture":"गहराई का फ़ैशन","CREDITS":"क्रेडिट्स","field manual":"फ़ील्ड मैनुअल","THE DEEP, EXPLAINED":"गहराई, समझाई गई","NEW":"नया","WEAPON":"हथियार","PASSIVE":"पैसिव","EVOLVE":"विकास","INFUSE":"तत्व","RECOVER":"मरम्मत","SALVAGE":"लूट","Instant":"तुरंत","Evolution":"विकास","Locks Element (permanent)":"तत्व लॉक (स्थायी)","DEFLECTOR ONLINE":"डिफ्लेक्टर चालू","DEFLECTOR OVERLOADED":"डिफ्लेक्टर ओवरलोड","TRAPPED":"फँस गए","NEW FRIEND REQUEST · check Social":"नया मित्र अनुरोध · मित्र पेज देखें","Repair Kit":"रिपेयर किट","Credit Cache":"क्रेडिट कैश","Resume Run":"रन जारी रखें"},
+es:{"Profile":"Perfil","Captain":"Capitán","Cosmetics":"Cosméticos","Social":"Social","Leaderboard":"Clasificación","Run Archive":"Archivo de partidas","Guides":"Guías","Settings":"Ajustes","Credits":"Créditos","view profile ›":"ver perfil ›","Language":"Idioma","DESCEND":"DESCIENDE","Customize":"Personalizar","Dive Network":"Red de buceo","Friends":"Amigos","Your record":"Tu récord","Codex":"Códice","Bestiary":"Bestiario","Options":"Opciones","Thanks":"Gracias","LORE":"HISTORIA","The starless deep · 18,000m down · it has noticed your light":"La profundidad sin estrellas · 18.000 m abajo · ha notado tu luz","HULL":"CASCO","LV":"NV","KILLS":"BAJAS","CR":"CR","REZ":"REZ","DODGE":"ESQUIVAR","THREAT":"AMENAZA","DEPTH":"PROFUNDIDAD","PARRY":"PARADA","GUARD":"GUARDIA","CHARGE":"CARGA","HEX":"MALEFICIO","LEVEL UP":"SUBES DE NIVEL","CHOOSE YOUR REWARD":"ELIGE TU RECOMPENSA","WARDEN BOON":"DON DEL GUARDIÁN","GET TO SAFETY":"PONTE A SALVO","SELECT YOUR DIVER":"ELIGE TU BUZO","Tap a diver to begin the descent.":"Toca un buzo para comenzar el descenso.","Choose an augment":"Elige una mejora","Reroll":"Volver a tirar","PAUSED":"PAUSA","Resume":"Continuar","Abandon Run":"Abandonar partida","LIGHTS OUT":"LUCES FUERA","Survived":"Sobreviviste","Level":"Nivel","Kills":"Bajas","Best Time":"Mejor tiempo","Descend Again":"Desciende otra vez","Run Details":"Detalles de la partida","Main Menu":"Menú principal","WARDEN FELLED":"GUARDIÁN ABATIDO","Claim a permanent boon":"Reclama un don permanente","SUPPLY CACHE":"ALIJO DE SUMINISTROS","A reward from the deep":"Una recompensa de las profundidades","Claim":"Reclamar","VICTORY":"VICTORIA","THE ABYSS YIELDS":"EL ABISMO CEDE","Enter the Corruption":"Entrar en la Corrupción","Back":"Atrás","OK":"OK","RUN ARCHIVE":"ARCHIVO DE PARTIDAS","LEADERBOARD":"CLASIFICACIÓN","global rankings":"clasificación global","OPTIONS":"OPCIONES","system":"sistema","SOCIAL":"SOCIAL","dive network":"red de buceo","Invites":"Invitaciones","Add Friend":"Añadir amigo","OPERATOR":"OPERADOR","the one behind the diver":"quien está detrás del buzo","CAPTAIN":"CAPITÁN","account ascension":"ascensión de cuenta","COSMETICS":"COSMÉTICOS","deep couture":"alta costura del abismo","CREDITS":"CRÉDITOS","field manual":"manual de campo","THE DEEP, EXPLAINED":"EL ABISMO, EXPLICADO","NEW":"NUEVO","WEAPON":"ARMA","PASSIVE":"PASIVA","EVOLVE":"EVOLUCIÓN","INFUSE":"ELEMENTO","RECOVER":"RECUPERAR","SALVAGE":"BOTÍN","Instant":"Instantáneo","Evolution":"Evolución","Locks Element (permanent)":"Fija el elemento (permanente)","DEFLECTOR ONLINE":"DEFLECTOR EN LÍNEA","DEFLECTOR OVERLOADED":"DEFLECTOR SOBRECARGADO","TRAPPED":"ATRAPADO","NEW FRIEND REQUEST · check Social":"NUEVA SOLICITUD DE AMISTAD · mira Social","Repair Kit":"Kit de reparación","Credit Cache":"Alijo de créditos","Resume Run":"Continuar partida"},
+ru:{"Profile":"Профиль","Captain":"Капитан","Cosmetics":"Косметика","Social":"Друзья","Leaderboard":"Таблица лидеров","Run Archive":"Архив забегов","Guides":"Гайды","Settings":"Настройки","Credits":"Титры","view profile ›":"открыть профиль ›","Language":"Язык","DESCEND":"ПОГРУЖЕНИЕ","Customize":"Кастомизация","Dive Network":"Сеть дайверов","Friends":"Друзья","Your record":"Твой рекорд","Codex":"Кодекс","Bestiary":"Бестиарий","Options":"Настройки","Thanks":"Благодарности","LORE":"ЛОР","The starless deep · 18,000m down · it has noticed your light":"Беззвёздная бездна · 18 000 м вниз · она заметила твой свет","HULL":"КОРПУС","LV":"УР","KILLS":"УБИЙСТВА","CR":"КР","REZ":"REZ","DODGE":"РЫВОК","THREAT":"УГРОЗА","DEPTH":"ГЛУБИНА","PARRY":"ПАРИРОВАНИЕ","GUARD":"ЗАЩИТА","CHARGE":"РЫВОК","HEX":"ПРОКЛЯТИЕ","LEVEL UP":"НОВЫЙ УРОВЕНЬ","CHOOSE YOUR REWARD":"ВЫБЕРИ НАГРАДУ","WARDEN BOON":"ДАР СМОТРИТЕЛЯ","GET TO SAFETY":"УХОДИ В БЕЗОПАСНОСТЬ","SELECT YOUR DIVER":"ВЫБЕРИ ДАЙВЕРА","Tap a diver to begin the descent.":"Нажми на дайвера, чтобы начать погружение.","Choose an augment":"Выбери усиление","Reroll":"Переброс","PAUSED":"ПАУЗА","Resume":"Продолжить","Abandon Run":"Покинуть забег","LIGHTS OUT":"СВЕТ ПОГАС","Survived":"Продержался","Level":"Уровень","Kills":"Убийства","Best Time":"Лучшее время","Descend Again":"Погрузиться снова","Run Details":"Детали забега","Main Menu":"Главное меню","WARDEN FELLED":"СМОТРИТЕЛЬ ПОВЕРЖЕН","Claim a permanent boon":"Забери постоянный дар","SUPPLY CACHE":"ТАЙНИК ПРИПАСОВ","A reward from the deep":"Награда из глубин","Claim":"Забрать","VICTORY":"ПОБЕДА","THE ABYSS YIELDS":"БЕЗДНА УСТУПАЕТ","Enter the Corruption":"Войти в Скверну","Back":"Назад","OK":"ОК","RUN ARCHIVE":"АРХИВ ЗАБЕГОВ","LEADERBOARD":"ТАБЛИЦА ЛИДЕРОВ","global rankings":"мировой рейтинг","OPTIONS":"НАСТРОЙКИ","system":"система","SOCIAL":"ДРУЗЬЯ","dive network":"сеть дайверов","Invites":"Приглашения","Add Friend":"Добавить друга","OPERATOR":"ОПЕРАТОР","the one behind the diver":"тот, кто за дайвером","CAPTAIN":"КАПИТАН","account ascension":"восхождение аккаунта","COSMETICS":"КОСМЕТИКА","deep couture":"мода глубин","CREDITS":"ТИТРЫ","field manual":"полевой устав","THE DEEP, EXPLAINED":"БЕЗДНА, ОБЪЯСНЁННАЯ","NEW":"НОВОЕ","WEAPON":"ОРУЖИЕ","PASSIVE":"ПАССИВКА","EVOLVE":"ЭВОЛЮЦИЯ","INFUSE":"СТИХИЯ","RECOVER":"РЕМОНТ","SALVAGE":"ДОБЫЧА","Instant":"Мгновенно","Evolution":"Эволюция","Locks Element (permanent)":"Закрепляет стихию (навсегда)","DEFLECTOR ONLINE":"ДЕФЛЕКТОР ВКЛЮЧЁН","DEFLECTOR OVERLOADED":"ДЕФЛЕКТОР ПЕРЕГРУЖЕН","TRAPPED":"В ЛОВУШКЕ","NEW FRIEND REQUEST · check Social":"НОВАЯ ЗАЯВКА В ДРУЗЬЯ · смотри Друзья","Repair Kit":"Ремкомплект","Credit Cache":"Тайник кредитов","Resume Run":"Продолжить забег"}
+};
+function t(s){if(LANG==='en')return s;const d=I18N[LANG];return (d&&d[s])||s;}
+function setLang(l){if(!I18N[l]&&l!=='en')return;LANG=l;try{window.storage.set('abyss_lang',l);}catch(e){}applyLang();}
+function applyLang(){
+ try{document.body.classList.toggle('rtl-ui',LANG==='fa');}catch(e){}
+ translateStatic();
+ try{document.querySelectorAll('#navLang .nl-chip').forEach(b=>b.classList.toggle('on',b.dataset.lang===LANG));}catch(e){}
+}
+// Walk curated UI elements; translate each text node in place. Original English is cached on
+// the node (_raw) so switching languages - including back to English - is lossless.
+const I18N_SEL='.nav-link,.nav-sub,#startbtn,.mtile .mt b,.mtile .mt>span,.msub,.lore-txt,.screen .btn,.screen h1,.screen h2,.screen .logo,.studiomark,.lvl-title,.lvl-sub,.go-title,.vic-title,.stat .l,.ptitle,.poptitle,.popsub,.tlabel,.st-rez,.vline,#dodgebtn,.controls-note,#menuarm .ma-row b,#menuarm .ma-row span,.nl-t';
+function translateStatic(){
+ try{
+  document.querySelectorAll(I18N_SEL).forEach(el=>{
+   el.childNodes.forEach(n=>{
+    if(n.nodeType!==3)return;
+    if(n._raw===undefined)n._raw=n.nodeValue;
+    const tr=n._raw.trim();
+    if(tr.length>1)n.nodeValue=n._raw.replace(tr,t(tr));
+   });
+  });
+ }catch(e){}
+}
+// boot: stored preference wins, else Telegram client language, else English
+(async()=>{
+ let l='';
+ try{const r=await window.storage.get('abyss_lang');if(r&&r.value)l=String(r.value);}catch(e){}
+ if(!l){try{const tl=String((TG_USER&&TG_USER.language_code)||'').toLowerCase();
+  if(tl.startsWith('fa'))l='fa';else if(tl.startsWith('zh'))l='zh';else if(tl.startsWith('hi'))l='hi';else if(tl.startsWith('es'))l='es';else if(tl.startsWith('ru'))l='ru';}catch(e){}}
+ if(l&&(I18N[l]||l==='en'))LANG=l;
+ applyLang();
+})();
+setTimeout(()=>{try{applyLang();}catch(e){}},400);
+// sidebar language chips
+try{
+ const nl=document.getElementById('navLang');
+ if(nl)nl.addEventListener('click',ev=>{const b=ev.target.closest('.nl-chip');if(b&&b.dataset.lang){setLang(b.dataset.lang);}});
+}catch(e){}
+/* ===== end i18n ===== */
+/* ===== FULL PERSIAN (FA) CONTENT — literary localization =====
+   trDyn(root): generic walker for dynamically-built screens (captain, profile, cosmetics,
+   codex, social, archive). Translates every exact-match text node; caches originals so
+   switching languages stays lossless. FA_WD / FA_PD mirror the weapon & passive desc
+   functions with native Persian phrasing (numbers stay live). */
+function trDyn(root){
+ if(!root)return;
+ try{
+  const w=document.createTreeWalker?document.createTreeWalker(root,4):null;
+  if(w){let n;while(n=w.nextNode()){if(n._raw===undefined)n._raw=n.nodeValue;const tr=(n._raw||'').trim();if(tr.length>1)n.nodeValue=n._raw.replace(tr,t(tr));}}
+  else{(function walk(el){el.childNodes&&el.childNodes.forEach(n=>{if(n.nodeType===3){if(n._raw===undefined)n._raw=n.nodeValue;const tr=n._raw.trim();if(tr.length>1)n.nodeValue=n._raw.replace(tr,t(tr));}else if(n.nodeType===1&&n.tagName!=='SCRIPT'&&n.tagName!=='STYLE')walk(n);});})(root);}
+ }catch(e){}
+}
+const FA_WD={
+bolt:l=>`${1+Math.floor(l/2)} تیرِ تندِ تپش، با ${2+Math.floor(l/3)} رخنه، بُردِ بلند.`,
+orbit:l=>`${l} خُردخورشید گِردت می‌چرخند و هر چه را بسایند می‌سوزانند. هر برخورد، دوزخ‌آتش را برمی‌افروزد؛ جرقه‌ی فروریزشِ مغاک.`,
+aura:l=>`میدانی از فروغ، هر دشمنی را که در برد باشد می‌گدازد.`,
+spread:l=>`مخروطی از ${4+l} نیزه به سوی نزدیک‌ترین گله.`,
+chain:l=>`آذرخش تا ${3+Math.floor(l/2)} دشمن زنجیر می‌شود.`,
+seek:l=>`${1+Math.floor(l/2)} ذره‌ی جوینده که خود شکار را می‌یابند.`,
+fireaoe:l=>`شکوفه‌ی اخگر: آسیبِ انفجاری و سوختنِ پیوسته.`,
+iceaoe:l=>`ترکشِ یخ گِردِ تو؛ آسیب همراهِ سرمازدگی (کندی).`,
+bleedaoe:l=>`خون‌ریزیِ انباشته بر نزدیک‌ترین گله.`,
+poison:l=>`ابرِ زهر، با زهرِ انباشته.`,
+sling:l=>`گلوله‌ی سنگین، پس‌رانشِ بزرگ، کمانه به ${1+Math.floor(l/3)} دشمنِ دیگر.`,
+spirit:l=>`${1+Math.floor(l/3)} شبحِ اثیری که از میانِ همه می‌گذرند.`,
+chaos:l=>`دشمنی به تصادف؛ آسیبِ آشوب، وحشی و ناپایدار.`,
+rifle:l=>`شلیکی بلند که یک هدف را از هستی می‌روبد. در دستِ تک‌انداز، مرگ‌بار.`,
+fists:l=>`ضربه‌های رزمی هرچه را در دسترس باشد می‌کوبند؛ مشت‌ها یک‌درمیان، با پس‌رانش.`,
+saber:l=>`تیغ‌های چرخان هر نزدیک‌شونده‌ای را می‌شکافند. بر افعی: بردِ بلندتر، پس‌رانشِ عظیم، تا ۸ تیغ.`,
+lightaoe:l=>`آذرخش را بر ${2+Math.floor(l/2)} دشمنِ نزدیک فرا می‌خواند و سرمازده‌شان می‌کند.`,
+deflect:l=>`آتشِ دشمن را در هوا می‌شکند و نزدیکان را برق‌زده می‌کند.`,
+siege:l=>`در برابرِ سیاهی‌لشکر فروتن، بر یلان و فرمانروایان ویرانگر (x${(2.5+l*0.3).toFixed(1)}).`,
+glint:l=>`${3+l} شمشیرِ شبح‌گون فرا می‌خواند که بادبزنی می‌گشایند و رخنه می‌کنند.`,
+chaosspirit:l=>`${1+Math.floor(l/3)} روحِ آشوب که شکار را می‌جویند و از همه می‌گذرند.`,
+duality:l=>`گویِ آمیزگر را می‌افکند که بر نزدیک‌ترین گله می‌ترکد و آذرخش و پلاسما را در دم به «بیش‌بار» می‌آمیزد. آسیبِ سنگین، و گله را می‌پراکند.`
+};
+const FA_PD={
+power:l=>`+${l*15}٪ آسیب بر همه‌چیز.`,
+haste:l=>`+${Math.round((1-Math.pow(0.88,l))*100)}٪ شتابِ آتش.`,
+vitality:l=>`+${l*25} بدنه‌ی بیشینه (و ترمیم نیز می‌کند).`,
+swift:l=>`+${l*9}٪ شتابِ حرکت.`,
+multi:l=>`+${l} گلوله بر همه‌ی سلاح‌ها، حتی تفنگِ تک‌انداز. انباشته کن تا توفان ببارد.`,
+area:l=>`+${l*14}٪ پهنه و اندازه‌ی گلوله.`,
+wisdom:l=>`+${l*20}٪ رِزونانسِ (تجربه‌ی) دریافتی.`,
+magnet:l=>`+${l*50} شعاعِ ربایشِ غنیمت.`,
+regen:l=>`بازسازیِ ${(l*1.0).toFixed(1)} بدنه در ثانیه.`,
+armor:l=>`-${l*3} آسیبِ دریافتی از هر ضربه.`,
+crit:l=>`+${l*9}٪ بختِ ضربه‌ی کاری.`,
+bulwark:l=>`+${l*2} زره و +${l*15} بدنه‌ی بیشینه.`,
+pierce:l=>`+${l} رخنه بر همه‌ی گلوله‌ها.`,
+knock:l=>`+${l*35}٪ پس‌رانش بر هر ضربه. به پروازشان درآور.`,
+thorns:l=>`بازتابِ ${l*18} آسیب بر هر که تو را بزند.`,
+greed:l=>`+${l*18}٪ اعتبار، +${l*12}٪ تجربه، +${l*30} بردِ ربایش.`,
+energyshield:l=>`+${l*25} سپرِ خودترمیم که ضربه‌ها را می‌بلعد.`,
+capacitor:l=>`سپرها و حائل ${Math.round((1-Math.pow(0.8,l))*100)}٪ تندتر پر می‌شوند.`,
+drone:l=>`+${l} پهپادِ همرزم.`
+};
+function faWD(id,l){try{return (LANG==='fa'&&FA_WD[id])?FA_WD[id](l):WEAPONS[id].desc(l);}catch(e){try{return WEAPONS[id].desc(l);}catch(_){return '';}}}
+function faPD(id,l){try{return (LANG==='fa'&&FA_PD[id])?FA_PD[id](l):PASSIVES[id].desc(l);}catch(e){try{return PASSIVES[id].desc(l);}catch(_){return '';}}}
+Object.assign(I18N.fa,{
+/* — elements — */
+"Fire":"آتش","Ice":"یخ","Lightning":"آذرخش","Toxic":"زهر","Radiation":"تابش","Void":"نیستی","Plasma":"پلاسما","Kinetic":"جنبشی","base":"پایه",
+/* — weapon names — */
+"Pulse Bolt":"تیرِ تپش","Mini Suns":"خُردخورشیدها","Lumen Field":"میدانِ فروغ","Scatter Lance":"نیزه‌پاش","Arc Tether":"زنجیرِ آذرخش","Seeker Motes":"ذره‌های جوینده","Cinder Bloom":"شکوفه‌ی اخگر","Frost Nova":"ترکشِ یخ","Rupture":"شکافت","Venom Spores":"هاگ‌های زهر","Slingshot":"فلاخن","Spirit Lash":"تازیانه‌ی روح","Chaos Bolt":"تیرِ آشوب","Sharpshooter":"تک‌تیرانداز","Iron Fists":"مشت‌های آهنین","Light Saber":"شمشیرِ نور","Storm Caller":"توفان‌خوان","Deflector Field":"سپرِ بازتاب","Siege Breaker":"دژشکن","Glintblade":"برق‌تیغ","Chaos Spirit":"روحِ آشوب","Catalyst":"آمیزگر",
+/* — passive names — */
+"Overcharge":"بیش‌توان","Synaptic":"تندپیوند","Plating":"زره‌پوش","Thrusters":"رانشگرها","Splitter":"چندپار","Resonate":"هم‌آوایی","Attunement":"هم‌کوکی","Lure Field":"میدانِ ربایش","Mendgel":"ژلِ ترمیم","Carapace":"سخت‌پوست","Focus Lens":"عدسیِ تمرکز","Bulwark":"بارو","Penetrator":"رخنه‌گر","Impact Driver":"کوبنده","Retaliate":"کین‌خواه","Scavenger":"غنیمت‌گر","Energy Shield":"سپرِ انرژی","Capacitor":"انباره","Drone Bay":"آشیانه‌ی پهپاد",
+/* — characters — */
+"Vanguard":"پیشتاز","The Reliable One":"استوارِ همیشگی",
+"\"Point me at the dark. I'll empty the mag and reload before you blink.\" Old school trigger discipline. Fast, far, and it hits where it counts.":"«مرا رو به تاریکی بگیر؛ پیش از آن‌که پلک بزنی خشاب را خالی کرده و پر کرده‌ام.» انضباطِ ماشه به سبکِ کهن. تند، دوررس، و درست همان‌جا می‌زند که باید.",
+"Sentinel":"دیده‌بان","The Immovable":"جنبش‌ناپذیر",
+"\"Bullets? Cute. Come closer.\" A wall with a grudge. Fodder fire just pings off the field while the cold drags them in to die.":"«گلوله؟ بامزه است. نزدیک‌تر بیا.» دیواری کینه‌به‌دل. آتشِ سیاهی‌لشکر از میدانش کمانه می‌کند و سرما آنان را به درون می‌کشد تا بمیرند.",
+"Ranger":"تکاور","The Opportunist":"فرصت‌شکار",
+"\"In, paid, gone. Heroics don't pay rent.\" Light on her feet, heavy on the loot, and the longest blink dash in the deep.":"«می‌روم، می‌گیرم، می‌گریزم. پهلوانی اجاره‌خانه نمی‌دهد.» سبک‌پا، سنگین‌غنیمت، با بلندترین جهشِ برق‌آسای ژرفا.",
+"Sniper":"تک‌انداز","The Cold Hand":"دستِ سرد",
+"\"One breath. One target. One hole.\" Made of glass and patience. The drone watches her back so she never has to.":"«یک نفس. یک هدف. یک سوراخ.» از شیشه و شکیبایی ساخته شده. پهپاد پشتش را می‌پاید تا او هرگز ناچار نشود.",
+"Vyper":"افعی","The Whirlwind":"گردباد",
+"\"Stay close. It's more fun when they can see it coming.\" Spins through the swarm flinging bodies, and the field eats their bullets so you never have to.":"«نزدیک بمان؛ وقتی مرگ را ببینند تماشایی‌تر است.» چرخان از دلِ انبوه می‌گذرد و پیکرها را می‌پراکَنَد؛ میدانش گلوله‌هاشان را می‌بلعد تا تو ناچار نباشی.",
+"Yujin":"یوجین","The Fallen Samurai":"سامورایِ فروافتاده",
+"\"A blade I lost. A discipline I kept.\" No dash, no shield, just footwork and a perfect parry with no cooldown. Glass body, river feet. Read the deep and turn its fury back on it.":"«تیغی را گم کردم؛ آیینی را نگاه داشتم.» نه جهشی، نه سپری؛ تنها پاورزی و دفعی بی‌نقص، بی‌هیچ بازدمی. تنی از شیشه، پاهایی چون رود. ژرفا را بخوان و خشمش را به خودش بازگردان.",
+"Rhino":"کرگدن","The Juggernaut":"کوه‌پیکر",
+"Flux":"فلاکس","The Reaction Weaver":"بافنده‌ی واکنش‌ها",
+/* char perk lines (HTML preserved) */
+"<span>+20%</span> dmg · <span>+18%</span> fire rate · <b style=\"color:#ffe27a\">+12% crit</b> · +1 pierce · dodge":"<span>+20%</span> آسیب · <span>+18%</span> شتابِ آتش · <b style=\"color:#ffe27a\">+12% ضربه‌ی کاری</b> · +1 رخنه · جاخالی",
+"<span>permanent shield</span> · <b style=\"color:#9b6dff\">chilling field</b> · faster guns in a crowd · no dodge, doesn't need it":"<span>سپرِ همیشگی</span> · <b style=\"color:#9b6dff\">میدانِ سرما</b> · در شلوغی تندتر می‌بارد · جاخالی ندارد، نیازی هم ندارد",
+"<span>+16%</span> speed · huge lure · <b style=\"color:#ffc24b\">+25% loot</b> · +1 shot · <b style=\"color:#ffc24b\">long dodge</b>":"<span>+16%</span> شتاب · ربایشِ پهناور · <b style=\"color:#ffc24b\">+25% غنیمت</b> · +1 شلیک · <b style=\"color:#ffc24b\">جاخالیِ بلند</b>",
+"<span>one shot rifle</span> · <b style=\"color:#8affc0\">2 companion drones</b> · <b style=\"color:#ff5a6e\">rifle kills feed resonance instantly</b> · fragile · long dodge":"<span>تفنگِ تک‌شلیک</span> · <b style=\"color:#8affc0\">۲ پهپادِ همراه</b> · <b style=\"color:#ff5a6e\">شکارِ تفنگ بی‌درنگ رِزونانس می‌دهد</b> · شکننده · جاخالیِ بلند",
+"<span>+35%</span> speed · <span>+120</span> hull · <b style=\"color:#7fe6ff\">projectile shield</b> · spinning Light Saber · dodge":"<span>+35%</span> شتاب · <span>+120</span> بدنه · <b style=\"color:#7fe6ff\">سپرِ گلوله‌گیر</b> · شمشیرِ نورِ چرخان · جاخالی",
+"<span>parry anything</span> (no cooldown) · <b style=\"color:#ffe27a\">fastest movement</b> · martial fists · low hull · no dodge":"<span>دفعِ هر چیز</span> (بی‌بازدم) · <b style=\"color:#ffe27a\">تندترین گام</b> · مشتِ رزمی · بدنه‌ی کم · بی‌جاخالی",
+"<span>no weapon, the charge is everything</span> · <b style=\"color:#ff9b4b\">hold up to 4s: more range, damage, knockback</b> · invincible mid-charge · trample + aftershock · huge hull":"<span>بی‌سلاح؛ یورش همه‌چیز است</span> · <b style=\"color:#ff9b4b\">تا ۴ ثانیه نگه دار: بردِ بیشتر، آسیب و پس‌رانشِ بیشتر</b> · در میانه‌ی یورش رویین‌تن · لگدمال + پس‌لرزه · بدنه‌ی عظیم",
+"<span>starts with the Catalyst (instant Overload)</span> · <b style=\"color:#b6ff3c\">stronger reactions and bigger zones</b> · Hex: warp the swarm + go untouchable · shrugs off fields · walks through black holes":"<span>با آمیزگر می‌آغازد (بیش‌بارِ آنی)</span> · <b style=\"color:#b6ff3c\">واکنش‌های نیرومندتر و پهنه‌های بزرگ‌تر</b> · طلسم: انبوه را دگرگون کن و رویین‌تن شو · میدان‌ها را به هیچ می‌گیرد · از دلِ سیاه‌چاله می‌گذرد",
+/* — boons — */
+"+22% Damage":"+۲۲٪ آسیب","More teeth. No catch. Just bite harder.":"دندانِ بیشتر. بی‌هیچ اما و اگر. فقط سخت‌تر گاز بگیر.",
+"+70 Max Hull":"+۷۰ بدنه‌ی بیشینه","Bolt on more plate. The deep hits back.":"ورقِ زرهِ تازه ببند؛ ژرفا پاسخِ ضربه را می‌دهد.",
+"+10% Attack Speed":"+۱۰٪ شتابِ آتش","Trigger finger's twitching. Let it.":"انگشتِ ماشه می‌پرد؛ بگذار بپرد.",
+"Twin Chamber":"خزانه‌ی دوقلو","Double load the chamber. One trigger, two answers.":"خزانه را دوبار پر کن. یک ماشه، دو پاسخ.",
+"+12% Move Speed":"+۱۲٪ شتابِ حرکت","Lighter on the fins. Catch me if you can.":"سبک‌بال‌تر بران. اگر می‌توانی مرا بگیر.",
+"+10% Crit Chance":"+۱۰٪ بختِ ضربه‌ی کاری","You see the seams in everything now. Aim there.":"اکنون درزِ هر چیز را می‌بینی. همان‌جا را نشانه برو.",
+"+16% Area":"+۱۶٪ پهنه","Bigger blast radius. Subtlety's overrated.":"شعاعِ انفجارِ بزرگ‌تر. ظرافت را زیادی بزرگش کرده‌اند.",
+"+40 Energy Shield":"+۴۰ سپرِ انرژی","One more layer of 'not today.' +40 shield.":"یک لایه‌ی دیگر از «امروز نه». +۴۰ سپر.",
+"Heal 1.2% per Kill":"ترمیمِ ۱٫۲٪ با هر شکار","Kill, heal, repeat. The deep pays its debts.":"بکش، ترمیم شو، تکرار کن. ژرفا بدهی‌اش را می‌پردازد.",
+"Evolution Catalyst":"آمیزگرِ تکامل","Push a maxed gun past its limits. Watch it become something else.":"سلاحِ به‌سقف‌رسیده را از مرزش فراتر بران و تماشا کن که چیزِ دیگری می‌شود.",
+"Elemental Graft":"پیوندِ عنصر","Lock an element into a weapon that has none. Choose your reactions.":"عنصری را در سلاحی بی‌عنصر قفل کن. واکنش‌هایت را خودت برگزین.",
+"Phoenix Protocol":"آیینِ ققنوس","Titan Slayer":"یل‌افکن","Event Ward":"طلسمِ رخداد","Bounty Surge":"خیزابِ غنیمت","+30% Reaction Power":"+۳۰٪ توانِ واکنش","Lingering Deep":"ژرفای ماندگار","Reactive Ward":"طلسمِ واکنشی","Deep Freeze":"یخ‌بندانِ ژرف",
+"A lasting power for slaying a Warden.":"نیرویی ماندگار، پاداشِ برافکندنِ یک نگهبان.","BOON":"موهبت","Permanent":"دائمی","Acquire":"برداشتن",
+/* — relics — */
+"Twin Cores":"هسته‌های دوقلو","Why fire one when the deep brought friends? +1 projectile, everything.":"چرا یکی شلیک کنی وقتی ژرفا مهمان آورده؟ +۱ گلوله بر همه‌چیز.",
+"Bloodthirst":"خون‌خواهی","Every kill tops you off. The abyss feeds you back. +2% hull per body.":"هر شکار جانی تازه‌ات می‌دهد. مغاک بازت می‌خورانَد. +۲٪ بدنه با هر پیکر.",
+"Glass Cannon":"توپِ شیشه‌ای","Hit like a god, fold like paper. +50% damage, -25% hull. Live fast.":"چون خدایان بزن، چون کاغذ تا شو. +۵۰٪ آسیب، -۲۵٪ بدنه. تند زندگی کن.",
+"Avarice":"آز","Greed is a survival trait down here. Double credits, double rez.":"این پایین، آز خصلتِ زنده‌ماندن است. اعتبارِ دوبرابر، رِزونانسِ دوبرابر.",
+"Aegis Reactor":"رآکتورِ سپر","Spin up the ablative field. +60 shield between you and oblivion.":"میدانِ سپر را به چرخش درآور. +۶۰ سپر میانِ تو و نیستی.",
+"Executioner":"جلاد","No wounded. Only deleted. +20% crit, crits hit for x3.":"زخمی نمی‌ماند؛ فقط محو می‌شود. +۲۰٪ ضربه‌ی کاری، و کاری‌ها ×۳ می‌زنند.",
+"Overclock":"فراچرخ","Redline the rig, ignore the warnings. +20% attack speed.":"دستگاه را به خطِ سرخ بران و هشدارها را نشنیده بگیر. +۲۰٪ شتابِ آتش.",
+"Detonator":"چاشنی","Every crit leaves a crater. They go off in a chain. 35% splash.":"هر ضربه‌ی کاری دهانه‌ای بر جا می‌گذارد و زنجیره‌وار می‌ترکند. ۳۵٪ آسیبِ پاشش.",
+"Unstable Catalyst":"آمیزگرِ ناپایدار","Your elemental reactions hit much harder. +60% reaction and ground-zone damage.":"واکنش‌های عنصری‌ات بسیار سخت‌تر می‌کوبند. +۶۰٪ آسیبِ واکنش و پهنه‌های زمینی.",
+"Deep Wellspring":"چشمه‌ی ژرف","Reactive Plating":"زرهِ واکنشی","Permafrost Lattice":"شبکه‌ی یخ‌بندانِ جاوید",
+/* — cosmetics — */
+"Native Signature":"امضای بومی","Each diver's original colors.":"رنگ‌های اصیلِ هر غواص.","Abyssal Teal":"فیروزه‌ی مغاک","Deep-current cyan.":"آبیِ جریانِ ژرف.","Magma Core":"هسته‌ی گدازه","Molten orange and gold.":"نارنجی و زرِ مذاب.","Void Violet":"بنفشِ نیستی","Singularity purple.":"ارغوانِ تکینگی.","Toxic Bloom":"شکوفه‌ی زهر","Irradiated green.":"سبزِ پرتوخورده.","Plasma Pink":"صورتیِ پلاسما","Searing magenta.":"سرخابیِ سوزان.","Royal Gold":"زرِ شاهانه","Sovereign gold.":"طلای فرمانروایان.","Glacier":"یخچالِ کهن","Frozen pale blue.":"آبیِ رنگ‌پریده‌ی یخ‌زده.","Crimson Tide":"موجِ سرخ","Arterial red.":"سرخِ شریانی.","Phantom White":"سپیدِ شبح","Pure ghost white.":"سپیدیِ نابِ ارواح.","Electric Sky":"آسمانِ برق","Lightning blue.":"آبیِ آذرخش.","Sunset Coral":"مرجانِ شفق","Warm coral pink.":"صورتیِ گرمِ مرجانی.","Spectrum":"رنگین‌طیف","A slowly shifting rainbow hue.":"رنگین‌کمانی که آهسته می‌گردد.","Native Wake":"ردِ بومی","Per-diver default trail.":"دنباله‌ی پیش‌فرضِ هر غواص.","None":"هیچ","No trail at all.":"بی‌هیچ دنباله‌ای.","Comet":"دنباله‌دار","A long, fading comet tail.":"دُمِ بلند و محوشونده‌ی یک دنباله‌دار.","Ribbon":"روبان","A smooth, wide flowing ribbon.":"روبانی پهن و روان.","Echo":"پژواک","Afterimages of your hull.":"پس‌تصویرهای بدنه‌ات.","Bubbles":"حباب‌ها","Rising deep-sea bubbles.":"حباب‌هایی که از ژرفا برمی‌خیزند.","Embers":"اخگرها","Trailing sparks of fire.":"جرقه‌های دنباله‌دارِ آتش.","Neon Wisp":"شعله‌نئون","Long glowing electric wisp.":"رشته‌ی بلند و تابانِ برق.","Stardust":"غبارِ ستاره","Twinkling particle dust.":"غبارِ ذره‌های چشمک‌زن.","Ink Cloud":"ابرِ مرکب","A dark spreading smear.":"لکه‌ای تیره که می‌گسترد.","Plasma Arc":"کمانِ پلاسما","A crackling dual-tone ribbon.":"روبانی دوسویه و جرقه‌زن.","Frost Trail":"ردِ یخ","Glittering ice crystals.":"بلورهای درخشانِ یخ.","Native Aura":"هاله‌ی بومی","Per-diver signature aura.":"هاله‌ی امضای هر غواص.","No aura.":"بی‌هاله.","Halo":"هاله","A soft radiant halo.":"هاله‌ای نرم و تابان.","Orbit Rings":"حلقه‌های مداری","Three counter-rotating rings.":"سه حلقه‌ی واگرد.","Ion Orbit":"مدارِ یونی","Orbiting energy nodes.":"گره‌های انرژیِ چرخان.","Pulse":"تپش","Expanding sonar pulses.":"تپش‌های گسترنده‌ی سونار.","Rune Crown":"تاجِ رمز","Rotating runic glyphs.":"نشان‌های رمزیِ چرخان.","Flame Crown":"تاجِ شعله","A licking corona of fire.":"تاجی از زبانه‌های آتش.","Frost Veil":"چادرِ یخ","A crystalline frost ring.":"حلقه‌ای بلورین از یخ.","Vortex":"گرداب","A swirling particle vortex.":"گردابی از ذره‌های چرخان.","Implosion":"فروریزش","The signature teal burst.":"ترکشِ فیروزه‌ایِ امضا.","Supernova":"اَبَرنواختر","A blinding white shockwave.":"موجی سپید و کورکننده.","Void Collapse":"فروپاشیِ نیستی","An inward purple singularity.":"تکینگیِ ارغوانیِ درون‌کِش.","Shatter":"خُردشدن","A spray of crystal shards.":"افشانه‌ای از تکه‌های بلور.","Spore Bloom":"شکوفه‌ی هاگ","A slow toxic cloud.":"ابرِ زهرِ آهسته.","Gilded End":"پایانِ زراندود","A golden farewell.":"بدرودی زرین.","Meltdown":"ذوبِ کامل","A molten eruption.":"فورانی مذاب.","Native":"بومی","Each weapon keeps its colors.":"هر سلاح رنگِ خودش را نگه می‌دارد.","Neon":"نئون","Bright glowing neon rounds.":"گلوله‌های نئونیِ تابان.","Bone":"استخوان","Pale ivory shards.":"تکه‌های عاجِ رنگ‌پریده.","Electric pink and blue.":"صورتی و آبیِ برقی.","Gold":"زر","Molten gold rounds.":"گلوله‌های زرِ مذاب.","Dark-matter bolts.":"تیرهای ماده‌ی تاریک.","Ember":"اخگر","Burning ember rounds.":"گلوله‌های اخگرِ سوزان.","Frost":"یخ‌زده","Icy crystal shots.":"شلیک‌های بلورِ یخ.","Hue-shifting prismatic rounds.":"گلوله‌های منشوریِ رنگ‌گردان.",
+/* — captain tiers + labels — */
+"DRIFTER":"سرگردان","DEEP DIVER":"ژرف‌غوص","TRENCH STALKER":"شکارچیِ گودال","ABYSS REAPER":"دروگرِ مغاک","HADAL WRAITH":"شبحِ ژرفنا","VOIDBORNE":"نیستی‌زاد","LEVIATHAN":"لویاتان","NIGHTMARE SOVEREIGN":"فرمانروای کابوس","ELDER OF THE DEEP":"پیرِ ژرفا","THE HOLLOW GOD":"خدای تهی",
+"APEX RANK ACHIEVED":"به فرازینه‌رتبه رسیدی","TIER":"رده","MAX":"بیشینه","LIFETIME XP":"تجربه‌ی همه‌ی عمر","NEXT RANK":"رتبه‌ی بعد","LV":"سطح",
+/* — profile axes + flavors — */
+"AGGRESSION":"تهاجم","ENDURANCE":"پایداری","MOBILITY":"چابکی","PRECISION":"دقت","GREED":"آز","SURVIVOR":"بازمانده","TANK":"سپرِ گوشتی","DEADEYE":"چشمِ مرگ","JUGGERNAUT":"کوه‌پیکر","STORMBRINGER":"توفان‌آور","DEEP DWELLER":"ساکنِ ژرفا","TREASURE DIVER":"گنج‌غواص","MOVEMENT RUNNER":"دونده‌ی بی‌قرار","UNWRITTEN":"نانوشته","RUNNER LINK STABLE":"پیوندِ دونده پایدار","SOMETHING MOVED BELOW":"چیزی آن پایین جنبید","DO NOT FOLLOW THE LIGHT":"از پیِ نور مرو",
+/* — social labels — */
+"Accept":"پذیرفتن","Add":"افزودن","Captain rank":"رتبه‌ی کاپیتان","Copy":"رونوشت","Decline":"رد کردن","Friend Requests":"درخواست‌های دوستی","My Diver Code":"کدِ غواصِ من","Network Diagnostics":"عیب‌یابیِ شبکه","Online":"برخط","Open Inside Telegram":"در تلگرام باز کن","Send":"فرستادن","Your Divers":"غواصانِ تو",
+/* — archive / misc — */
+"VICTORY":"پیروزی","FELL":"فروافتاد","New weapon:":"سلاحِ نو:","This weapon gains two levels.":"این سلاح دو سطح بالا می‌رود.","This weapon gains a level.":"این سلاح یک سطح بالا می‌رود.","Credit Stash":"اندوخته‌ی اعتبار","+150 credits.":"+۱۵۰ اعتبار.","+60 credits.":"+۶۰ اعتبار.","Restore 30% of your max hull.":"۳۰٪ از بدنه‌ی بیشینه‌ات را بازمی‌گرداند.","Gain 25 credits.":"۲۵ اعتبار می‌گیری.","+35% power, +1 projectile, faster & wider.":"+۳۵٪ توان، +۱ گلوله، تندتر و پهن‌تر.",
+"You will be remembered, champion. The deep keeps your light now.":"از یاد نخواهی رفت، ای پهلوان. اکنون ژرفا نورِ تو را نگاه می‌دارد.",
+"You didn't just fail. You disappointed me.":"تو فقط شکست نخوردی؛ مرا ناامید کردی."
+});
+Object.assign(I18N.fa,{
+/* — statuses — */
+"Burn":"سوختن","Fire damage over time. Stacks add up fast: 1 stack is 4 dmg/sec, 50 stacks is 200/sec. Hit 300 stacks on one target and the whole screen ignites.":"آسیبِ آتش در گذرِ زمان. انباشته‌ها تند بالا می‌روند: ۱ انباشته ۴ آسیب بر ثانیه است و ۵۰ انباشته ۲۰۰. به ۳۰۰ انباشته بر یک هدف برس تا سراسرِ پرده شعله‌ور شود.",
+"Chill":"سرمازدگی","Ice slows enemies. More stacks, slower foes. Pairs beautifully with anything that wants targets to sit still.":"یخ دشمنان را کند می‌کند. انباشته‌ی بیشتر، دشمنِ کندتر. با هر چه هدفِ بی‌حرکت بخواهد، هم‌نشینِ زیبایی است.",
+"Shock":"برق‌زدگی","Lightning damage over time that loves a crowd. Cheap to apply, great for softening packs.":"آسیبِ آذرخش در گذرِ زمان، که عاشقِ شلوغی است. ارزان می‌نشیند و گله‌ها را خوب نرم می‌کند.",
+"Corrosion":"خوردگی","Toxic rot that eats hull steadily. The patient killer.":"پوسیدگیِ زهرآگین که بدنه را پیوسته می‌خورَد. قاتلِ شکیبا.",
+"Radiation":"تابش","Nuclear decay damage. Feeds the Mutation reaction for fatter loot.":"آسیبِ واپاشیِ هسته‌ای. واکنشِ «جهش» را می‌خورانَد تا غنیمت فربه‌تر شود.",
+"Marked":"نشان‌خورده","Void brand. Marked enemies take escalating bonus damage from every hit, up to +75%.":"داغِ نیستی. نشان‌خورده از هر ضربه آسیبِ افزوده‌ی فزاینده می‌گیرد، تا +۷۵٪.",
+"Weakened":"سست‌شده","Plasma overload. Weakened enemies hit you softer. Survival through suppression.":"بیش‌بارِ پلاسما. سست‌شده‌ها نرم‌تر می‌زنند. زنده‌ماندن از راهِ فروکوفتن.",
+"Bleed":"خون‌ریزی","Raw kinetic wounds that drip damage. The honest status.":"زخم‌های جنبشیِ خام که آسیب می‌چکانند. صادق‌ترینِ حالت‌ها.",
+/* — reactions — */
+"Thermal Shock":"شوکِ گرمایی","A shock burst that knocks the whole pack outward. If the target was frozen, it shatters for far more and clears the freeze.":"ترکشی که همه‌ی گله را به بیرون می‌کوبد. اگر هدف یخ‌زده باشد، با آسیبی بس بیشتر می‌شکند و یخ می‌پرد.",
+"Combustion":"احتراق","Drops a burning fire pool on the ground. Anything that stands in it keeps taking fire damage.":"برکه‌ای از آتش بر زمین می‌نهد. هر چه در آن بایستد، پیوسته می‌سوزد.",
+"Chain Storm":"توفانِ زنجیره","A six jump lightning chain, and it leaves a conductive zone behind that keeps zapping anything that walks in.":"زنجیره‌ی آذرخش با شش جهش؛ و پهنه‌ای رسانا بر جا می‌گذارد که هر واردشونده‌ای را برق می‌زند.",
+"Overload":"بیش‌بار","A hard scatter that flings enemies away and briefly stuns everyone caught in it.":"پراکنشی سخت که دشمنان را به دوردست می‌افکند و گرفتاران را دمی گیج می‌کند.",
+"Entropy":"آشفتگی","Burn loses its ceiling and snowballs, plus a void rift opens that pulls enemies inward. Soak them, then ignite.":"سوختن سقفش را گم می‌کند و بهمن‌وار می‌بالد؛ و شکافی از نیستی گشوده می‌شود که دشمنان را به درون می‌کشد. خیسشان کن، سپس برافروز.",
+"Mutation":"جهش","The enemy grows stronger but drops far richer loot, and lets out a fear pulse that sends nearby fodder fleeing. Risk for reward.":"دشمن نیرومندتر می‌شود اما غنیمتی بس فربه‌تر می‌ریزد، و تپشی از هراس می‌پراکَنَد که خردگان را می‌گریزانَد. خطر در برابرِ پاداش.",
+"Superconduct":"اَبَررسانش","The target takes +50% from everything, and a frozen ground zone forms that slows all who cross it.":"هدف از همه‌چیز +۵۰٪ آسیب می‌گیرد، و پهنه‌ای یخ‌زده بر زمین می‌بندد که هر گذرنده‌ای را کند می‌کند.",
+"Absolute Zero":"صفرِ مطلق","Total freeze. The enemy locks solid and becomes an immovable wall the horde piles into.":"یخ‌بندانِ کامل. دشمن سنگ می‌شود؛ دیواری ناجنبیدنی که انبوه بر آن تلنبار می‌گردد.",
+"Swirl":"چرخش","Spreads the strongest status on the target out to every enemy nearby. Turn one burning foe into a burning crowd.":"نیرومندترین حالتِ روی هدف را به همه‌ی دشمنانِ پیرامون می‌گسترد. یک سوزنده را به انبوهی سوزان بدل کن.",
+"Crystallize":"بلورش","Drops a crystal shard. Walk over it for a chunk of shield, or hull if you have no shield.":"تکه‌بلوری می‌اندازد. از رویش بگذر تا پاره‌ای سپر بگیری، و اگر سپر نداری، بدنه.",
+"Bloom":"شکوفایی","Plants a seed that blooms after about 1.5 seconds, detonating on the nearest pack with a homing burst.":"دانه‌ای می‌کارد که پس از حدودِ ۱٫۵ ثانیه می‌شکفد و با ترکشی جوینده بر نزدیک‌ترین گله می‌ترکد.",
+"Corrosive Mist":"مِهِ خورنده","Lays down a poison fog that stacks corrosion and slows everything caught inside it.":"مِهی زهرآگین می‌گسترد که خوردگی می‌انبارد و هر گرفتاری را کند می‌کند.",
+"Magnetize":"مغناطش","Opens a strong pull rift that yanks enemies into a tight cluster. Set it up, then blow the cluster apart.":"شکافی پرکشش می‌گشاید که دشمنان را در خوشه‌ای تنگ گرد می‌آورد. بچین، سپس خوشه را از هم بپاش.",
+"Irradiate":"پرتوباران","Leaves a radioactive zone that applies radiation and makes everything inside take extra damage.":"پهنه‌ای پرتوزا بر جا می‌گذارد که تابش می‌نشانَد و هر چه درون باشد آسیبِ افزوده می‌گیرد.",
+/* — items — */
+"Credit Cache":"بسته‌ی اعتبار","Pickup":"برداشتنی","Loose salvage. Bank it. Credits feed your greed perks and the run archive.":"غنیمتِ پراکنده. بیندوزش. اعتبار، خصلت‌های آز و آرشیوِ ران‌هایت را می‌خورانَد.",
+"Repair Cell":"سلولِ ترمیم","Patches a chunk of hull back on. Grab it before the next wave reads you.":"پاره‌ای از بدنه را بازمی‌دوزد. پیش از آن‌که موجِ بعد تو را بخواند، بردار.",
+"Resonance Magnet":"آهن‌ربای رِزونانس","Every resonance orb on the whole map screams toward you at once. Pure dopamine.":"هر گویِ رِزونانسِ سراسرِ نقشه یک‌باره به سویت فریادکشان می‌آید. دوپامینِ ناب.",
+"Void Burst":"ترکشِ نیستی","Wipes the entire floor of fodder in one flash. Rare, on a cooldown, and always satisfying.":"در یک درخشش، سراسرِ کف را از خردگان می‌روبد. کمیاب، با بازدم، و همیشه دل‌چسب.",
+"Supply Cache":"محموله‌ی تدارکات","Map Drop":"افتاده در نقشه","Walk over it for an instant gacha pull. Bigger foes guard the best ones.":"از رویش بگذر تا قرعه‌ای آنی بکشی. بهترین‌ها را دشمنانِ بزرگ‌تر پاس می‌دارند.",
+"Resonance Orb":"گویِ رِزونانس","The deep's currency for power. Collect it to level up and reshape your build.":"پولِ رایجِ ژرفا برای قدرت. گِردش آور تا سطح بگیری و ساختت را از نو بریزی.",
+"Acceleration Lane":"باندِ شتاب","Terrain":"زمین","The glowing teal roads. Ride one for faster movement, faster fire, and a damage bump.":"جاده‌های فیروزه‌ایِ تابان. بر یکی بران تا گامِ تندتر، آتشِ تندتر و آسیبِ افزون بگیری.",
+/* — hazards — */
+"Black Hole":"سیاه‌چاله","The Singularity's gift. It drags you toward a lethal core and pulls enemies in to be crushed. Respect it. Route around it. Or use Event Ward and laugh.":"ارمغانِ تکینگی. تو را به سوی هسته‌ای مرگ‌بار می‌کشد و دشمنان را به درون می‌بلعد تا خرد شوند. حرمتش را نگه دار؛ راهت را گِردش بپیچ. یا طلسمِ رخداد بردار و بخند.",
+"Solar Storm":"توفانِ خورشیدی","Standing fire fields from the Solar Construct. Walk out, do not camp.":"میدان‌های آتشِ ایستا از ساخته‌ی خورشیدی. بیرون برو؛ اردو مزن.",
+"Meteor Strike":"شهاب‌باران","Corruption rain. Telegraphed, then it lands hard. The blast clears enemies too if you bait them in.":"بارانِ فساد. نخست نشانش می‌آید، سپس سخت فرود می‌آید. اگر دشمنان را به دام بکشی، انفجارش آنان را نیز می‌روبد.",
+"Hazard":"مخاطره","Modifier":"نشان‌دار",
+/* — chains — */
+"Inferno":"دوزخ‌آتش","Stack burn to 12 and it ignites into Inferno, a hotter self feeding blaze.":"سوختن را به ۱۲ برسان تا به دوزخ‌آتش بدل شود؛ شعله‌ای داغ‌تر که خود را می‌خورانَد.",
+"Plaguefire":"طاعون‌آتش","Poison the flame. It becomes Plaguefire and melts hull at terrifying speed.":"شعله را زهرآگین کن تا طاعون‌آتش شود و بدنه را با شتابی هولناک بگدازد.",
+"Abyssal Collapse":"فروریزشِ مغاک","The deep folds inward. A crushing implosion that drags and devastates everything nearby.":"ژرفا به درون تا می‌خورد. فروریزشی له‌کننده که هر چه نزدیک باشد را می‌کشد و ویران می‌کند.",
+"Burn x3":"سوختن ×۳","Inferno + Toxic":"دوزخ‌آتش + زهر","Plaguefire + Void":"طاعون‌آتش + نیستی",
+/* — enemy modifiers — */
+"Volatile":"ناپایدار","Explodes on death. Kill it at a distance or eat the blast.":"با مرگش می‌ترکد. از دور بکشش، یا انفجار را نوش کن.",
+"Magnetic":"مغناطیسی","Hoards your resonance orbs while alive. Kill it and they all fly home to you.":"تا زنده است گوی‌های رِزونانست را می‌انبارد. بکشش تا همه یک‌جا به خانه بازپرند.",
+"Phaseborn":"فازوَرزاد","Phases in and out of solidity. While ghosted it slips through crowds and walls of bodies.":"میانِ جسم و شبح می‌لغزد. تا شبح است، از میانِ انبوه و دیوارِ پیکرها می‌گذرد.",
+"Infernal":"دوزخی","Leaves a burning trail. Do not chase it through the fire.":"ردی سوزان بر جا می‌گذارد. از میانِ آتش دنبالش مکن.",
+"Necrotic":"مُرده‌خیز","Rises once from death at half strength. Kill it twice.":"یک بار از مرگ برمی‌خیزد، با نیمی از توان. دوبار بکشش.",
+/* — codex section notes — */
+"Things the deep leaves behind. Most of it flies to you the moment you get close. Tap any card for the full read.":"آنچه ژرفا بر جا می‌گذارد. بیشترش همین که نزدیک شوی به سویت پر می‌کشد. برای خواندنِ کامل روی هر کارت بزن.",
+"Marked enemies: some foes spawn with a glyph overhead. Learn them fast:":"دشمنانِ نشان‌دار: برخی با نشانی بر فرازِ سر زاده می‌شوند. زود بشناس‌شان:",
+"Hazards to avoid:":"مخاطره‌هایی که باید ازشان گریخت:",
+"Your guns fire on their own. Your job is choosing which ones grow. Max a weapon to unlock four Evolution tiers, then feed it elements in the draft. Tap any weapon for the full read.":"سلاح‌هایت خود می‌بارند؛ کارِ تو گزینشِ آن است که کدام ببالد. سلاحی را به سقف برسان تا چهار رده‌ی تکامل بگشاید، سپس در قرعه به آن عنصر بخوران. برای خواندنِ کامل روی هر سلاح بزن.",
+/* — codex long-reads — */
+"Dodge, Guard, Parry":"جاخالی، گارد، دفع","Space or the dive button":"کلیدِ Space یا دکمه‌ی شیرجه","Every diver has one survival tool. Learn yours first.":"هر غواص یک ابزارِ بقا دارد. نخست از آنِ خود را بیاموز.",
+"Every diver answers danger differently.\n\nMost divers blink a short distance with full invulnerability. Ranger blinks farthest and fastest, on the shortest cooldown in the game. Her whole life is dodge, shotgun, dodge.\n\nVanguard does not dodge. He plants his feet and raises an unbreakable Guard for over a second. While it holds, nothing hurts him and slows wash off his hull.\n\nYujin parries. Tap the button and a quarter second window opens where everything breaks against your fists: bullets, lasers, stampedes, even black hole cores. The parry has only a brief cooldown, so quick taps still open windows back to back. With perfect reads Yujin survives anything. And because he cannot dodge, a black hole would be a guaranteed death, so while caught in one his button instead blinks him out to safety. With lazy thumbs Yujin still dies fast.\n\nRhino charges. The dive button sends him barreling forward, untouchable the whole way, flinging every enemy he touches aside and trampling them for damage. When the charge ends a shockwave bursts out and scatters the rest. Slow on foot, unstoppable in motion.\n\nThe Sorcerer hexes. His button does not move him. Instead he becomes untouchable for a few seconds and mutates the whole swarm around him, turning fodder into richer loot and forcing them to flee. It is his survival button and his early treasure engine at once.":"هر غواص به خطر پاسخی از آنِ خود می‌دهد.\n\nبیشترِ غواصان جهشی کوتاه می‌زنند، سراپا رویین‌تن. تکاور دورتر و تندتر از همه می‌جهد، با کوتاه‌ترین بازدمِ بازی. سراسرِ زندگی‌اش همین است: جاخالی، شلیک، جاخالی.\n\nپیشتاز جاخالی نمی‌زند. پا سفت می‌کند و گاردی نشکستنی برمی‌افرازد، بیش از یک ثانیه. تا برپاست، هیچ چیز نمی‌آزاردش و کندی‌ها از بدنه‌اش می‌شویند.\n\nیوجین دفع می‌کند. دکمه را بزن تا پنجره‌ای ربع‌ثانیه‌ای گشوده شود که در آن همه‌چیز بر مشت‌هایت می‌شکند: گلوله، لیزر، یورشِ گله، حتی هسته‌ی سیاه‌چاله. دفع تنها بازدمی کوتاه دارد، پس ضربه‌های پیاپیِ انگشت، پنجره‌های پیاپی می‌گشایند. با خواندنِ بی‌نقص، یوجین از هر چیزی جانِ سالم به در می‌برد. و چون جاخالی ندارد، سیاه‌چاله برایش مرگی حتمی می‌بود؛ پس چون در آن گرفتار شود، دکمه‌اش او را به بیرون، به امنیت می‌جهانَد. با شستِ تنبل، یوجین همچنان زود می‌میرد.\n\nکرگدن یورش می‌برد. دکمه‌ی شیرجه او را غرّان به پیش می‌راند، سراسرِ راه دست‌نیافتنی؛ هر دشمنی را که بساید به کناری می‌افکند و لگدمالش می‌کند. چون یورش پایان گیرد، موجی می‌ترکد و باقی را می‌پراکند. بر پا کند است، در حرکت بازناایستادنی.\n\nجادوگر طلسم می‌کند. دکمه‌اش او را نمی‌جنبانَد؛ چند ثانیه دست‌نیافتنی می‌شود و سراسرِ انبوهِ پیرامونش را دگرگون می‌کند: خردگان به غنیمتِ فربه‌تر بدل می‌شوند و به گریز وادار. این هم دکمه‌ی بقای اوست و هم موتورِ گنجِ آغازینش.",
+"Shields":"سپرها","Vyper and Sentinel":"افعی و دیده‌بان","A permanent field that eats incoming fire.":"میدانی همیشگی که آتشِ رسیده را می‌بلعد.",
+"Vyper and Sentinel carry a permanent energy field that swallows every non boss projectile on contact. It does not block body slams, so keep moving.\n\nEvery other diver earns a recharging Barrier as they level. When the blue bar under your hull is up, you can afford one mistake. Watch it. Tank when it is full, run when it is empty.":"افعی و دیده‌بان میدانی همیشگی از انرژی دارند که هر گلوله‌ی غیرِ فرمانروا را در دمِ برخورد می‌بلعد. کوبشِ تن‌به‌تن را نمی‌گیرد؛ پس در حرکت بمان.\n\nدیگر غواصان با سطح‌گرفتن، حائلی خودپُرشونده به دست می‌آورند. تا نوارِ آبیِ زیرِ بدنه‌ات برپاست، یک خطا جا داری. بپایش. پُر که بود تن بده، خالی که بود بگریز.",
+"Wardens and Boons":"نگهبانان و موهبت‌ها","Every 5 levels":"هر ۵ سطح","Kill the giant, claim a permanent gift.":"غول را بکش و ارمغانی جاودانه بردار.",
+"Every fifth level a Warden descends: a giant with a name and a trick. Fell it and you claim a Boon, a permanent change to your run that no draft can offer.\n\nIf a Warden drifts off your screen too long it calls escorts to push you back toward the fight. The deep does not let you ignore its champions.":"هر پنج سطح یک نگهبان فرود می‌آید: غولی با نامی و نیرنگی. برافکنش تا موهبتی برداری؛ دگرگونی‌ای جاودانه در رانَت که هیچ قرعه‌ای نمی‌بخشد.\n\nاگر نگهبان دیرزمانی از پرده‌ات دور بمانَد، ملازمانش را فرا می‌خواند تا تو را به سوی پیکار بازپس برانند. ژرفا نمی‌گذارد پهلوانانش را نادیده بگیری.",
+"The Three Suns":"سه خورشید","L20, L50, L80":"سطحِ ۲۰، ۵۰، ۸۰","Half screen titans that walk with you for entire levels.":"یلانی به پهنای نیم‌پرده که سطح‌ها با تو گام برمی‌دارند.",
+"Three times on the way down, something the size of half your screen arrives and simply refuses to die fast.\n\nHelios, the Dying Sun. A burning sphere at level 20 that alternates radial rings with aimed bursts.\n\nThe Monolith. A rotating fortress square at level 50, firing cross volleys from its corners and birthing drones.\n\nThe Spear of the Deep. A fast triangle at level 80 that fires from its tip and lunges across the floor at you.\n\nThey are built to last five or more levels beside you. That is on purpose. Fighting a Sun while the horde presses in is the heart of this game. Past level 70 the cycle continues every five levels, and each new Sun arrives with double the hull of the last.":"سه بار در راهِ فرود، چیزی به پهنای نیمِ پرده‌ات از راه می‌رسد و به‌سادگی از مردنِ زود سر باز می‌زند.\n\nهلیوس، خورشیدِ محتضر. گویی سوزان در سطحِ ۲۰ که حلقه‌های شعاعی را با رگبارهای نشانه‌رفته یک‌درمیان می‌کند.\n\nمونولیت. دژی چهارگوش و چرخان در سطحِ ۵۰ که از گوشه‌هایش رگبارِ چلیپایی می‌بارد و پهپاد می‌زاید.\n\nنیزه‌ی ژرفا. سه‌گوشی تندرو در سطحِ ۸۰ که از نوکش می‌بارد و سراسرِ کف به سویت خیز برمی‌دارد.\n\nساخته شده‌اند تا پنج سطح و بیشتر در کنارت بپایند. و این به‌عمد است: پیکار با یک خورشید در حالی که انبوه می‌فشارد، قلبِ این بازی است. از سطحِ ۷۰ به بعد این چرخه هر پنج سطح ادامه می‌یابد، و هر خورشیدِ تازه با بدنه‌ای دوچندانِ پیشین از راه می‌رسد.",
+"Named Wardens":"نگهبانانِ نامدار","The rotation":"گردشِ نوبت","Learn their faces. They do not change their tricks.":"چهره‌هاشان را بیاموز؛ نیرنگ‌هاشان را عوض نمی‌کنند.",
+"The Collector vacuums your resonance orbs into a hoard while it lives. Kill it and everything it stole erupts back, magnetized to you with interest.\n\nThe Judge marks you with a gold sigil. While judged you take thirty percent more from everything. Kill it fast or play like a coward for five seconds.\n\nThe Twin divides at half health into two faster copies. The Boon comes when the last one falls.\n\nThe Shepherd never stops calling its flock, with something Epic every third call.\n\nTitan, the Solar Construct, and the Singularity round out the rotation with raw violence, sun fields, and black holes.":"گردآورنده تا زنده است گوی‌های رِزونانست را به خزانه‌اش می‌مکد. بکشش تا هر چه ربوده با بهره به سویت بازبجوشد.\n\nداور با نشانی زرین داغت می‌زند. تا داغ برپاست، از همه‌چیز سی‌درصد بیشتر آسیب می‌گیری. یا زود بکشش، یا پنج ثانیه بزدلانه بازی کن.\n\nهمزاد در نیمه‌ی جان به دو رونوشتِ تندتر می‌شکافد. موهبت آن‌گاه می‌رسد که واپسین فروافتد.\n\nچوپان هرگز از فراخواندنِ گله بازنمی‌ایستد، و هر سومین فراخوان چیزی حماسی می‌آورد.\n\nتیتان، ساخته‌ی خورشیدی و تکینگی، گردشِ نوبت را با خشونتِ خام، میدان‌های خورشیدی و سیاه‌چاله‌ها کامل می‌کنند.",
+"The Leviathan":"لویاتان","Level 90":"سطحِ ۹۰","The biggest thing in the game. Everything stops for it.":"بزرگ‌ترین چیزِ بازی. همه‌چیز برایش می‌ایستد.",
+"At level 90 the deep holds its breath. Leveling freezes. The horde stops spawning. And a circle nearly a thousand pixels wide rises to meet you.\n\nThe Leviathan births one of the original Suns every sixty seconds while it lives. Kill it and the deep exhales: ascent resumes, the horde returns, and level 100 waits.\n\nThis is the wall before the door. Bring your whole build.":"در سطحِ ۹۰ ژرفا نفسش را نگه می‌دارد. سطح‌گرفتن می‌ایستد. انبوه از زادن بازمی‌ماند. و دایره‌ای نزدیک به هزار پیکسل پهنا برمی‌خیزد تا به دیدارت آید.\n\nلویاتان تا زنده است هر شصت ثانیه یکی از خورشیدهای نخستین را می‌زاید. بکشش تا ژرفا بازدَم برآورد: فراز از سر گرفته می‌شود، انبوه بازمی‌گردد، و سطحِ ۱۰۰ چشم‌به‌راه است.\n\nاین دیوارِ پیش از در است. همه‌ی ساختت را بیاور.",
+"Hazards of the Floor":"مخاطره‌های کف","Read the telegraphs":"نشانه‌ها را بخوان","Tar, black holes, solar fields, meteors. The floor itself fights you.":"قیر، سیاه‌چاله، میدانِ خورشیدی، شهاب. خودِ کف با تو می‌جنگد.",
+"Tar Fields ripple for a moment before they set. Step in one and your thrusters bog down: movement drops hard until you escape. Vanguard, Sentinel and Yujin resist the pull. Vanguard inside his Guard ignores it completely.\n\nBlack Holes drag everything toward a crushing core, and the Singularity likes to drop them ahead of where you are running, not behind.\n\nSolar fields burn anything that lingers. Meteors mark the ground before they land. Every hazard in this game announces itself once. After that, it assumes you were listening.":"میدان‌های قیر دمی موج می‌زنند و سپس می‌بندند. پا در یکی بگذار تا رانشگرهایت به گِل بنشیند: گام سخت می‌افتد تا بگریزی. پیشتاز، دیده‌بان و یوجین در برابرِ این کشش پایدارند؛ پیشتاز درونِ گاردش یکسره نادیده‌اش می‌گیرد.\n\nسیاه‌چاله‌ها همه‌چیز را به سوی هسته‌ای له‌کننده می‌کشند، و تکینگی خوش دارد آن‌ها را پیشِ پایت بیندازد، نه پشتِ سرت.\n\nمیدان‌های خورشیدی هر درنگ‌کننده‌ای را می‌سوزانند. شهاب‌ها پیش از فرود، زمین را نشان می‌زنند. هر مخاطره‌ی این بازی یک بار خود را اعلام می‌کند؛ از آن پس می‌پندارد که گوش می‌داده‌ای.",
+"The Pace of the Deep":"آهنگِ ژرفا","How leveling works":"سطح‌گرفتن چگونه کار می‌کند","The deep feeds you on its own schedule. About 18 minutes to the floor.":"ژرفا به زمان‌بندیِ خودش می‌خوراندت. تا کف، نزدیکِ ۱۸ دقیقه.",
+"Resonance is not a faucet you can force open. The deep meters what it feeds you.\n\nThe first 20 levels come one choice at a time and you will feel the grind. After that, a draft opens every fifth level, with your final pick at 95. Push your build hard and you will run a little ahead of schedule. The deep notices, and tightens the flow until the floor catches up.\n\nA full descent to level 100 takes fifteen to twenty minutes. At level 40 the Seal breaks and kills feed you directly, no orbs on the floor. Objectives, Wardens and the Suns are how you get rich faster than the schedule allows.":"رِزونانس شیری نیست که به زور بگشایی؛ ژرفا خوراکت را پیمانه می‌کند.\n\nبیست سطحِ نخست، هر بار یک گزینش می‌آید و سنگینیِ کار را حس خواهی کرد. از آن پس، هر پنجمین سطح قرعه‌ای می‌گشاید، و واپسین گزینشت در ۹۵ است. ساختت را سخت بران تا اندکی از زمان‌بندی پیش بیفتی؛ ژرفا درمی‌یابد و جریان را تنگ می‌کند تا کف به تو برسد.\n\nفرودِ کامل تا سطحِ ۱۰۰ پانزده تا بیست دقیقه می‌کشد. در سطحِ ۴۰ مُهر می‌شکند و شکارها یک‌راست می‌خورانندت؛ دیگر گویی بر کف نیست. مأموریت‌ها، نگهبانان و خورشیدها راهِ توانگرشدنِ زودتر از زمان‌بندی‌اند.",
+"Reading Your Build":"خواندنِ ساختت","Press Tab, or the small corner button on touch, and your whole run opens in one card: every weapon with its stars and evolution tier, every augment, every element you carry, and which Reactions are live right now.\n\nCheck it before every draft. The best pick is usually the one that completes a pair, not the one with the biggest number.":"کلیدِ Tab را بزن، یا بر لمسی دکمه‌ی کوچکِ گوشه را، تا سراسرِ رانت در یک کارت گشوده شود: هر سلاح با ستاره‌ها و رده‌ی تکاملش، هر تقویت، هر عنصری که با خود داری، و این‌که هم‌اکنون کدام واکنش‌ها زنده‌اند.\n\nپیش از هر قرعه نگاهی بینداز. بهترین گزینش معمولاً آن است که جفتی را کامل می‌کند، نه آن که بزرگ‌ترین عدد را دارد.",
+"The Corruption":"فساد","Reach level 100, watch the victory, then choose to keep going. The Corruption rewrites the rules: every level past 100 raises the tier, stacks a brutal modifier, and sends another named Warden down after you.\n\nA fresh draft opens every 10 corrupted levels and a Boon lands every 20. The level counter itself starts to lie to you. Words appear that should not.\n\nThe floor of the world sits at C100. Nothing descends further. Nothing needs to.":"به سطحِ ۱۰۰ برس، پیروزی را بنگر، و آن‌گاه ماندن را برگزین. فساد قانون‌ها را از نو می‌نویسد: هر سطحِ پس از ۱۰۰ رده را بالا می‌برد، نشانی بی‌رحم می‌انبارد، و نگهبانِ نامدارِ دیگری را از پی‌ات فرومی‌فرستد.\n\nهر ۱۰ سطحِ فاسد قرعه‌ای تازه می‌گشاید و هر ۲۰ سطح موهبتی فرود می‌آید. خودِ شمارگرِ سطح به تو دروغ می‌گوید. واژه‌هایی پدیدار می‌شوند که نباید.\n\nکفِ جهان بر C100 نشسته است. هیچ‌چیز فروتر نمی‌رود. نیازی هم نیست."
+});
+Object.assign(I18N.fa,{
+"No gun. No brakes. He hunts the way a real beast does, by running things down. Hold to dig in and build a charge, release to barrel through the swarm untouchable and send bodies flying. The longer the hold, the harder the deep breaks.":"نه تفنگی، نه ترمزی. چون دَدی راستین شکار می‌کند: با زیر گرفتن. نگه دار تا پا سفت کند و نیرو بینبارد؛ رها کن تا رویین‌تن از دلِ انبوه بغرّد و پیکرها را به پرواز درآورد. هرچه فشردن بلندتر، شکستنِ ژرفا سخت‌تر.",
+"Elements never settle around him, they collide. His Catalyst fuses lightning and plasma into instant Overloads, his Hex warps the swarm into walking loot, and he drifts untouched through the black holes that swallow everyone else.":"عنصرها گِردِ او آرام نمی‌گیرند؛ به هم می‌کوبند. آمیزگرش آذرخش و پلاسما را در دم به «بیش‌بار» می‌آمیزد، طلسمش انبوه را به غنیمتِ راه‌رونده بدل می‌کند، و خود آسوده از دلِ سیاه‌چاله‌هایی می‌گذرد که دیگران را می‌بلعند.",
+"<span>starts with the Catalyst (instant Overload)</span> · <b style=\"color:#b6ff3c\">stronger reactions and bigger zones</b> · Hex: warp the swarm + go untouchable · shrugs off fields · walks black holes":"<span>با آمیزگر می‌آغازد (بیش‌بارِ آنی)</span> · <b style=\"color:#b6ff3c\">واکنش‌های نیرومندتر و پهنه‌های بزرگ‌تر</b> · طلسم: انبوه را دگرگون کن و رویین‌تن شو · میدان‌ها را به هیچ می‌گیرد · از دلِ سیاه‌چاله می‌گذرد",
+"Chronostasis":"ایست‌زمان","You bent the clock. They're wading through syrup now. -12% enemy speed.":"زمان را خم کردی؛ اکنون در شیره دست‌وپا می‌زنند. -۱۲٪ شتابِ دشمن.",
+"Titan Heart":"قلبِ تیتان","A second heart, bigger than the first. +120 hull. Stack 'em.":"قلبی دوم، بزرگ‌تر از نخست. +۱۲۰ بدنه. رویش بینبار.",
+"The pools, fogs and rifts you leave behind grow larger and linger longer. +40% zone size and duration.":"برکه‌ها، مِه‌ها و شکاف‌هایی که بر جا می‌گذاری بزرگ‌تر می‌شوند و دیرتر می‌پایند. +۴۰٪ اندازه و ماندگاریِ پهنه.",
+"Triggering a reaction feeds your shield. Heals 8 shield (or hull) on every reaction, a few times a second.":"هر واکنش سپرت را می‌خورانَد. با هر واکنش ۸ سپر (یا بدنه) ترمیم می‌شود، چند بار در ثانیه.",
+"Your ice bites deeper. Chill always lands with extra stacks, freezing crowds in place for longer.":"یخِ تو ژرف‌تر گاز می‌گیرد. سرمازدگی همیشه با انباشته‌ی افزوده می‌نشیند و انبوه را دیرتر در جای خود می‌خشکانَد.",
+"Die once, get up anyway. The dark isn't done with you. Revive at 50%.":"یک بار بمیر و باز برخیز؛ تاریکی هنوز با تو کار دارد. با ۵۰٪ جان بازخیز.",
+"The big ones bleed too. +35% to anything that thinks it's a boss.":"بزرگان هم خون دارند. +۳۵٪ بر هر چه خود را فرمانروا می‌پندارد.",
+"Stand in the storm and grin. 35% less hazard pain, 40% less black hole pull.":"در دلِ توفان بایست و بخند. ۳۵٪ دردِ مخاطره کمتر، ۴۰٪ کششِ سیاه‌چاله کمتر.",
+"Skim a little extra off the top. +20% credits & rez.":"سهمی افزون از سرِ سفره بردار. +۲۰٪ اعتبار و رِزونانس.",
+"Your elemental reactions and the zones they leave hit noticeably harder.":"واکنش‌های عنصری‌ات و پهنه‌هایی که بر جا می‌گذارند، آشکارا سخت‌تر می‌کوبند.",
+"Fire pools, poison fog, frost ground and rifts grow bigger and last longer.":"برکه‌های آتش، مِهِ زهر، زمینِ یخ و شکاف‌ها بزرگ‌تر می‌شوند و بیشتر می‌پایند.",
+"Every reaction you trigger tops up a little shield. Great for staying in the thick of it.":"هر واکنش اندکی سپرت را پر می‌کند. برای ماندن در دلِ معرکه بی‌همتاست.",
+"Your chill lands with extra bite, slowing and locking down crowds for longer.":"سرمازدگی‌ات گزنده‌تر می‌نشیند و انبوه را دیرتر کند و قفل می‌کند.",
+"One panel that shows everything you are.":"یک صفحه که هر آنچه هستی را نشانت می‌دهد.",
+"Beat the deep, then let it rewrite itself.":"ژرفا را شکست بده؛ آن‌گاه بگذار خود را از نو بنویسد."
+});
+/* ===== end FA content ===== */
+Object.assign(I18N.fa,{
+/* — runtime weapon renames (override pass) — */
+"Pulse Cannon":"توپِ تپش","Chain Arc":"کمانِ زنجیره","Nova Generator":"نوازا","Void Lance":"نیزه‌ی نیستی",
+/* — warden / boss display names — */
+"TITAN CORE":"هسته‌ی تیتان","SOLAR CONSTRUCT":"ساخته‌ی خورشیدی","THE SINGULARITY":"تکینگی","THE COLLECTOR":"گردآورنده","THE JUDGE":"داور","THE TWIN":"همزاد","THE SHEPHERD":"چوپان","HELIOS, THE DYING SUN":"هلیوس، خورشیدِ محتضر","THE MONOLITH":"مونولیت","THE SPEAR OF THE DEEP":"نیزه‌ی ژرفا","THE LEVIATHAN":"لویاتان","THE VOID LORD":"سرورِ نیستی","A WARDEN":"نگهبانی",
+" DESCENDS. SLAY IT FOR A BOON":" فرود می‌آید. برای موهبت، برافکنش",
+"THE VOID LORD AWAKENS":"سرورِ نیستی بیدار می‌شود","OMEGA PROTOCOL AWAKENS":"آیینِ اُمگا بیدار می‌شود","A LEGENDARY HORROR ARRIVES":"هراسی افسانه‌ای از راه می‌رسد",
+"THE JUDGE MARKS YOU":"داور داغت می‌زند","THE COLLECTOR'S HOARD IS YOURS":"خزانه‌ی گردآورنده از آنِ توست",
+/* — canvas alerts + subs — */
+"NEW OBJECTIVE":"مأموریتِ تازه","THE SWARM":"انبوه","they come like a storm of knives":"چون توفانی از چاقو می‌آیند","ARROWHEAD VOLLEY":"رگبارِ پیکان","sharp things, incoming":"چیزهای تیز در راه‌اند","SWARM INBOUND":"انبوه در راه است","THE DARK SURGES":"تاریکی می‌خروشد","HORDE BREACH":"رخنه‌ی خیل","THEY COME IN NUMBERS":"بی‌شمار می‌آیند","TIDE OF THE DEEP":"خیزابِ ژرفا",
+"THE SEAL IS BROKEN":"مُهر شکست","the deep now feeds you directly":"ژرفا اکنون یک‌راست می‌خوراندت",
+"THE LEVIATHAN RISES":"لویاتان برمی‌خیزد","the deep holds its breath \u00b7 ascent locked":"ژرفا نفسش را نگه می‌دارد · فراز بسته شد",
+"THE LEVIATHAN FALLS":"لویاتان فرومی‌افتد","the deep exhales \u00b7 ascent resumes":"ژرفا بازدَم برمی‌آورد · فراز از سر گرفته می‌شود",
+"A SUN DESCENDS":"خورشیدی فرود می‌آید",
+/* — objectives — */
+"DESTROY {N} ENEMIES":"{N} دشمن را نابود کن","SHATTER {N} TRIANGLES":"{N} سه‌گوش را بشکن","POP {N} FAST BALLS":"{N} گویِ تندرو را بترکان","BREAK {N} SQUARES":"{N} چهارگوش را بشکن","COLLECT {N} RESONANCE ORBS":"{N} گویِ رِزونانس گِرد آور","TAKE NO HULL DAMAGE":"هیچ آسیبی به بدنه نگیر",
+"OBJECTIVE COMPLETE: SUPPLY CACHE":"مأموریت انجام شد: محموله‌ی تدارکات","OBJECTIVE COMPLETE: WARDEN BOON":"مأموریت انجام شد: موهبتِ نگهبان","OBJECTIVE COMPLETE: AUGMENT DRAFT":"مأموریت انجام شد: قرعه‌ی تقویت","OBJECTIVE COMPLETE: INSTANT ASCENT":"مأموریت انجام شد: فرازِ آنی","OBJECTIVE COMPLETE: CREDIT JACKPOT":"مأموریت انجام شد: گنجِ اعتبار","OBJECTIVE FAILED":"مأموریت شکست خورد",
+/* — build card + misc — */
+"Current Build":"ساختِ کنونی","Weapons":"سلاح‌ها","Augments":"تقویت‌ها","Synergy":"هم‌افزایی",
+"Restore 35% of max hull.":"۳۵٪ از بدنه‌ی بیشینه را بازمی‌گرداند.","Vault of Credits":"گنجینه‌ی اعتبار","+400 credits.":"+۴۰۰ اعتبار.",
+"written by Claude":"به قلمِ کلود","OBJECTIVE COMPLETE":"مأموریت انجام شد",
+/* — corrected codex notes (post-rework copy) — */
+"Six ways to descend. Each one plays a different game. Tap a diver to study them before your next run.":"شش راه برای فرود. هر یک بازیِ خودش را دارد. پیش از رانِ بعدی، روی هر غواص بزن و بشناسش.",
+"Eight damage types. Every weapon carries exactly one element - its innate one, or the single element you lock in with an Infusion. Land two different elements on the same enemy, from two different weapons, and a Reaction fires.":"هشت گونه آسیب. هر سلاح درست یک عنصر دارد - عنصرِ ذاتی‌اش، یا همان یک عنصری که با «عنصرافشانی» در آن قفل می‌کنی. دو عنصرِ ناهمسان را، از دو سلاحِ جدا، بر یک دشمن بنشان تا واکنشی برافروخته شود.",
+"Effects stack as pips over an enemy. The more pips, the harder it bites.":"اثرها چون نشانه‌هایی بر فرازِ دشمن می‌انبارند. نشانه‌ی بیشتر، گزشِ سخت‌تر.",
+"Land two different elements on the same enemy and the deep answers. There are 14 reactions, and most leave something on the battlefield: fire pools, poison fog, pull rifts, frozen ground, freeze walls, even crystal shards you can grab. Each weapon carries one element for the whole run, so reactions come from pairing different weapons. This is where builds get broken.":"دو عنصرِ ناهمسان بر یک دشمن بنشان تا ژرفا پاسخ دهد. چهارده واکنش هست و بیشترشان چیزی بر میدان به جا می‌گذارند: برکه‌های آتش، مِهِ زهر، شکاف‌های کِشنده، زمینِ یخ‌زده، دیوارهای یخ، حتی تکه‌بلورهایی که می‌توانی برداری. هر سلاح در سراسرِ ران یک عنصر دارد؛ پس واکنش‌ها از هم‌جفت‌کردنِ سلاح‌های جداگانه می‌آیند. این‌جاست که ساخت‌ها افسارگسیخته می‌شوند.",
+"Escalation chains. Stack deeper, burn brighter:":"زنجیره‌های اوج‌گیری. ژرف‌تر بینبار، درخشان‌تر بسوز:",
+"How the deep actually works. Tap any card to read the whole thing before your next run.":"ژرفا به‌راستی چگونه کار می‌کند. پیش از رانِ بعدی، روی هر کارت بزن و همه‌اش را بخوان."
+});
+
+
 function tgShareText(){try{const d=Math.floor(time*8).toLocaleString();return 'ABYSS // SURVIVORS \u00b7 '+(player&&player.char?player.char.name:'Diver')+' \u00b7 LV '+(player?player.level:0)+' \u00b7 '+d+'m deep \u00b7 '+kills+' kills \u00b7 by @'+(TG_USER.username||TG_USER.first_name||'survivor');}catch(e){return 'ABYSS // SURVIVORS';}}
 function tgShowShare(){try{if(TG)TG.MainButton.show();}catch(e){}}
 // ---- DIVE NETWORK: presence + friends relay ----
@@ -3535,7 +3864,7 @@ function computeStats(){const A=runArchive||[];const total=A.length,wins=A.filte
  const hl=A.reduce((a,r)=>Math.max(a,r.level||0),0),hc=A.reduce((a,r)=>Math.max(a,r.corruption||0),0);
  const n0=Math.max(1,total),avg=f=>A.reduce((a,r)=>a+(f(r)||0),0)/n0;
  const axes=[Math.min(1,avg(r=>(r.dodges||0)/Math.max(60,r.time||60))/0.5),Math.min(1,avg(r=>(r.kills||0)/Math.max(60,r.time||60))/45),Math.min(1,avg(r=>(r.taken||0)/Math.max(60,r.time||60))/35),Math.min(1,avg(r=>(r.peak||0))/80000),Math.min(1,avg(r=>(r.gold||0)/Math.max(60,r.time||60))/9),Math.min(1,avg(r=>(r.time||0))/1200)];
- const per={};A.forEach(r=>per[r.char]=(per[r.char]||0)+1);let main='\u2014',mn=0;for(const k in per)if(per[k]>mn){mn=per[k];main=k;}
+ const per={};A.forEach(r=>per[r.char]=(per[r.char]||0)+1);let main='-',mn=0;for(const k in per)if(per[k]>mn){mn=per[k];main=k;}
  const elCount={},itCount={},reCount={};
  A.forEach(function(r){var b=r.build||r.snapshot||{};(b.weapons||[]).forEach(function(w){if(w.name)itCount[w.name]=(itCount[w.name]||0)+1;(w.inf||[]).forEach(function(el){if(el)elCount[el]=(elCount[el]||0)+1;});});if(r.reacts){for(var k in r.reacts)reCount[k]=(reCount[k]||0)+(r.reacts[k]||0);}});
  var topN=function(o,n){return Object.entries(o).sort(function(a,b){return b[1]-a[1];}).slice(0,n).map(function(e){return {k:e[0],c:e[1]};});};
@@ -3549,7 +3878,7 @@ function statCardHTML(s,name,photo,about){
  const stat=(v,l)=>`<div class="dstat"><div class="v">${v}</div><div class="l">${l}</div></div>`;
  const av=photo?`<img src="${photo}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #b06bff">`:`<div class="pavatar" style="border-color:#b06bff">\ud83d\udc64</div>`;
  return `<div class="pcard"><div class="pname-row">${av}<div><div style="font-family:var(--disp);font-size:17px;letter-spacing:.1em;color:#eaf2ff">${name}</div><div style="font-size:12px;color:var(--dim);margin-top:5px">Main: <b style="color:${mc?mc.color:'#cde4ff'}">${mc?mc.glyph+' ':''}${s.main}</b> \u00b7 Style: <b style="color:#b06bff">${styleName}</b></div>${about?`<div style="font-size:12px;color:#9bb0d8;margin-top:6px;font-style:italic">${about}</div>`:''}</div></div></div>`+
-  `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'\u2014','Highest Level')+stat(fmtT(s.timeIn),'Time in the Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'\u2014','Max Corruption')+`</div></div>`+
+  `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in the Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'-','Max Corruption')+`</div></div>`+
   `<div class="pcard"><div class="ptitle">Playstyle Analysis</div>${svgRadar(s.axes,['MOBILITY','AGGRESSION','TANK','PRECISION','GREED','ENDURANCE'])}</div>`;}
 function svgRadar(vals,labels){const cx=110,cy=104,R=78,n=vals.length;
  const pt=(i,f)=>{const a=i/n*TAU-Math.PI/2;return (cx+Math.cos(a)*R*f).toFixed(1)+','+(cy+Math.sin(a)*R*f).toFixed(1);};
@@ -3568,7 +3897,7 @@ function openProfile(){hideAllScreens();state='profile';
  const _ns=(typeof NET!=='undefined'&&NET&&NET.stats)||{};
  const winsD=Math.max(wins,_ns.wins||0),tkD=Math.max(tk,_ns.kills||0),ttD=Math.max(tt,_ns.timeIn||0),tgD=Math.max(tg,_ns.gold||0),hlD=Math.max(hl,_ns.level||0),hcD=Math.max(hc,_ns.maxCorr||0);
  const per={};runArchive.forEach(r=>per[r.char]=(per[r.char]||0)+1);
- let main='\u2014',mn=0;for(const k in per)if(per[k]>mn){mn=per[k];main=k;}
+ let main='-',mn=0;for(const k in per)if(per[k]>mn){mn=per[k];main=k;}
  const mc=CHARS.find(c=>c.name===main);
  const stat=(v,l)=>`<div class="dstat"><div class="v">${v}</div><div class="l">${l}</div></div>`;
  const mx=Math.max(1,...Object.values(per).concat([1]));
@@ -3606,9 +3935,9 @@ function openProfile(){hideAllScreens();state='profile';
     <div class="ptitle" style="margin-top:10px">Shape</div><div class="shaperow">${shapeBtns}</div>
     <div class="ptitle" style="margin-top:10px">Sigil</div><div class="shaperow">${logoBtns}</div></div>`+
   `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+
-   stat(gamesShown,'Total Runs')+stat(winsD,'Victories')+stat(gamesShown?Math.round(winsD/gamesShown*100)+'%':'\u2014','Win Rate')+
-   stat(fmtT(bestTime),'Best Time')+stat(fmtN(tkD),'Total Kills')+stat(hlD||'\u2014','Highest Level')+
-   stat(fmtT(ttD),'Time in the Deep')+stat(fmtN(tgD),'Credits Earned')+stat(hcD||'\u2014','Max Corruption')+
+   stat(gamesShown,'Total Runs')+stat(winsD,'Victories')+stat(gamesShown?Math.round(winsD/gamesShown*100)+'%':'-','Win Rate')+
+   stat(fmtT(bestTime),'Best Time')+stat(fmtN(tkD),'Total Kills')+stat(hlD||'-','Highest Level')+
+   stat(fmtT(ttD),'Time in the Deep')+stat(fmtN(tgD),'Credits Earned')+stat(hcD||'-','Max Corruption')+
   `</div></div>`+
   `<div class="pcard"><div class="ptitle">Playstyle Analysis</div>${svgRadar(axesV,axesL)}</div>`+
   `<div class="pcard"><div class="ptitle">Loadout Affinity</div>
@@ -3624,7 +3953,7 @@ function openProfile(){hideAllScreens();state='profile';
  pi.onchange=()=>{profName=(pi.value||'SURVIVOR').toUpperCase().slice(0,14);pi.value=profName;try{window.storage.set('abyss_name',profName);}catch(e){}};
  const cvw=document.getElementById('capView');if(cvw)cvw.onclick=()=>openCaptain();
  if(netId()&&Date.now()-NET.lastSync>15000)netSync();
- document.getElementById('profile').classList.remove('hidden');}
+ document.getElementById('profile').classList.remove('hidden');try{trDyn(document.getElementById('profile'));}catch(e){}}
 /* ===== MENU FX: The Deep ===== */
 const mfx={p:[],sil:[],frag:[],t:0,lines:['SIGNAL LOST...','DEPTH: 18,492m','OXYGEN: UNKNOWN','RUNNER LINK STABLE','SOMETHING MOVED BELOW','TRANSMISSION 7 OF ?','DO NOT FOLLOW THE LIGHT','HULL INTEGRITY: FINE. PROBABLY.'],li:0,lt:0};
 for(let i=0;i<46;i++)mfx.p.push({x:Math.random(),y:Math.random(),s:rand(0.5,2.2),v:rand(4,16),c:pick(['#3cc8ff','#b06bff','#ff9b3c','#6cffb0'])});
@@ -3657,7 +3986,7 @@ function buildCardHTML(){if(!player)return'';
  s+='<h5>Synergy</h5>'+(act.length?act.map(n=>`<div class="syn">\u25c8 ${n.toUpperCase()} ACTIVE</div>`).join(''):'<div style="color:var(--dim);font-size:12px">mix two elements to unlock reactions</div>');
  return s;}
 function toggleBuild(){const bc=document.getElementById('buildcard');if(!player){bc.classList.add('hidden');return;}
- const show=bc.classList.contains('hidden');bc.classList.toggle('hidden',!show);if(show)bc.innerHTML=buildCardHTML();}
+ const show=bc.classList.contains('hidden');bc.classList.toggle('hidden',!show);if(show){bc.innerHTML=buildCardHTML();try{trDyn(bc);}catch(e){}}}
 try{if(IS_TOUCH){const hl=document.getElementById('hintline');if(hl)hl.innerHTML='<b>DRAG</b> anywhere to move &nbsp;\u00b7&nbsp; <b>TAP</b> the dive button to dodge / parry / guard &nbsp;\u00b7&nbsp; guns auto fire';}}catch(e){}
 document.getElementById('buildbtn').onclick=toggleBuild;
 function fpRunRow(r,i){const win=r.result==='Victory';const c=CHARS.find(x=>x.name===r.char);
@@ -3679,11 +4008,11 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
  const B=document.getElementById('socialbody');
  document.querySelectorAll&&document.querySelectorAll('.stab').forEach(b=>b.classList.remove('on'));
  B.innerHTML='<div class="pcard"><div style="color:var(--dim);font-family:var(--disp);font-size:11px;letter-spacing:.14em">LOADING DIVER RECORD...</div></div>';
- document.getElementById('social').classList.remove('hidden');
+ document.getElementById('social').classList.remove('hidden');try{trDyn(document.getElementById('social'));}catch(e){}
  fetch('/api/social?action=profile&id='+encodeURIComponent(fid)).then(r=>r.json()).then(j=>{
   if(j&&j.ok&&j.profile){const p=j.profile,st=p.stats||{};const runs=p.runs||[];
    const axes=(st.axes&&st.axes.length===6)?st.axes:[0.3,0.5,0.4,0.3,0.4,0.3];
-   const s={total:st.total||st.runs||0,wins:st.wins||0,winRate:(st.total||0)?Math.round((st.wins||0)/st.total*100):0,bestTime:st.best||0,kills:st.kills||0,highLevel:st.level||0,timeIn:st.timeIn||0,gold:st.gold||0,maxCorr:st.maxCorr||0,axes,main:st.main||'\u2014',mainRuns:0};
+   const s={total:st.total||st.runs||0,wins:st.wins||0,winRate:(st.total||0)?Math.round((st.wins||0)/st.total*100):0,bestTime:st.best||0,kills:st.kills||0,highLevel:st.level||0,timeIn:st.timeIn||0,gold:st.gold||0,maxCorr:st.maxCorr||0,axes,main:st.main||'-',mainRuns:0};
    const styles=['MOVEMENT RUNNER','STORMBRINGER','JUGGERNAUT','DEADEYE','TREASURE DIVER','DEEP DWELLER'];
    const styleName=s.total?styles[axes.indexOf(Math.max(...axes))]:'UNWRITTEN';
    const mc=CHARS.find(c=>c.name===s.main);
@@ -3702,7 +4031,7 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
    html+=`<div class="pcard">${capEmblem(fcap,fInfo)}</div>`;
    // wide grid: stats + radar
    html+='<div class="fp-grid">';
-   html+=`<div class="pcard"><div class="ptitle">Career Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'\u2014','Highest Level')+stat(fmtT(s.timeIn),'Time in Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'\u2014','Max Corruption')+`</div></div>`;
+   html+=`<div class="pcard"><div class="ptitle">Career Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'-','Max Corruption')+`</div></div>`;
    html+=`<div class="pcard"><div class="ptitle">Playstyle</div>${svgRadar(axes,['MOBILITY','AGGRESSION','TANK','PRECISION','GREED','ENDURANCE'])}</div>`;
    html+='</div>';
    // head-to-head comparison vs you
@@ -3850,7 +4179,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
  if(!id){
   s='<div class="pcard"><div class="ptitle">Open Inside Telegram</div><div style="font-size:13px;color:#cde4ff;line-height:1.6">The friend network runs on your Telegram identity. Open ABYSS from <b style="color:#3cc8ff">@AbyssSurvivorsbot</b> to link up, add friends, and see who is online.</div></div>';
   B.innerHTML=s;document.querySelectorAll&&document.querySelectorAll('.stab').forEach(b=>{b.onclick=()=>openSocial(b.dataset.t);});
-  document.getElementById('social').classList.remove('hidden');return;
+  document.getElementById('social').classList.remove('hidden');try{trDyn(document.getElementById('social'));}catch(e){}return;
  }
  if(tab==='friends'){
   // live network constellation header + pulse stats
@@ -3900,7 +4229,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
 
  if(id&&Date.now()-NET.lastSync>20000)netSync();
  if(tab==='friends')hydrateFriends();
- document.getElementById('social').classList.remove('hidden');}
+ document.getElementById('social').classList.remove('hidden');try{trDyn(document.getElementById('social'));}catch(e){}}
 function showPopup(title,sub,icon,color){const m=document.getElementById('popmodal');document.getElementById('poptitle').textContent=title;document.getElementById('popsub').textContent=sub||'';const ic=document.getElementById('popicon');ic.textContent=icon||'\u2713';ic.style.color=color||'#6cffb0';m.querySelector('.popbox').style.borderColor=color||'#6cffb0';m.querySelector('.popbox').style.boxShadow='0 0 40px '+(color||'#6cffb0')+'55';m.classList.remove('hidden');const ok=document.getElementById('popok');ok.onclick=()=>m.classList.add('hidden');try{hap('notify','success');}catch(e){}}
 function qLabel(q){return {potato:'Potato',low:'Low',medium:'Medium',ultra:'Ultra (Full)'}[q]||q;}
 let optReturn='menu';
@@ -3949,7 +4278,7 @@ document.getElementById('vy-detail').onclick=()=>{if(lastRecord)openDetail(lastR
 /* ===== UI WIRING ===== */
 function buildCharSelect(){const list=document.getElementById('charlist');list.innerHTML='';
  CHARS.forEach(c=>{const el=document.createElement('div');el.className='char';el.style.setProperty('--c',c.color);
-  el.innerHTML=`<div class="glyph" style="color:${c.color};filter:drop-shadow(0 0 12px ${c.color})">${c.glyph}</div><h3>${c.name}</h3><div class="role">${c.role}</div><p>${c.desc}</p><div class="perks">${c.perks}</div>`;
+  el.innerHTML=`<div class="glyph" style="color:${c.color};filter:drop-shadow(0 0 12px ${c.color})">${c.glyph}</div><h3>${t(c.name)}</h3><div class="role">${t(c.role)}</div><p>${t(c.desc)}</p><div class="perks">${t(c.perks)}</div>`;
   el.onclick=()=>{if(!AC)initAudio();startRun(c);};list.appendChild(el);});}
 function toMenu(){tgHideShare(); // TELEGRAM MINI APP
  const __bc=document.getElementById('buildcard');if(__bc)__bc.classList.add('hidden');state='menu';showHUD(false);hideAllScreens();showNavToggle();document.getElementById('menu').classList.remove('hidden');try{refreshMenuChip();}catch(e){}player=null;try{ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);}catch(e){}}
