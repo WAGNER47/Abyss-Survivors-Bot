@@ -1403,6 +1403,17 @@ duality:{name:'Catalyst',icon:'⚛',color:'#d65cff',max:8,desc:l=>`Hurls a catal
  stats(l,P){return{radius:(86+l*9)*P.area,dmg:(26+l*9)*P.damageMult,speed:430*P.projSpeed,life:1.6*P.projLife,r:11*P.area,count:1+P.extraProj};},
  cd(l,P){return Math.max(0.55,1.25-l*0.07)*P.cdMul*P.charCdMul;},
  fire(P,st){const t=nearestEnemy(P.x,P.y);const base=t?Math.atan2(t.y-P.y,t.x-P.x):Math.random()*TAU;const n=st.count||1;for(let i=0;i<n;i++){const a=base+(n>1?(i-(n-1)/2)*0.26:0);pjs.push({x:P.x,y:P.y,vx:Math.cos(a)*st.speed,vy:Math.sin(a)*st.speed,r:st.r,dmg:st.dmg,pierce:1,life:st.life,color:this.color,kind:'catalyst',hit:new Set(),burstR:st.radius});}}},
+trident:{name:'Triton Burst',icon:'\u2942',color:'#4bd8ff',max:8,continuous:true,desc:l=>`Fires a tight 3-round burst. ${(14+l*6)} damage per round, pierce ${1+Math.floor(l/4)}. Fast, precise, relentless.`,
+ stats(l,P){return{damage:(14+l*6)*P.damageMult,count:1+P.extraProj,pierce:1+Math.floor(l/4)+P.pierceBonus,speed:880*P.projSpeed,life:1.7*P.projLife,r:5.5*P.area,burst:3,cad:0.072};},
+ cd(l,P){return Math.max(0.34,0.95-l*0.06)*P.cdMul*P.charCdMul;},
+ tick(P,l,dt,w){const st=this.stats(l,P);w._cd=(w._cd||0)-dt;
+  const shoot=()=>{const t=nearestEnemy(P.x,P.y);if(!t)return false;const b=Math.atan2(t.y-P.y,t.x-P.x);
+   for(let i=0;i<st.count;i++){const a=b+(st.count>1?(i-(st.count-1)/2)*0.09:0)+rand(-0.015,0.015);
+    pjs.push({x:P.x+Math.cos(a)*P.r,y:P.y+Math.sin(a)*P.r,vx:Math.cos(a)*st.speed,vy:Math.sin(a)*st.speed,r:st.r,dmg:st.damage,pierce:st.pierce,life:st.life,color:this.color,kind:'bolt',hit:new Set()});}
+   if(particles.length<430)particles.push({x:P.x+Math.cos(b)*(P.r+8),y:P.y+Math.sin(b)*(P.r+8),vx:Math.cos(b)*220,vy:Math.sin(b)*220,life:0.12,color:'#bfefff',r:2.2});
+   return true;};
+  if((w._bq||0)>0){w._bt=(w._bt||0)-dt;if(w._bt<=0){w._bt=st.cad;if(shoot())w._bq--;else w._bq=0;}}
+  else if(w._cd<=0){if(shoot()){w._cd=this.cd(l,P)*P.fieldHaste;w._bq=st.burst-1;w._bt=st.cad;}else w._cd=0.12;}}},
 };
 function isBig(e){return e.boss||e.legendary||e.warden||e.finalboss;}
 /* ===== ELEMENT IDENTITIES / RENAMES / EVOLUTIONS / BEAM ===== */
@@ -1415,7 +1426,7 @@ WEAPONS.beam={name:'Beam Emitter',icon:'═',color:'#ff9bf0',max:8,continuous:tr
    const ex=e.x-P.x,ey=e.y-P.y,proj=ex*Math.cos(ang)+ey*Math.sin(ang);if(proj<0||proj>st.range)continue;
    const perp=Math.abs(-ex*Math.sin(ang)+ey*Math.cos(ang));if(perp<st.width+e.r)dealDamage(e,st.dps*dt,{tick:true});}
   w._render={tx,ty,width:st.width};}};
-const WEAPON_EL={bolt:'kinetic',orbit:'fire',aura:'radiation',spread:'kinetic',chain:'lightning',seek:'plasma',fireaoe:'fire',iceaoe:'ice',bleedaoe:'kinetic',poison:'toxic',sling:'kinetic',spirit:'void',chaos:'plasma',rifle:'kinetic',saber:'plasma',lightaoe:'lightning',deflect:'plasma',siege:'kinetic',glint:'void',chaosspirit:'void',beam:'plasma',fists:'kinetic',duality:'lightning'};
+const WEAPON_EL={trident:'kinetic',bolt:'kinetic',orbit:'fire',aura:'radiation',spread:'kinetic',chain:'lightning',seek:'plasma',fireaoe:'fire',iceaoe:'ice',bleedaoe:'kinetic',poison:'toxic',sling:'kinetic',spirit:'void',chaos:'plasma',rifle:'kinetic',saber:'plasma',lightaoe:'lightning',deflect:'plasma',siege:'kinetic',glint:'void',chaosspirit:'void',beam:'plasma',fists:'kinetic',duality:'lightning'};
 const EVOS={
  bolt:{names:['Twin Pulse','Scatter Pulse','Storm Pulse','Singularity Pulse'],els:['lightning','void']},
  orbit:{names:['Twin Suns','Solar Crown','Coronal Halo','The Inferno Crown'],els:['fire','fire']},
@@ -1428,9 +1439,10 @@ const EVOS={
 function wEls(w){return [(w.inf&&w.inf[0])||WEAPON_EL[w.id]||'kinetic'];}
 function evoName(id,tier){const n=EVOS[id]&&EVOS[id].names;return n?n[tier-1]:WEAPONS[id].name+' '+['Mk II','Mk III','Prime','Omega'][tier-1];}
 let CURW=null,CURP=null,DT=0;
-const DODGE={vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.85},sniper:{d:340,cd:1.4},vyper:{d:300,cd:1.3},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99}};
+const DODGE={angler:{d:0,cd:99},vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.85},sniper:{d:340,cd:1.4},vyper:{d:300,cd:1.3},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99}};
 const BULWARK={dur:1.4,cd:4.5};const PARRY={win:0.34,cd:0.42};
 const RHINO={trampleDmg:48,knock:1400,aftershock:1500,aftershockDmg:120,maxHold:4};
+const GRAPPLE={maxHold:1.15,baseLen:430,maxLen:820,hookSpeed:2600,zipSpeed:1950,pullSpeed:2300,dmg:34,corridorDmg:26,knock:950,pullMassMax:2.4};
 const HEX={dur:2.6,cd:9,radius:200,pull:300};
 /* ===== RARITY LADDER & BUILD CORES ===== */
 const RARITY=[
@@ -1506,6 +1518,10 @@ const CHARS=[
  desc:'Elements never settle around him, they collide. His Catalyst fuses lightning and plasma into instant Overloads, his Hex warps the swarm into walking loot, and he drifts untouched through the black holes that swallow everyone else.',
  perks:'<span>starts with the Catalyst (instant Overload)</span> · <b style="color:#b6ff3c">stronger reactions and bigger zones</b> · Hex: warp the swarm + go untouchable · shrugs off fields · walks black holes',
  start:'duality',mods:{hpBase:-25,speedMul:1.04,reactAmpBase:0.5,zoneScaleBase:0.4,hazResBase:0.45,bhResist:0.72,powerBase:0.05}},
+{id:'angler',glyph:'\u2693',name:'Angler',role:'The Harpooner',color:'#4bd8ff',
+ desc:'"The deep taught me to fish. I taught it to fear the line." Her lure glows where no light should. Hold to aim the harpoon, release to fire: small prey gets dragged screaming to her feet, and anything too heavy to drag becomes the anchor she rides in on.',
+ perks:'<span>grapple hook dive button</span> \u00b7 <b style="color:#4bd8ff">hold to charge: much longer line</b> \u00b7 light foes get pulled to you, heavy ones pull you in \u00b7 damages + scatters everything along the line \u00b7 Triton Burst sidearm',
+ start:'trident',mods:{hpBase:20,speedMul:1.05,charCdMul:0.95,critBase:0.05,slowResBase:0.35}},
 ];
 
 /* ===== LEGENDARY RELICS (chest gacha) & WARDEN BOONS ===== */
@@ -2075,6 +2091,97 @@ function update(dt){
    radialImpulse(player.x,player.y,R,RHINO.aftershock*cp.knock);
    for(const e of queryNear(player.x,player.y,R)){if(e._dead)continue;if(dist2(player.x,player.y,e.x,e.y)>R*R)continue;dealDamage(e,(RHINO.aftershockDmg+player.level*2.4)*cp.dmg*player.damageMult,{tick:true});}
    player._chargePow=null;
+  }
+ }
+ // ANGLER: GRAPPLING HARPOON. Hold to charge line length, release to fire in your facing.
+ // Light prey gets dragged to you. Heavy prey (and wardens) anchor you: you zip to THEM,
+ // damaging and scattering everything along the corridor. Empty line = pure mobility zip.
+ // The hook tip and every zip target are clamped inside an active boss arena ring, so the
+ // line can never cross the border.
+ if(player.char.id==='angler'){
+  const _held=(keys[' ']||dodgeHeld);
+  const _clampArena=(px,py)=>{if(player._arenaR>0){const dx=px-player._arenaX,dy=py-player._arenaY,d=Math.hypot(dx,dy)||1;const lim=player._arenaR-10;if(d>lim)return{x:player._arenaX+dx/d*lim,y:player._arenaY+dy/d*lim,hit:true};}return{x:px,y:py,hit:false};};
+  // WINDUP: aim the harpoon while held (off cooldown, no live line)
+  if(_held&&player.dodgeCd<=0&&!player._grap&&player.dodgeT<=0){
+   player._grapUp=true;player._grapHold=Math.min(GRAPPLE.maxHold,(player._grapHold||0)+dt);
+   const cf=player._grapHold/GRAPPLE.maxHold;
+   camZoomTarget=1+0.08*cf;
+   if(Math.random()<0.5){const a=Math.random()*TAU,rr=player.r+30+26*Math.random();particles.push({x:player.x+Math.cos(a)*rr,y:player.y+Math.sin(a)*rr,vx:-Math.cos(a)*(120+220*cf),vy:-Math.sin(a)*(120+220*cf),life:0.22,color:cf>0.7?'#dff8ff':'#4bd8ff',r:1.6});}
+   if(!player._grapSfxT||time>player._grapSfxT){player._grapSfxT=time+0.2;sfx('thock');}
+  }
+  // RELEASE: fire the harpoon
+  else if(player._grapUp&&!_held){player._grapUp=false;
+   const hold=player._grapHold||0;player._grapHold=0;const cf=hold/GRAPPLE.maxHold;
+   let dx=mx,dy=my;if(dx===0&&dy===0){const pv=Math.hypot(player.pvx,player.pvy);if(pv>10){dx=player.pvx/pv;dy=player.pvy/pv;}else{dx=player._face||1;dy=0;}}
+   const dl=Math.hypot(dx,dy)||1;dx/=dl;dy/=dl;
+   player._grap={ph:'out',dx,dy,trav:0,len:GRAPPLE.baseLen+cf*(GRAPPLE.maxLen-GRAPPLE.baseLen),cf,tx:player.x,ty:player.y};
+   if(rs)rs.dodges=(rs.dodges||0)+1;
+   camPunch=0.06+0.08*cf;screenShake=Math.max(screenShake,3+4*cf);
+   ring(player.x,player.y,player.r+14,'#4bd8ff');burst(player.x,player.y,'#4bd8ff',6+8*cf);
+   hap('impact','light');sfx('thock');
+  }
+  // LIVE LINE
+  const g=player._grap;
+  if(g){
+   if(g.ph==='out'){
+    g.trav+=GRAPPLE.hookSpeed*dt;
+    let tx=player.x+g.dx*g.trav,ty=player.y+g.dy*g.trav;
+    const cl=_clampArena(tx,ty);tx=cl.x;ty=cl.y;g.tx=tx;g.ty=ty;
+    // hook collision: first enemy near the tip
+    let hitE=null;for(const e of queryNear(tx,ty,30+g.cf*12)){if(e._dead)continue;const d=Math.hypot(e.x-tx,e.y-ty);if(d<e.r+14+g.cf*8){hitE=e;break;}}
+    if(hitE){
+     dealDamage(hitE,(GRAPPLE.dmg+player.level*1.4)*(1+g.cf)*player.damageMult,{tick:true});
+     burst(tx,ty,'#4bd8ff',8);ring(tx,ty,hitE.r+12,'#dff8ff');screenShake=Math.max(screenShake,5+4*g.cf);hap('impact','medium');
+     const m=Math.max(0.6,hitE.m||hitE.r*hitE.r/100);
+     const heavy=isBig(hitE)||hitE.warden||hitE.finalboss||hitE.elite||m>GRAPPLE.pullMassMax;
+     if(!hitE._dead&&!heavy){g.ph='pull';g.e=hitE;hitE._grapT=0;if(hitE.stunT!==undefined)hitE.stunT=Math.max(hitE.stunT||0,0.5);toast('HOOKED');sfx('shield');}
+     else{g.ph='zip';g.e=hitE._dead?null:hitE;g.px=tx;g.py=ty;player.iframes=Math.max(player.iframes,0.12);sfx('bomb');}
+    }
+    else if(cl.hit||g.trav>=g.len){g.ph='zip';g.e=null;g.px=tx;g.py=ty;player.iframes=Math.max(player.iframes,0.1);}
+   }
+   else if(g.ph==='zip'){
+    let tx=g.e&&!g.e._dead?g.e.x:g.px,ty=g.e&&!g.e._dead?g.e.y:g.py;
+    const cl=_clampArena(tx,ty);tx=cl.x;ty=cl.y;g.tx=tx;g.ty=ty;g.px=tx;g.py=ty;
+    const dx=tx-player.x,dy=ty-player.y,d=Math.hypot(dx,dy)||1;
+    const stopAt=g.e?player.r+g.e.r+8:10;
+    const sp=(GRAPPLE.zipSpeed+g.cf*650)*dt;
+    player.iframes=Math.max(player.iframes,0.07);
+    if(d<=stopAt+sp){ // ARRIVAL: harpoon slam
+     player.x=tx-dx/d*stopAt;player.y=ty-dy/d*stopAt;
+     if(g.e&&!g.e._dead){dealDamage(g.e,(GRAPPLE.dmg*1.5+player.level*2.0)*(1+g.cf)*player.damageMult,{tick:true});const mm=Math.max(0.6,g.e.m||g.e.r*g.e.r/100);g.e.kvx=(g.e.kvx||0)+dx/d*GRAPPLE.knock*0.6/mm;g.e.kvy=(g.e.kvy||0)+dy/d*GRAPPLE.knock*0.6/mm;}
+     ring(player.x,player.y,player.r+34,'#4bd8ff');ring(player.x,player.y,player.r+64,'#dff8ff');burst(player.x,player.y,'#4bd8ff',16+10*g.cf);
+     radialImpulse(player.x,player.y,170+80*g.cf,650*(1+g.cf*0.7));
+     screenShake=Math.max(screenShake,8+7*g.cf);camPunch=Math.max(camPunch,0.1+0.08*g.cf);hap('impact','heavy');sfx('bomb');
+     player._grap=null;player.dodgeCd=0.9+g.cf*0.8;player._grapLastCd=player.dodgeCd;
+    } else {
+     player.x+=dx/d*sp;player.y+=dy/d*sp;player.pvx=dx/d*260;player.pvy=dy/d*260;
+     // corridor: damage + scatter everything the line drags you through
+     for(const e2 of queryNear(player.x,player.y,player.r+70)){if(e2._dead||e2===g.e)continue;const ex=e2.x-player.x,ey=e2.y-player.y,ed=Math.hypot(ex,ey)||1;if(ed>player.r+e2.r+42)continue;
+      const m2=Math.max(0.6,e2.m||e2.r*e2.r/100);e2.kvx=(e2.kvx||0)+ex/ed*GRAPPLE.knock/m2;e2.kvy=(e2.kvy||0)+ey/ed*GRAPPLE.knock/m2;
+      if((e2._grapHitT||0)<=0){e2._grapHitT=0.2;dealDamage(e2,(GRAPPLE.corridorDmg+player.level*1.2)*(1+g.cf*0.6)*player.damageMult,{tick:true});if(!e2._dead)burst(e2.x,e2.y,'#4bd8ff',3);}}
+     if(particles.length<430&&Math.random()<0.6)particles.push({x:player.x,y:player.y,vx:-dx/d*260+rand(-50,50),vy:-dy/d*260+rand(-50,50),life:0.22,color:'#4bd8ff',r:2});
+    }
+   }
+   else if(g.ph==='pull'){
+    const e=g.e;
+    if(!e||e._dead){player._grap=null;player.dodgeCd=0.55;player._grapLastCd=player.dodgeCd;}
+    else{
+     g.tx=e.x;g.ty=e.y;
+     const dx=player.x-e.x,dy=player.y-e.y,d=Math.hypot(dx,dy)||1;
+     const m=Math.max(0.6,e.m||e.r*e.r/100);
+     const sp=(GRAPPLE.pullSpeed/Math.max(1,m*0.55))*dt;
+     if(e.stunT!==undefined)e.stunT=Math.max(e.stunT||0,0.12);
+     if(d<=player.r+e.r+8+sp){ // LANDED at your feet
+      e.x=player.x-dx/d*(player.r+e.r+6);e.y=player.y-dy/d*(player.r+e.r+6);
+      dealDamage(e,(GRAPPLE.dmg*1.4+player.level*1.8)*(1+g.cf)*player.damageMult,{tick:true});
+      if(!e._dead&&e.stunT!==undefined)e.stunT=Math.max(e.stunT||0,0.7);
+      ring(e.x,e.y,e.r+14,'#dff8ff');burst(e.x,e.y,'#4bd8ff',10);screenShake=Math.max(screenShake,5);hap('impact','medium');
+      player._grap=null;player.dodgeCd=0.7+g.cf*0.5;player._grapLastCd=player.dodgeCd;
+     } else {e.x+=dx/d*sp;e.y+=dy/d*sp;if(particles.length<430&&Math.random()<0.5)particles.push({x:e.x,y:e.y,vx:rand(-60,60),vy:rand(-60,60),life:0.18,color:'#4bd8ff',r:1.6});}
+    }
+   }
+   // safety: never let a stale line outlive a run state change
+   if(player._grap&&player.hp<=0)player._grap=null;
   }
  }
  if(player.parryT>0)player.parryT-=dt;else player.parryActive=false;
@@ -2776,6 +2883,7 @@ function drawCharAura(p){
  else if(id==='vyper'){if(moving&&particles.length<340&&Math.random()<0.17)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+rand(-p.r,p.r),vx:rand(-10,10),vy:rand(20,52),life:0.5,color:'#9bff5c',r:1.6});ctx.globalAlpha=0.3+0.15*Math.sin(t*4);ctx.strokeStyle='#9bff5c';if(glow){ctx.shadowColor='#9bff5c';ctx.shadowBlur=9;}ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+8,t%TAU,t%TAU+Math.PI*1.3);ctx.stroke();}
  else if(id==='yujin'){if(particles.length<340&&Math.random()<0.09)particles.push({x:p.x+rand(-20,20),y:p.y+rand(-20,20),vx:rand(-15,15),vy:rand(-26,-8),life:1.0,color:'#ffd0e0',r:1.8});ctx.globalAlpha=0.32;ctx.strokeStyle='#ffe27a';if(glow){ctx.shadowColor='#ffe27a';ctx.shadowBlur=8;}ctx.lineWidth=1.6;const ba=t*1.2;ctx.beginPath();ctx.arc(p.x,p.y,p.r+12,ba,ba+0.85);ctx.stroke();}
  else if(id==='rhino'){if(moving&&particles.length<340&&Math.random()<0.16)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+p.r*0.5,vx:rand(-30,30),vy:rand(-6,16),life:0.42,color:'#caa37a',r:2.6});}
+ else if(id==='angler'){if(moving&&particles.length<340&&Math.random()<0.10)particles.push({x:p.x+rand(-p.r,p.r),y:p.y+rand(-p.r,p.r),vx:rand(-14,14),vy:rand(-20,-4),life:0.5,color:'#bfefff',r:1.6});}
  else if(id==='sorcerer'){ctx.globalAlpha=0.75;const a1=t*1.6,a2=-t*1.3;if(glow)ctx.shadowBlur=8;ctx.fillStyle='#ff5cf0';if(glow)ctx.shadowColor='#ff5cf0';ctx.beginPath();ctx.arc(p.x+Math.cos(a1)*(p.r+12),p.y+Math.sin(a1)*(p.r+12),2.4,0,TAU);ctx.fill();ctx.fillStyle='#5cd0ff';if(glow)ctx.shadowColor='#5cd0ff';ctx.beginPath();ctx.arc(p.x+Math.cos(a2)*(p.r+12),p.y+Math.sin(a2)*(p.r+12),2.4,0,TAU);ctx.fill();}
  ctx.restore();
 }
@@ -2796,6 +2904,44 @@ function drawPlayer(){const p=player;
  if(p.char.id==='vanguard'){ctx.save();const rdy=p.dodgeCd<=0,frac=rdy?1:1-p.dodgeCd/BULWARK.cd;ctx.globalAlpha=rdy?0.85:0.4;ctx.strokeStyle=rdy?'#00e5d4':'#6680a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,p.r+13,-Math.PI/2,-Math.PI/2+TAU*frac);ctx.stroke();ctx.restore();}
  if(p.char.id==='sorcerer'){ctx.save();const rdy=p.dodgeCd<=0,frac=rdy?1:1-p.dodgeCd/HEX.cd;ctx.globalAlpha=rdy?0.85:0.4;ctx.strokeStyle=rdy?'#b6ff3c':'#6680a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,p.r+13,-Math.PI/2,-Math.PI/2+TAU*frac);ctx.stroke();ctx.restore();}
  if(p.bulwarkT>0){ctx.save();ctx.globalAlpha=0.5+0.4*Math.sin(time*20);ctx.strokeStyle='#00e5d4';ctx.fillStyle='rgba(0,229,212,0.12)';ctx.shadowColor='#00e5d4';ctx.shadowBlur=20;ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y,p.r+18,0,TAU);ctx.fill();ctx.stroke();ctx.restore();}
+ // ===== ANGLER visuals: the lure, the line, the ritual =====
+ if(p.char.id==='angler'){ctx.save();
+  // signature anglerfish lure: a glowing orb on a stalk, bobbing above the diver
+  const bob=Math.sin(time*2.6)*3, lx=p.x+Math.sin(time*1.3)*2, ly=p.y-p.r-16+bob;
+  ctx.globalAlpha=0.85;ctx.strokeStyle='#2c6d86';ctx.lineWidth=1.6;
+  ctx.beginPath();ctx.moveTo(p.x,p.y-p.r+2);ctx.quadraticCurveTo(p.x+3,p.y-p.r-9,lx,ly);ctx.stroke();
+  const fl=0.6+0.4*Math.sin(time*9+Math.sin(time*3.7)*2);
+  if(QX&&QX.glow){ctx.shadowColor='#bfefff';ctx.shadowBlur=16*fl;}
+  ctx.globalAlpha=0.55+0.42*fl;ctx.fillStyle='#dff8ff';
+  ctx.beginPath();ctx.arc(lx,ly,2.6+1.2*fl,0,TAU);ctx.fill();
+  ctx.globalAlpha=0.22*fl;ctx.fillStyle='#4bd8ff';
+  ctx.beginPath();ctx.arc(lx,ly,7+3*fl,0,TAU);ctx.fill();
+  ctx.restore();}
+ // cooldown ring (same language as Rhino's)
+ if(p.char.id==='angler'){ctx.save();const rdy=p.dodgeCd<=0,frac=rdy?1:1-p.dodgeCd/(p._grapLastCd||1);ctx.globalAlpha=rdy?0.9:0.4;ctx.strokeStyle=rdy?'#4bd8ff':'#6680a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,p.r+13,-Math.PI/2,-Math.PI/2+TAU*Math.max(0,Math.min(1,frac)));ctx.stroke();ctx.restore();}
+ // charge-up: the line coils, aim ray extends with held power
+ if(p.char.id==='angler'&&p._grapUp){ctx.save();const cf=Math.min(1,(p._grapHold||0)/GRAPPLE.maxHold);const col=cf>0.78?'#ffffff':(cf>0.45?'#bfefff':'#4bd8ff');
+  let dx=mx,dy=my;if(dx===0&&dy===0){const pv=Math.hypot(p.pvx,p.pvy);if(pv>10){dx=p.pvx/pv;dy=p.pvy/pv;}else{dx=p._face||1;dy=0;}}
+  const dl=Math.hypot(dx,dy)||1;dx/=dl;dy/=dl;
+  const len=GRAPPLE.baseLen+cf*(GRAPPLE.maxLen-GRAPPLE.baseLen);
+  ctx.globalAlpha=0.35+0.3*cf;ctx.strokeStyle=col;ctx.lineWidth=1.8;ctx.setLineDash([5,10]);ctx.lineDashOffset=-(time*90)%15;
+  ctx.beginPath();ctx.moveTo(p.x+dx*(p.r+6),p.y+dy*(p.r+6));ctx.lineTo(p.x+dx*len,p.y+dy*len);ctx.stroke();ctx.setLineDash([]);
+  // charge arc around the diver
+  ctx.globalAlpha=0.75;ctx.strokeStyle=col;ctx.lineWidth=3;if(QX&&QX.glow){ctx.shadowColor=col;ctx.shadowBlur=12;}
+  ctx.beginPath();ctx.arc(p.x,p.y,p.r+20,-Math.PI/2,-Math.PI/2+TAU*cf);ctx.stroke();
+  ctx.restore();}
+ // live harpoon line + hook head
+ if(p.char.id==='angler'&&p._grap){ctx.save();const g=p._grap;
+  const tx=g.tx,ty=g.ty,a=Math.atan2(ty-p.y,tx-p.x);
+  if(QX&&QX.glow){ctx.shadowColor='#4bd8ff';ctx.shadowBlur=10;}
+  ctx.globalAlpha=0.5;ctx.strokeStyle='#2c6d86';ctx.lineWidth=4.5;
+  ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(tx,ty);ctx.stroke();
+  ctx.globalAlpha=0.92;ctx.strokeStyle=g.ph==='pull'?'#dff8ff':'#4bd8ff';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(tx,ty);ctx.stroke();
+  // harpoon head
+  ctx.translate(tx,ty);ctx.rotate(a);ctx.fillStyle='#dff8ff';
+  ctx.beginPath();ctx.moveTo(12,0);ctx.lineTo(-4,-6);ctx.lineTo(-1,0);ctx.lineTo(-4,6);ctx.closePath();ctx.fill();
+  ctx.restore();}
  if(p.char.id==='rhino'){ctx.save();const rdy=p.dodgeCd<=0,frac=rdy?1:1-p.dodgeCd/(p._lastChargeCd||1);ctx.globalAlpha=rdy?0.9:0.4;ctx.strokeStyle=rdy?'#ff9b4b':'#6680a8';ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(p.x,p.y,p.r+13,-Math.PI/2,-Math.PI/2+TAU*frac);ctx.stroke();ctx.restore();}
  if(p.char.id==='rhino'&&p._chargingUp){ctx.save();const cf=Math.min(1,(p._chargeHold||0)/RHINO.maxHold);const col=cf>0.78?'#ffffff':(cf>0.45?'#ffe0a0':'#ff9b4b');
   // pulsing buildup aura (grows + brightens with charge)
@@ -3593,7 +3739,8 @@ deflect:l=>`آتشِ دشمن را در هوا می‌شکند و نزدیکان
 siege:l=>`در برابرِ سیاهی‌لشکر فروتن، بر یلان و فرمانروایان ویرانگر (x${(2.5+l*0.3).toFixed(1)}).`,
 glint:l=>`${3+l} شمشیرِ شبح‌گون فرا می‌خواند که بادبزنی می‌گشایند و رخنه می‌کنند.`,
 chaosspirit:l=>`${1+Math.floor(l/3)} روحِ آشوب که شکار را می‌جویند و از همه می‌گذرند.`,
-duality:l=>`گویِ آمیزگر را می‌افکند که بر نزدیک‌ترین گله می‌ترکد و آذرخش و پلاسما را در دم به «بیش‌بار» می‌آمیزد. آسیبِ سنگین، و گله را می‌پراکند.`
+duality:l=>`گویِ آمیزگر را می‌افکند که بر نزدیک‌ترین گله می‌ترکد و آذرخش و پلاسما را در دم به «بیش‌بار» می‌آمیزد. آسیبِ سنگین، و گله را می‌پراکند.`,
+trident:l=>`رگباری فشرده‌ی سه‌تیر. ${14+l*6} آسیب بر هر تیر، رخنه ${1+Math.floor(l/4)}. تند، دقیق، بی‌امان.`
 };
 const FA_PD={
 power:l=>`+${l*15}٪ آسیب بر همه‌چیز.`,
@@ -3781,6 +3928,13 @@ Object.assign(I18N.fa,{
 "Your chill lands with extra bite, slowing and locking down crowds for longer.":"سرمازدگی‌ات گزنده‌تر می‌نشیند و انبوه را دیرتر کند و قفل می‌کند.",
 "One panel that shows everything you are.":"یک صفحه که هر آنچه هستی را نشانت می‌دهد.",
 "Beat the deep, then let it rewrite itself.":"ژرفا را شکست بده؛ آن‌گاه بگذار خود را از نو بنویسد."
+});
+Object.assign(I18N.fa,{
+"Triton Burst":"رگبارِ تریتون",
+"Angler":"صیاد","The Harpooner":"زوبین‌انداز",
+"\"The deep taught me to fish. I taught it to fear the line.\" Her lure glows where no light should. Hold to aim the harpoon, release to fire: small prey gets dragged screaming to her feet, and anything too heavy to drag becomes the anchor she rides in on.":"«ژرفا به من ماهی‌گیری آموخت؛ من به او آموختم از ریسمان بترسد.» چراغِ طعمه‌اش جایی می‌درخشد که هیچ نوری را نشاید. نگه دار تا زوبین را نشانه بروی، رها کن تا بپرّد: شکارِ خُرد فریادکشان تا پیشِ پایش کشیده می‌شود، و هر چه سنگین‌تر از آن باشد که کشیده شود، لنگری می‌گردد که او سوارِ ریسمان به سویش می‌تازد.",
+"<span>grapple hook dive button</span> · <b style=\"color:#4bd8ff\">hold to charge: much longer line</b> · light foes get pulled to you, heavy ones pull you in · damages + scatters everything along the line · Triton Burst sidearm":"<span>قلابِ زوبین بر دکمه‌ی شیرجه</span> · <b style=\"color:#4bd8ff\">نگه دار تا نیرو بگیرد: ریسمانی بس بلندتر</b> · خردان به سویت کشیده می‌شوند، سنگین‌ها تو را می‌کشند · هر چه بر سرِ راه باشد آسیب می‌بیند و می‌پراکند · سلاحِ کمری: رگبارِ تریتون",
+"HOOKED":"به قلاب افتاد"
 });
 /* ===== end FA content ===== */
 Object.assign(I18N.fa,{
