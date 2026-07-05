@@ -933,11 +933,21 @@
    ========================================================================= */
 const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
+// V9 PERF: glow governor. Canvas shadowBlur is the single most expensive 2D operation on
+// mobile WebKit - every blurred shape is a live CPU blur. Intercepting the setter scales
+// every glow in the game by the quality tier (0 = free) without touching 110 call sites.
+(function(){try{
+ const d=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur');
+ if(d&&d.set)Object.defineProperty(ctx,'shadowBlur',{
+  get(){return d.get.call(this);},
+  set(v){const m=(QX&&QX.glowMul!=null)?QX.glowMul:1;d.set.call(this,m>0?v*m:0);}
+ });
+}catch(e){}})();
 // OPTIONS: global glow gate. On low quality, shadowBlur becomes a no-op for big perf wins on weak devices.
 try{const _sbDesc=Object.getOwnPropertyDescriptor(CanvasRenderingContext2D.prototype,'shadowBlur');
  if(_sbDesc&&_sbDesc.set){Object.defineProperty(ctx,'shadowBlur',{configurable:true,get(){return _sbDesc.get.call(this);},set(v){_sbDesc.set.call(this,QX.glow?v:0);}});}}catch(e){}
 let W=0,H=0,DPR=1,VIEW=1;const IS_TOUCH=('ontouchstart' in window)||navigator.maxTouchPoints>0;
-function resize(){DPR=Math.min(window.devicePixelRatio||1,2);const r=cv.getBoundingClientRect();W=Math.round(r.width)||window.innerWidth;H=Math.round(r.height)||window.innerHeight;cv.width=Math.floor(W*DPR);cv.height=Math.floor(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);VIEW=IS_TOUCH?(W<560?0.66:0.8):1;sizeDock();}
+function resize(){DPR=Math.min(window.devicePixelRatio||1,(typeof QX!=='undefined'&&QX.dprCap)||2);const r=cv.getBoundingClientRect();W=Math.round(r.width)||window.innerWidth;H=Math.round(r.height)||window.innerHeight;cv.width=Math.floor(W*DPR);cv.height=Math.floor(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);VIEW=IS_TOUCH?(W<560?0.66:0.8):1;sizeDock();}
 window.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(resize,60));
 if(!IS_TOUCH){window.addEventListener('mousemove',e=>{const r=cv.getBoundingClientRect();mseX=e.clientX-r.left;mseY=e.clientY-r.top;mseOn=true;},{passive:true});}if(window.visualViewport){visualViewport.addEventListener('resize',resize);visualViewport.addEventListener('scroll',resize);}resize();setTimeout(resize,120);setTimeout(resize,400);
 
@@ -973,28 +983,44 @@ let AC=null,master=null,muted=false;
  };
 })();
 // ---- OPTIONS / settings (persisted) ----
-const QUALITY_LEVELS=['potato','low','medium','ultra'];
-let OPT={quality:'ultra',physics:'ultra',vibration:true,volume:0.28};
-let QX={particleMul:1,maxParticles:700,corpses:true,corpseMax:120,trails:true,shadows:true,glow:true};
+const QUALITY_LEVELS=['potato','low','medium','high','ultra'];
+let OPT={quality:'ultra',physics:'ultra',vibration:true,volume:0.28,fps:false};
+var QX={particleMul:1,maxParticles:700,corpses:true,corpseMax:120,trails:true,shadows:true,glow:true,glowMul:1,dprCap:2,fps30:false}; // var (hoisted): resize() and the glow governor run before this line executes
 let _cullX0=-1e9,_cullY0=-1e9,_cullX1=1e9,_cullY1=1e9;
 function onScreen(x,y,pad){pad=pad||0;return x+pad>=_cullX0&&x-pad<=_cullX1&&y+pad>=_cullY0&&y-pad<=_cullY1;}
 let PX={iterMul:1,corpsePhys:true};
 let _fpsWatch={t:0,frames:0,warned:false,lowFrames:0};
-function fpsWatchdog(dt){if(OPT.quality==='potato'||OPT.autoPerf===false)return;_fpsWatch.frames++;_fpsWatch.t+=dt;if(_fpsWatch.t>=1){const fps=_fpsWatch.frames/_fpsWatch.t;_fpsWatch.frames=0;_fpsWatch.t=0;if(fps<50){_fpsWatch.lowFrames++;if(_fpsWatch.lowFrames>=4){_fpsWatch.lowFrames=0;const order=['ultra','medium','low','potato'];const i=order.indexOf(OPT.quality);if(i<order.length-1){OPT.quality=order[i+1];OPT.physics=OPT.quality;applyQuality();saveOpt();toast('PERFORMANCE: quality lowered to '+qLabel(OPT.quality)+' \u00b7 change in Options');}}}else{_fpsWatch.lowFrames=Math.max(0,_fpsWatch.lowFrames-1);}}}
+function fpsWatchdog(dt){if(OPT.quality==='potato'||OPT.autoPerf===false)return;_fpsWatch.frames++;_fpsWatch.t+=dt;if(_fpsWatch.t>=1){const fps=_fpsWatch.frames/_fpsWatch.t;_fpsWatch.frames=0;_fpsWatch.t=0;if(fps<48){_fpsWatch.lowFrames++;if(_fpsWatch.lowFrames>=3){_fpsWatch.lowFrames=0;const order=['ultra','high','medium','low','potato'];const i=order.indexOf(OPT.quality);if(i<order.length-1){OPT.quality=order[i+1];OPT.physics=OPT.quality;applyQuality();saveOpt();toast('PERFORMANCE: quality lowered to '+qLabel(OPT.quality)+' \u00b7 change in Options');}}}else{_fpsWatch.lowFrames=Math.max(0,_fpsWatch.lowFrames-1);}}}
 function applyQuality(){
  const q=OPT.quality;
- QX.particleMul = q==='potato'?0.18 : q==='low'?0.45 : q==='medium'?0.75 : 1;
- QX.maxParticles= q==='potato'?120 : q==='low'?260 : q==='medium'?460 : 700;
- QX.shadows = q!=='potato' && q!=='low';
- QX.glow = q!=='potato';
+ // V9 PERF tier table. glowMul scales EVERY canvas shadowBlur in the game via the glow
+ // governor (0 = blur fully off, baked sprites carry the neon look instead). dprCap
+ // controls render resolution - blur cost scales with pixel count, so the two multiply.
+ QX.particleMul = q==='potato'?0.18 : q==='low'?0.45 : q==='medium'?0.68 : q==='high'?0.85 : 1;
+ QX.maxParticles= q==='potato'?120 : q==='low'?260 : q==='medium'?420 : q==='high'?560 : 700;
+ QX.glowMul = q==='potato'?0 : q==='low'?0 : q==='medium'?(IS_TOUCH?0:0.4) : q==='high'?(IS_TOUCH?0.5:0.75) : 1;
+ QX.dprCap = q==='potato'?1 : q==='low'?1.15 : q==='medium'?1.35 : q==='high'?1.6 : 2;
+ QX.fps30 = q==='potato' || (q==='low'&&IS_TOUCH);
+ QX.shadows = q==='high'||q==='ultra';
+ QX.glow = QX.glowMul>0;
  QX.trails = q!=='potato';
  const p=OPT.physics;
  QX.corpses = p!=='potato';
- QX.corpseMax = p==='potato'?0 : p==='low'?40 : p==='medium'?80 : 120;
+ QX.corpseMax = p==='potato'?0 : p==='low'?40 : p==='medium'?80 : p==='high'?100 : 120;
  PX.corpsePhys = p!=='potato';
+ try{resize();}catch(e){}
 }
 function saveOpt(){try{window.storage.set('abyss_opt',JSON.stringify(OPT));}catch(e){}}
-(async()=>{try{const r=await window.storage.get('abyss_opt');if(r&&r.value){const o=JSON.parse(r.value);if(o&&typeof o==='object'){OPT=Object.assign(OPT,o);}}}catch(e){}applyQuality();muted=(OPT.volume<=0);})();
+(async()=>{let had=false;try{const r=await window.storage.get('abyss_opt');if(r&&r.value){const o=JSON.parse(r.value);if(o&&typeof o==='object'){OPT=Object.assign(OPT,o);had=!!o.quality;}}}catch(e){}
+ // V9 PERF: phones start on a phone-tuned tier instead of eating bad frames until the
+ // watchdog reacts. One-time migration for existing mobile players still on old-default
+ // ultra - they get one toast and can switch back in Options (we never override again).
+ try{
+  if(!had&&IS_TOUCH){OPT.quality='medium';OPT.physics='medium';}
+  else if(had&&IS_TOUCH&&!OPT._v9perf&&OPT.quality==='ultra'){OPT.quality='high';OPT.physics=OPT.physics==='ultra'?'high':OPT.physics;setTimeout(()=>{try{toast('GRAPHICS TUNED FOR YOUR DEVICE - change in Options');}catch(e){}},2500);}
+  OPT._v9perf=true;saveOpt();
+ }catch(e){}
+ applyQuality();muted=(OPT.volume<=0);})();
 function initAudio(){try{AC=new (window.AudioContext||window.webkitAudioContext)();
  master=AC.createGain();master.gain.value=(OPT&&OPT.volume!=null)?OPT.volume:0.28;
  // creamy bus: gentle lowpass + soft compression so nothing is ever harsh
@@ -1064,7 +1090,7 @@ const BAL={
   spawnInterval(t){return Math.max(0.28,0.95-t*0.011);},
   spawnBatch(t){return 2+Math.floor(t/18);},
   enemyCap:260,
-  enemyCapQ(){const q=OPT.quality;const m=q==='potato'?0.42:q==='low'?0.60:q==='medium'?0.80:1;return Math.round(260*m);},
+  enemyCapQ(){const q=OPT.quality;const m=q==='potato'?0.42:q==='low'?0.60:q==='medium'?0.78:q==='high'?0.90:1;return Math.round(260*m);},
   xpNext(level){const base=52+level*16+Math.pow(level,2.02);let m=1;if(level<=3)m=0.6;else if(level<=8)m=0.85;else if(level<10)m=1.1;return Math.floor(base*m);},
   playerIFrames:0.5, cellSize:80,
   barrierLevel:5, barrierRecharge:0.8,
@@ -2693,16 +2719,16 @@ function render(){
  drawGridBg(camX,camY,VW,VH);drawRoads(camX,camY,VW,VH);
  drawZones();
  for(const sd of seeds){ctx.save();const pz=0.6+0.4*Math.sin(time*10);ctx.globalAlpha=0.8*pz;ctx.fillStyle='#6cffb0';if(QX&&QX.glow){ctx.shadowColor='#6cffb0';ctx.shadowBlur=14;}ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r*pz,0,TAU);ctx.fill();ctx.globalAlpha=0.4;ctx.strokeStyle='#6cffb0';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(sd.x,sd.y,sd.r+5+pz*4,0,TAU);ctx.stroke();ctx.restore();}
- for(const tr of trails){ctx.save();ctx.globalAlpha=Math.min(0.55,tr.life*0.4);const g=ctx.createRadialGradient(tr.x,tr.y,2,tr.x,tr.y,tr.r);g.addColorStop(0,'rgba(255,150,60,0.9)');g.addColorStop(1,'rgba(255,80,30,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.r,0,TAU);ctx.fill();ctx.restore();}
+ for(const tr of trails){if(!onScreen(tr.x,tr.y,tr.r))continue;const _ta=ctx.globalAlpha;ctx.globalAlpha=Math.min(0.55,tr.life*0.4);stampBloom('rgba(255,140,55,0.95)',tr.x,tr.y,tr.r,1);ctx.globalAlpha=_ta;}
  drawArenaRing();
  for(const hz of hazards){ctx.save();
   if(hz.tele>0){ctx.globalAlpha=0.45+0.3*Math.sin(time*12);ctx.strokeStyle=hz.box?'#9fb6e0':(hz.type==='meteor'?'#ff9b4b':(hz.type==='blackhole'?'#b07bff':(hz.type==='tar'?'#8a6bd8':(hz.type==='solar'?'#ffb04b':'#ff7b9b'))));ctx.lineWidth=2;ctx.setLineDash([8,8]);if(hz.box){ctx.strokeRect(hz.x-hz.r,hz.y-hz.r,hz.r*2,hz.r*2);}else{ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.stroke();}ctx.setLineDash([]);}
-  else if(hz.type==='blackhole'){const g=ctx.createRadialGradient(hz.x,hz.y,2,hz.x,hz.y,hz.r);g.addColorStop(0,'rgba(15,0,35,0.96)');g.addColorStop(0.3,'rgba(80,20,150,0.5)');g.addColorStop(1,'rgba(140,90,255,0.04)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.fill();ctx.strokeStyle='#b07bff';ctx.shadowColor='#b07bff';ctx.shadowBlur=14;ctx.lineWidth=2;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.coreR,0,TAU);ctx.stroke();ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*(0.5+0.3*Math.sin(time*4)),0,TAU);ctx.stroke();ctx.globalAlpha=0.3;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*(0.78+0.18*Math.sin(time*3+1.3)),0,TAU);ctx.stroke();}
+  else if(hz.type==='blackhole'){if(!hz._g||hz._gr!==hz.r){hz._gr=hz.r;hz._g=ctx.createRadialGradient(0,0,2,0,0,hz.r);hz._g.addColorStop(0,'rgba(15,0,35,0.96)');hz._g.addColorStop(0.3,'rgba(80,20,150,0.5)');hz._g.addColorStop(1,'rgba(140,90,255,0.04)');}ctx.translate(hz.x,hz.y);ctx.fillStyle=hz._g;ctx.beginPath();ctx.arc(0,0,hz.r,0,TAU);ctx.fill();ctx.translate(-hz.x,-hz.y);ctx.strokeStyle='#b07bff';ctx.shadowColor='#b07bff';ctx.shadowBlur=14;ctx.lineWidth=2;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.coreR,0,TAU);ctx.stroke();ctx.globalAlpha=0.5;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*(0.5+0.3*Math.sin(time*4)),0,TAU);ctx.stroke();ctx.globalAlpha=0.3;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*(0.78+0.18*Math.sin(time*3+1.3)),0,TAU);ctx.stroke();}
   else if(hz.type==='meteor'){ctx.globalAlpha=clamp(hz.life/0.25,0,1)*0.6;ctx.fillStyle='rgba(255,155,75,0.6)';ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.fill();}
-  else if(hz.type==='tar'){ctx.globalAlpha=0.5;const g=ctx.createRadialGradient(hz.x,hz.y,8,hz.x,hz.y,hz.r);g.addColorStop(0,'rgba(90,60,160,0.55)');g.addColorStop(1,'rgba(40,25,80,0.25)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.fill();ctx.globalAlpha=0.7;ctx.strokeStyle='#8a6bd8';ctx.setLineDash([4,9]);ctx.lineWidth=2;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*0.96,0,TAU);ctx.stroke();ctx.setLineDash([]);}
-  else if(hz.type==='solar'){const g=ctx.createRadialGradient(hz.x,hz.y,hz.r*0.2,hz.x,hz.y,hz.r);g.addColorStop(0,'rgba(255,170,70,0.34)');g.addColorStop(1,'rgba(255,90,40,0.16)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(255,170,80,0.7)';ctx.lineWidth=2;ctx.stroke();}
+  else if(hz.type==='tar'){ctx.globalAlpha=0.5;if(!hz._g||hz._gr!==hz.r){hz._gr=hz.r;hz._g=ctx.createRadialGradient(0,0,8,0,0,hz.r);hz._g.addColorStop(0,'rgba(90,60,160,0.55)');hz._g.addColorStop(1,'rgba(40,25,80,0.25)');}ctx.translate(hz.x,hz.y);ctx.fillStyle=hz._g;ctx.beginPath();ctx.arc(0,0,hz.r,0,TAU);ctx.fill();ctx.translate(-hz.x,-hz.y);ctx.globalAlpha=0.7;ctx.strokeStyle='#8a6bd8';ctx.setLineDash([4,9]);ctx.lineWidth=2;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r*0.96,0,TAU);ctx.stroke();ctx.setLineDash([]);}
+  else if(hz.type==='solar'){if(!hz._g||hz._gr!==hz.r){hz._gr=hz.r;hz._g=ctx.createRadialGradient(0,0,hz.r*0.2,0,0,hz.r);hz._g.addColorStop(0,'rgba(255,170,70,0.34)');hz._g.addColorStop(1,'rgba(255,90,40,0.16)');}ctx.translate(hz.x,hz.y);ctx.fillStyle=hz._g;ctx.beginPath();ctx.arc(0,0,hz.r,0,TAU);ctx.fill();ctx.translate(-hz.x,-hz.y);ctx.strokeStyle='rgba(255,170,80,0.7)';ctx.lineWidth=2;ctx.stroke();}
   else if(hz.type==='boxzone'){const pul=0.5+0.5*Math.sin(time*8);ctx.globalAlpha=0.2+0.12*pul;const g=ctx.createLinearGradient(hz.x-hz.r,hz.y-hz.r,hz.x+hz.r,hz.y+hz.r);g.addColorStop(0,'rgba(159,182,224,0.35)');g.addColorStop(1,'rgba(120,150,210,0.5)');ctx.fillStyle=g;ctx.fillRect(hz.x-hz.r,hz.y-hz.r,hz.r*2,hz.r*2);ctx.globalAlpha=0.6;ctx.strokeStyle='#9fb6e0';if(QX&&QX.glow){ctx.shadowColor='#9fb6e0';ctx.shadowBlur=12;}ctx.lineWidth=2.4;ctx.strokeRect(hz.x-hz.r,hz.y-hz.r,hz.r*2,hz.r*2);ctx.shadowBlur=0;ctx.globalAlpha=0.35;ctx.beginPath();ctx.moveTo(hz.x-hz.r,hz.y);ctx.lineTo(hz.x+hz.r,hz.y);ctx.moveTo(hz.x,hz.y-hz.r);ctx.lineTo(hz.x,hz.y+hz.r);ctx.stroke();}
-  else{const a=0.12+hz.ramp*0.42,g=ctx.createRadialGradient(hz.x,hz.y,hz.r*0.2,hz.x,hz.y,hz.r);g.addColorStop(0,`rgba(255,90,80,${a*0.55})`);g.addColorStop(1,`rgba(170,40,120,${a})`);ctx.fillStyle=g;ctx.beginPath();ctx.arc(hz.x,hz.y,hz.r,0,TAU);ctx.fill();ctx.strokeStyle=`rgba(255,90,130,${0.45+hz.ramp*0.5})`;ctx.lineWidth=2;ctx.stroke();}
+  else{const a=0.12+hz.ramp*0.42,_ak=(a*20)|0;if(!hz._g||hz._gr!==hz.r||hz._ga!==_ak){hz._gr=hz.r;hz._ga=_ak;hz._g=ctx.createRadialGradient(0,0,hz.r*0.2,0,0,hz.r);hz._g.addColorStop(0,`rgba(255,90,80,${a*0.55})`);hz._g.addColorStop(1,`rgba(170,40,120,${a})`);}ctx.translate(hz.x,hz.y);ctx.fillStyle=hz._g;ctx.beginPath();ctx.arc(0,0,hz.r,0,TAU);ctx.fill();ctx.translate(-hz.x,-hz.y);ctx.strokeStyle=`rgba(255,90,130,${0.45+hz.ramp*0.5})`;ctx.lineWidth=2;ctx.stroke();}
   ctx.restore();}
  for(const o of orbs)glowDot(o.x,o.y,o.r,'#6cffb0',8);
  for(const c of chests){ctx.save();const pulse=0.7+0.3*Math.sin(time*6);ctx.globalAlpha=pulse;ctx.shadowColor='#ffd24b';ctx.shadowBlur=18;ctx.fillStyle='#ffd24b';ctx.fillRect(c.x-9,c.y-7,18,14);ctx.fillStyle='#5a4410';ctx.fillRect(c.x-9,c.y-1,18,3);ctx.restore();}
@@ -2711,7 +2737,7 @@ function render(){
   else if(d.type==='magnet')drawSymbol(d.x,d.y,'⊚','#5cd0ff');else if(d.type==='bomb')drawSymbol(d.x,d.y,'✸','#ffc24b');else if(d.type==='shard')drawSymbol(d.x,d.y,'◈','#9bd0ff');
   if(d.type!=='gold'){ctx.save();const pu=0.5+0.5*Math.sin(time*5+d.x*0.01);const dc=d.type==='heart'?'#ff5a6e':(d.type==='magnet'?'#5cd0ff':'#ffc24b');ctx.globalAlpha=0.35+0.4*pu;ctx.strokeStyle=dc;ctx.shadowColor=dc;ctx.shadowBlur=12;ctx.lineWidth=2;ctx.beginPath();ctx.arc(d.x,d.y,13+5*pu,0,TAU);ctx.stroke();ctx.restore();}}
  const aw=player.weapons.find(x=>x.id==='aura');
- if(aw&&aw._render){const r=aw._render.radius;ctx.save();const g=ctx.createRadialGradient(player.x,player.y,r*0.3,player.x,player.y,r);g.addColorStop(0,'rgba(155,109,255,0)');g.addColorStop(0.7,'rgba(155,109,255,0.10)');g.addColorStop(1,'rgba(155,109,255,0.28)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(player.x,player.y,r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(155,109,255,0.5)';ctx.lineWidth=2;ctx.stroke();ctx.restore();}
+ if(aw&&aw._render){const r=aw._render.radius;ctx.save();if(!aw._gr||aw._grR!==r){aw._grR=r;aw._gr=ctx.createRadialGradient(0,0,r*0.3,0,0,r);aw._gr.addColorStop(0,'rgba(155,109,255,0)');aw._gr.addColorStop(0.7,'rgba(155,109,255,0.10)');aw._gr.addColorStop(1,'rgba(155,109,255,0.28)');}ctx.translate(player.x,player.y);ctx.fillStyle=aw._gr;ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(155,109,255,0.5)';ctx.lineWidth=2;ctx.stroke();ctx.restore();}
  const dw=player.weapons.find(x=>x.id==='deflect');
  if(dw&&dw._render){const r=dw._render.radius;ctx.save();ctx.globalAlpha=0.4;ctx.strokeStyle='#9bd0ff';ctx.lineWidth=1.5;ctx.setLineDash([5,7]);ctx.beginPath();ctx.arc(player.x,player.y,r,0,TAU);ctx.stroke();ctx.setLineDash([]);ctx.restore();}
  for(const p of epjs)drawProjectile(p);
@@ -2720,7 +2746,7 @@ function render(){
  for(const p of pjs){ctx.save();
   if(p.kind==='catalyst'){const pz=0.7+0.3*Math.sin(time*14);if(QX&&QX.glow){ctx.shadowColor='#ff5cf0';ctx.shadowBlur=22;}ctx.globalAlpha=0.95;ctx.fillStyle='#d65cff';ctx.beginPath();ctx.arc(p.x,p.y,p.r*pz,0,TAU);ctx.fill();ctx.globalAlpha=0.8;ctx.strokeStyle='#5cd0ff';ctx.lineWidth=2.4;ctx.beginPath();ctx.arc(p.x,p.y,p.r*pz+3,0,TAU);ctx.stroke();ctx.shadowBlur=0;ctx.globalAlpha=1;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(p.x,p.y,p.r*0.4,0,TAU);ctx.fill();ctx.restore();continue;}
   var _pc=projSkinCol(p,p.color)||p.color,_ps2=projSkin(),_core=(_ps2&&_ps2.mode&&_ps2.mode!=='native')?_ps2.core:null,_gm=(_ps2&&_ps2.mode&&_ps2.mode!=='native'&&_ps2.glow)?_ps2.glow:1;
-  if(p.spirit)ctx.globalAlpha=0.8;ctx.shadowColor=_pc;ctx.shadowBlur=(p.big?18:12)*_gm;ctx.fillStyle=_pc;
+  if(p.spirit)ctx.globalAlpha=0.8;if(QX.glowMul===0)stampBloom(_pc,p.x,p.y,(p.r||3)*3+(p.big?8:0),0.4);ctx.shadowColor=_pc;ctx.shadowBlur=(p.big?18:12)*_gm;ctx.fillStyle=_pc;
   if(p.big){const a=Math.atan2(p.vy,p.vx);ctx.translate(p.x,p.y);ctx.rotate(a);ctx.fillRect(-10,-p.r/2,20,p.r);if(_core){ctx.shadowBlur=0;ctx.fillStyle=_core;ctx.fillRect(-6,-Math.max(1,p.r/4),12,Math.max(2,p.r/2));}}
   else{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,TAU);ctx.fill();if(_core){ctx.shadowBlur=0;ctx.globalAlpha=1;ctx.fillStyle=_core;ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1,p.r*0.45),0,TAU);ctx.fill();}}ctx.restore();}
  const ow=player.weapons.find(x=>x.id==='orbit');
@@ -2766,19 +2792,35 @@ function render(){
  if(touchActive){ctx.save();ctx.setTransform(DPR,0,0,DPR,0,0);ctx.globalAlpha=0.3;ctx.strokeStyle='#00e5d4';ctx.lineWidth=2;ctx.beginPath();ctx.arc(touchOrigin.x,touchOrigin.y,46,0,TAU);ctx.stroke();ctx.globalAlpha=0.55;ctx.fillStyle='#00e5d4';ctx.beginPath();ctx.arc(touchOrigin.x+touchVec.x*40,touchOrigin.y+touchVec.y*40,15,0,TAU);ctx.fill();ctx.restore();}
 }
 function drawGridBg(camX,camY,VW,VH){VW=VW||W;VH=VH||H;const s=56;ctx.strokeStyle='rgba(60,90,150,0.10)';ctx.lineWidth=1;const x0=Math.floor(camX/s)*s,y0=Math.floor(camY/s)*s;ctx.beginPath();for(let x=x0;x<camX+VW+s;x+=s){ctx.moveTo(x,camY);ctx.lineTo(x,camY+VH);}for(let y=y0;y<camY+VH+s;y+=s){ctx.moveTo(camX,y);ctx.lineTo(camX+VW,y);}ctx.stroke();}
+let _laneGV=null,_laneGH=null,_laneW=0;
 function drawRoads(camX,camY,VW,VH){VW=VW||W;VH=VH||H;ctx.save();
+ if(_laneW!==ROAD.w||!_laneGV){_laneW=ROAD.w;
+  _laneGV=ctx.createLinearGradient(0,0,ROAD.w,0);_laneGH=ctx.createLinearGradient(0,0,0,ROAD.w);
+  for(const g of [_laneGV,_laneGH]){g.addColorStop(0,'rgba(0,229,212,0.03)');g.addColorStop(0.5,'rgba(0,229,212,0.11)');g.addColorStop(1,'rgba(0,229,212,0.03)');}}
  const lane=(vert,period,w)=>{let p=Math.floor((vert?camX:camY)/period)*period;
   for(;p<(vert?camX+VW:camY+VH)+period;p+=period){
-   const g=vert?ctx.createLinearGradient(p,0,p+w,0):ctx.createLinearGradient(0,p,0,p+w);
-   g.addColorStop(0,'rgba(0,229,212,0.03)');g.addColorStop(0.5,'rgba(0,229,212,0.11)');g.addColorStop(1,'rgba(0,229,212,0.03)');
-   ctx.fillStyle=g;
-   if(vert)ctx.fillRect(p,camY,w,VH);else ctx.fillRect(camX,p,VW,w);
+   ctx.fillStyle=vert?_laneGV:_laneGH;
+   if(vert){ctx.translate(p,0);ctx.fillRect(0,camY,w,VH);ctx.translate(-p,0);}else{ctx.translate(0,p);ctx.fillRect(camX,0,VW,w);ctx.translate(0,-p);}
    ctx.fillStyle='rgba(0,229,212,0.26)';
    const off=(time*140)%64;
    if(vert){for(let y=camY-64+off;y<camY+VH;y+=64){ctx.beginPath();ctx.moveTo(p+w/2-9,y+12);ctx.lineTo(p+w/2,y);ctx.lineTo(p+w/2+9,y+12);ctx.lineTo(p+w/2,y+7);ctx.closePath();ctx.fill();}}
    else{for(let x=camX-64+off;x<camX+VW;x+=64){ctx.beginPath();ctx.moveTo(x+12,p+w/2-9);ctx.lineTo(x,p+w/2);ctx.lineTo(x+12,p+w/2+9);ctx.lineTo(x+7,p+w/2);ctx.closePath();ctx.fill();}}}};
  lane(true,ROAD.px,ROAD.w);lane(false,ROAD.py,ROAD.w);ctx.restore();}
-function glowDot(x,y,r,color,blur){if(!onScreen(x,y,r+blur))return;ctx.save();ctx.shadowColor=color;ctx.shadowBlur=blur;ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.restore();}
+// V9 PERF: baked bloom. Each glow color is rendered ONCE to a small offscreen sprite
+// (soft radial falloff + hot core), then stamped with drawImage - GPU-cheap, no live blur.
+// Visually ~identical to shadowBlur at a fraction of the cost; used on every tier.
+const _bloomCache={};let _bloomN=0;
+function bloomSprite(color){
+ let sp=_bloomCache[color];if(sp)return sp;
+ if(_bloomN>96){for(const k in _bloomCache){delete _bloomCache[k];}_bloomN=0;}
+ const S=64,c=document.createElement('canvas');c.width=S;c.height=S;const g2=c.getContext('2d');
+ const gr=g2.createRadialGradient(S/2,S/2,1,S/2,S/2,S/2);
+ gr.addColorStop(0,color);gr.addColorStop(0.28,color);gr.addColorStop(1,'rgba(0,0,0,0)');
+ g2.globalAlpha=0.9;g2.fillStyle=gr;g2.beginPath();g2.arc(S/2,S/2,S/2,0,Math.PI*2);g2.fill();
+ _bloomCache[color]=c;_bloomN++;return c;
+}
+function stampBloom(color,x,y,r,alpha){const sp=bloomSprite(color);const pa=ctx.globalAlpha;ctx.globalAlpha=pa*(alpha==null?0.55:alpha);ctx.drawImage(sp,x-r,y-r,r*2,r*2);ctx.globalAlpha=pa;}
+function glowDot(x,y,r,color,blur){if(!onScreen(x,y,r+blur))return;stampBloom(color,x,y,r+blur*0.9,0.6);ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();}
 // Banner shown during the grace window before a level-up / boon menu opens, so the
 // player knows a reward is queued and can dash clear of danger before play freezes.
 function drawMenuArmBanner(){
@@ -3245,7 +3287,22 @@ function sanitizeState(){try{
  fix(enemies);fix(orbs);fix(drops);fix(pjs);fix(epjs);fix(shards);fix(hazards);fix(particles);fix(chests);fix(zones);fix(seeds);
  const tcap=(typeof DMGNUM!=='undefined'&&DMGNUM==='diablo')?260:140;if(texts&&texts.length>tcap)texts.length=tcap;if(epjs&&epjs.length>500)epjs.length=500;if(arcs&&arcs.length>120)arcs.length=120;
 }catch(e2){}}
-function loop(now){requestAnimationFrame(loop);const dt=Math.min((now-lastT)/1000,0.05);lastT=now;
+let _f30last=0;
+// FPS counter chip: tiny fixed DOM readout (top-left, under the safe area). DOM beats canvas
+// here - it works in every state (menu, dive, screens) and costs nothing when hidden.
+let _fpsChip=null,_fpsCf=0,_fpsCt=0;
+function fpsChipEl(){if(_fpsChip)return _fpsChip;try{const d=document.createElement('div');d.id='fpschip';d.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;z-index:99999;font:600 10px Rajdhani,monospace;letter-spacing:.08em;color:#6cffb0;background:rgba(6,12,24,0.55);padding:2px 6px;border-radius:4px;pointer-events:none;display:none;text-shadow:0 0 6px rgba(0,0,0,0.8)';document.body.appendChild(d);_fpsChip=d;}catch(e){}return _fpsChip;}
+function fpsChipTick(dt){const el=fpsChipEl();if(!el)return;if(!OPT.fps){if(el.style.display!=='none')el.style.display='none';return;}
+ _fpsCf++;_fpsCt+=dt;
+ if(_fpsCt>=0.5){const f=Math.round(_fpsCf/_fpsCt);_fpsCf=0;_fpsCt=0;
+  el.style.display='block';el.textContent=f+' FPS';
+  el.style.color=f>=50?'#6cffb0':(f>=30?'#ffd24b':'#ff5a6e');}}
+function loop(now){requestAnimationFrame(loop);
+ // V9 PERF: frame governor. On the lowest tiers a locked 30fps is smoother than a
+ // stuttering 40-50 and roughly halves heat. Skipped frames cost nothing at all.
+ if(QX.fps30&&now-_f30last<31)return;_f30last=now;
+ const dt=Math.min((now-lastT)/1000,0.05);lastT=now;
+ try{fpsChipTick(dt);}catch(e){}
  try{if(state==='playing')update(dt);}
  catch(err){console.error('ABYSS update error:',err);sanitizeState();if(!window._abyssErr){window._abyssErr=true;try{toast('GLITCH CONTAINED. RUN CONTINUES');}catch(e3){}}}
  try{if(player)render();}
@@ -4446,7 +4503,7 @@ function openSocial(tab){hideAllScreens();state='social';tab=tab||'friends';
  if(tab==='friends')hydrateFriends();
  document.getElementById('social').classList.remove('hidden');try{trDyn(document.getElementById('social'));}catch(e){}}
 function showPopup(title,sub,icon,color){const m=document.getElementById('popmodal');document.getElementById('poptitle').textContent=title;document.getElementById('popsub').textContent=sub||'';const ic=document.getElementById('popicon');ic.textContent=icon||'\u2713';ic.style.color=color||'#6cffb0';m.querySelector('.popbox').style.borderColor=color||'#6cffb0';m.querySelector('.popbox').style.boxShadow='0 0 40px '+(color||'#6cffb0')+'55';m.classList.remove('hidden');const ok=document.getElementById('popok');ok.onclick=()=>m.classList.add('hidden');try{hap('notify','success');}catch(e){}}
-function qLabel(q){return {potato:'Potato',low:'Low',medium:'Medium',ultra:'Ultra (Full)'}[q]||q;}
+function qLabel(q){return {potato:'Potato',low:'Low',medium:'Medium',high:'High',ultra:'Ultra (Full)'}[q]||q;}
 let optReturn='menu';
 function openOptions(from){optReturn=from||'menu';hideAllScreens();state='options';
  const B=document.getElementById('optbody');
@@ -4456,10 +4513,12 @@ function openOptions(from){optReturn=from||'menu';hideAllScreens();state='option
  s+=`<div class="pcard"><div class="ptitle">Physics Quality</div><div style="font-size:11.5px;color:var(--dim);margin-bottom:9px">Controls corpse flinging and debris. Potato turns them off entirely.</div>${seg('physics',OPT.physics,QUALITY_LEVELS)}</div>`;
  s+=`<div class="pcard"><div class="ptitle">Damage Numbers</div><div style="font-size:11.5px;color:var(--dim);margin-bottom:9px">How floating damage shows over enemies.</div><div class="optseg" data-opt="dmgnum">`+['off','minimal','full','diablo'].map(o=>`<button class="optb ${DMGNUM===o?'on':''}" data-opt="dmgnum" data-val="${o}">${o}</button>`).join('')+`</div></div>`;
  s+=`<div class="pcard"><div class="ptitle">Vibration</div><div class="optseg" data-opt="vibration"><button class="optb ${OPT.vibration?'on':''}" data-opt="vibration" data-val="on">On</button><button class="optb ${!OPT.vibration?'on':''}" data-opt="vibration" data-val="off">Off</button></div><div style="font-size:11.5px;color:var(--dim);margin-top:8px">Haptic feedback on mobile in Telegram.</div></div>`;
+ s+=`<div class="pcard"><div class="ptitle">FPS Counter</div><div class="optseg" data-opt="fps"><button class="optb ${OPT.fps?'on':''}" data-opt="fps" data-val="on">On</button><button class="optb ${!OPT.fps?'on':''}" data-opt="fps" data-val="off">Off</button></div><div style="font-size:11.5px;color:var(--dim);margin-top:8px">Shows a tiny frame rate readout in the corner.</div></div>`;
  s+=`<div class="pcard"><div class="ptitle">Audio Volume <span id="volval" style="color:#6cffb0;font-weight:400">${Math.round(OPT.volume/0.6*100)}%</span></div><input type="range" id="volslider" min="0" max="100" value="${Math.round(OPT.volume/0.6*100)}" style="width:100%;margin-top:8px;accent-color:#3cc8ff"></div>`;
  B.innerHTML=s;
  B.querySelectorAll('.optb').forEach(btn=>{btn.onclick=()=>{const o=btn.dataset.opt,v=btn.dataset.val;
   if(o==='vibration'){OPT.vibration=(v==='on');if(OPT.vibration)hap('impact','soft');}
+  else if(o==='fps'){OPT.fps=(v==='on');}
   else if(o==='dmgnum'){DMGNUM=v;syncDmgBtn();try{window.storage.set('abyss_dmgnum',DMGNUM);}catch(e){}}
   else{OPT[o]=v;applyQuality();}
   saveOpt();
