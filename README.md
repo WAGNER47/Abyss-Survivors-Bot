@@ -28,7 +28,7 @@ Descend through 100 levels of geometric horror. Build your diver. Meet what wait
 
 <div align="center">
 
-`⚔ SIX DIVERS`&nbsp;&nbsp;·&nbsp;&nbsp;`✦ 21 WEAPONS`&nbsp;&nbsp;·&nbsp;&nbsp;`☄ 8 ELEMENTS`&nbsp;&nbsp;·&nbsp;&nbsp;`♛ NAMED WARDENS`&nbsp;&nbsp;·&nbsp;&nbsp;`◆ THE CORRUPTION`
+`⚔ DIVERS`&nbsp;&nbsp;·&nbsp;&nbsp;`✦ WEAPONS`&nbsp;&nbsp;·&nbsp;&nbsp;`☄ ELEMENTS`&nbsp;&nbsp;·&nbsp;&nbsp;`♛ WARDENS`&nbsp;&nbsp;·&nbsp;&nbsp;`◆ THE CORRUPTION`
 
 </div>
 
@@ -58,7 +58,6 @@ Descend through 100 levels of geometric horror. Build your diver. Meet what wait
 <br/>
 
 **Veil & Wire Studio**
-One guy. One file. 18,000 meters of dark.
 
 <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0b0f21,100:120a2e&height=90&section=footer"/>
 
