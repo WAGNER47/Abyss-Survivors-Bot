@@ -13,7 +13,7 @@
 
 ### **You are a light. The deep wants to swallow it.**
 
-A neon deep-sea roguelite survivor, built as a single HTML file.
+A neon deep-sea roguelite survivor game,
 Descend through 100 levels of geometric horror. Build your diver. Meet what waits below.
 
 <br/>
