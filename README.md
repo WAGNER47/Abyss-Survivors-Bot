@@ -1,152 +1,65 @@
 <div align="center">
 
-<!-- HERO -->
-<img width="100%" src="https://capsule-render.vercel.app/api?type=venom&color=0:0b0f21,50:1a0533,100:0b0f21&height=300&section=header&text=ABYSS%20%2F%2F%20SURVIVORS&fontSize=52&fontColor=fff&animation=fadeIn&fontAlignY=55&desc=Something%20lives%20at%2018%2C000%20meters.%20It%20has%20noticed%20your%20light.&descAlignY=75&descSize=16&descColor=6cffb0"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=venom&color=0:0b0f21,50:120a2e,100:0b0f21&height=280&section=header&text=ABYSS%20%2F%2F%20SURVIVORS&fontSize=56&fontColor=eaf2ff&animation=fadeIn&fontAlignY=54&desc=Something%20lives%20at%2018%2C000%20meters.%20It%20has%20noticed%20your%20light.&descAlignY=74&descSize=15&descColor=6cffb0"/>
 
 <br/>
 
-![Status](https://img.shields.io/badge/STATUS-LIVE%20IN%20THE%20DEEP-6cffb0?style=for-the-badge&labelColor=0b0f21)
-![Version](https://img.shields.io/badge/VERSION-3.0-b06bff?style=for-the-badge&labelColor=0b0f21)
-![Platform](https://img.shields.io/badge/PLATFORM-TELEGRAM%20%2F%20WEB-3cc8ff?style=for-the-badge&labelColor=0b0f21)
-![Studio](https://img.shields.io/badge/VEIL%20%26%20WIRE-STUDIO-ff9b3c?style=for-the-badge&labelColor=0b0f21)
+![Live](https://img.shields.io/badge/LIVE_IN_THE_DEEP-6cffb0?style=for-the-badge&labelColor=0b0f21)
+![Players](https://img.shields.io/badge/27K_DAILY_DIVERS-3cc8ff?style=for-the-badge&labelColor=0b0f21)
+![Platform](https://img.shields.io/badge/TELEGRAM_%2F_WEB-b06bff?style=for-the-badge&labelColor=0b0f21)
+![Studio](https://img.shields.io/badge/VEIL_%26_WIRE-ff9b3c?style=for-the-badge&labelColor=0b0f21)
 
 <br/>
 
-```
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-▓                                                        ▓
-▓   SIGNAL DETECTED   ·   DEPTH: 18,492m                 ▓
-▓   HULL INTEGRITY: UNKNOWN                              ▓
-▓   OXYGEN: IRRELEVANT                                   ▓
-▓   SOMETHING IS ALREADY MOVING TOWARD YOUR LIGHT        ▓
-▓                                                        ▓
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-```
+### **You are a light. The deep wants to swallow it.**
 
-### [⬇️ DESCEND NOW](https://abyss-survivors-v21-telegram-sdk.vercel.app) &nbsp;&nbsp;|&nbsp;&nbsp; [🌊 PLAY ON TELEGRAM](https://t.me/AbyssSurvivorsbot) &nbsp;&nbsp;|&nbsp;&nbsp; [📖 READ THE GUIDES](#guides)
+A neon deep-sea roguelite survivor, built as a single HTML file.
+Descend through 100 levels of geometric horror. Build your diver. Meet what waits below.
+
+<br/>
+
+## [ ⬇ DESCEND NOW ](https://t.me/AbyssSurvivorsbot)
+
+<br/>
 
 </div>
 
 ---
 
-## ◈ What Is This
+<div align="center">
 
-**ABYSS // SURVIVORS** is a neon deep-sea roguelite survivor built as a single HTML file.
+`⚔ SIX DIVERS`&nbsp;&nbsp;·&nbsp;&nbsp;`✦ 21 WEAPONS`&nbsp;&nbsp;·&nbsp;&nbsp;`☄ 8 ELEMENTS`&nbsp;&nbsp;·&nbsp;&nbsp;`♛ NAMED WARDENS`&nbsp;&nbsp;·&nbsp;&nbsp;`◆ THE CORRUPTION`
 
-You are a light. The deep wants to swallow it.
+</div>
 
-Survive infinite geometric horrors across 100 levels. Build your diver with weapons, elements, reactions and boons. Face half-screen titans that walk beside you for entire levels. Then, at level 100, choose whether to keep going.
+<br/>
 
-> *"Let me see the real you. Level your way to 100, then surprise me with your final decision."*
+> Mix two elements on the same enemy and the deep answers.
+> Face half-screen titans that walk beside you for entire levels.
+> Reach level 100, then decide whether to keep going.
 
-Built by **Veil & Wire Studio**
-
----
-
-## ◈ Six Divers
-
-| Glyph | Diver | Playstyle | Special |
-|:---:|---|---|---|
-| ⚔ | **Vanguard** | Tank · Stand your ground | Unbreakable Guard instead of dodge. Clears slows. |
-| 🛡 | **Sentinel** | Shield wall · Absorb everything | Permanent energy field. Barrier stacks. |
-| ⚡ | **Ranger** | Speed · Dodge and shotgun | Shortest dodge cooldown in the game. |
-| 🎯 | **Sniper** | Precision · XP engine | Rifle kills feed resonance instantly. 2 companion drones. |
-| 🌀 | **Vyper** | Hybrid · Shield plus blink | Permanent shield and dodge combined. |
-| 👊 | **Yujin** | Parry · Read everything | Zero cooldown parry. Rapid tap survives anything. |
-```
-
-**Named Wardens** rotate every 5 levels. Learn their faces.
-
-| Warden | What It Does |
-|---|---|
-| ♛ The Collector | Steals your resonance orbs. Kill it to get everything back, magnetized. |
-| ⚖ The Judge | Brands you. You take 30% more damage until it dies. |
-| ✦ The Twin | Splits at half health into two faster copies. Boon when the last one falls. |
-| ☘ The Shepherd | Never stops summoning its flock. Epic enemy every third call. |
-
----
-
-## ◈ Elements and Reactions
-
-Eight damage types. Mix two on the same enemy and the deep answers.
-
-```
-  🔥 Fire  +  ❄ Ice       →  THERMAL SHOCK      · burst damage
-  🔥 Fire  +  ☠ Toxic     →  COMBUSTION         · spread burn
-  ⚡ Lightning  +  ☠ Toxic →  CHAIN STORM        · arc to neighbors  
-  ⚡ Lightning  +  ◈ Plasma →  OVERLOAD          · devastating pulse
-  🔥 Fire  +  ◆ Void      →  ENTROPY            · implosion
-  ☢ Radiation  +  ☠ Toxic →  MUTATION           · evolving DoT
-  ❄ Ice  +  ⚡ Lightning  →  SUPERCONDUCT       · armor shred
-  ❄ Ice  +  ◆ Void        →  ABSOLUTE ZERO      · frozen collapse
-
-  BURN  ×12   →  INFERNO
-  INFERNO  +  TOXIC  →  PLAGUEFIRE
-  PLAGUEFIRE  +  VOID  →  ABYSSAL COLLAPSE  ·  the big one
-```
-
-## ◈ The Corruption
-Beat level 100. Then keep going.
-
-```
-  YOU CANT  ·  OXYGEN WARNING  ·  TURN BACK  ·  IT SEES YOU
-  NO SURFACE  ·  DEPTH ERR0R  ·  SIGNAL EATEN  ·  DO NOT BLINK
-```
-
----
-
-## ◈ Play It
-
-**Browser** — open the link, press DESCEND
-
-**Telegram** — find `@AbyssSurvivorsbot`, tap Play ABYSS, or type `/game` in any group the bot is in
-
-**Mobile** — drag to move, tap the dive button to dodge, parry or guard, guns auto fire
----
-
-## ◈ Roadmap
-
-- [x] Six playable divers with unique mechanics
-- [x] 21 weapons with four evolution tiers
-- [x] Eight elements and twelve reactions
-- [x] Named Wardens with identities and mechanics  
-- [x] The Three Suns and The Leviathan
-- [x] Telegram Mini App with group launch
-- [x] Social hub with party links and diver codes
-- [x] Operator identity customization
-- [x] Pacing governor and corruption mode
-- [ ] Live group roster sync
-- [ ] Backend leaderboard keyed to Telegram ID
-- [ ] True multiplayer co-dive up to 3 divers
-- [ ] Meta progression between runs
-- [ ] Steam release
-
----
-
-## ◈ Studio
-
-**Veil & Wire Studio**
-
-Ramtin · Creator, Designer, Developer
-
-> *One guy. One file. 18,000 meters of dark.*
-
----
+<br/>
 
 <div align="center">
 
+**Play** — open in Telegram, or drop in from the web. Drag to move, guns auto fire, tap to dodge.
+
+<br/>
+
 ```
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ▓                                          ▓
-▓   your light will never go out           ▓  
-▓   now go make it burn up there           ▓
-▓   in the real world, survivor            ▓
+▓   your light will never go out           ▓
+▓   now go make it burn                    ▓
 ▓                                          ▓
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 ```
 
-![Made with](https://img.shields.io/badge/MADE%20WITH-VANILLA%20HTML-ff9b3c?style=for-the-badge&labelColor=0b0f21)
-![Love](https://img.shields.io/badge/AND-TOO%20MUCH%20CAFFEINE-ff5a6e?style=for-the-badge&labelColor=0b0f21)
-![Deep](https://img.shields.io/badge/DEPTH-18%2C492m-6cffb0?style=for-the-badge&labelColor=0b0f21)
+<br/>
+
+**Veil & Wire Studio**
+One guy. One file. 18,000 meters of dark.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0b0f21,100:120a2e&height=90&section=footer"/>
 
 </div>
