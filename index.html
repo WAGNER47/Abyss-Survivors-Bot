@@ -1734,6 +1734,7 @@ solar:{hp:6200,speed:46,dmg:30,r:92,color:'#ff7a3c',xp:90,special:true,warden:tr
 singularity:{hp:6800,speed:44,dmg:32,r:96,color:'#9b6dff',xp:90,special:true,warden:true,arch:'void'},
 omega:{hp:52000,speed:40,dmg:55,r:150,color:'#ff3df0',xp:500,special:true,finalboss:true,arch:'omega',ranged:true},
 voidlord:{hp:90000,speed:30,dmg:64,r:230,color:'#9b6dff',xp:4000,special:true,warden:true,arch:'blackhole',noEscort:true},
+reflection:{hp:4000000,speed:26,dmg:85,r:210,color:'#ff3df0',xp:9000,special:true,warden:true,arch:'reflection',noEscort:true,reflection:true},
 };
 function enemyMix(t){const m=['swarm','runner','runner'];for(const id in ETYPES){const e=ETYPES[id];if(e.special)continue;if(t>=e.after&&id!=='swarm'&&id!=='runner'){const w=id==='boulder'?2:((id==='tri'||id==='fastball')?5:((e.shape==='square'||id==='bigball')?3:2));for(let k=0;k<w;k++)m.push(id);}}return m;}
 const EMODS={volatile:{icon:'\u26a1',color:'#ffb04b'},magnetic:{icon:'\ud83e\uddf2',color:'#5cd0ff'},phase:{icon:'\ud83d\udc7b',color:'#b9c8ff'},infernal:{icon:'\ud83d\udd25',color:'#ff7a3c'},necrotic:{icon:'\ud83d\udc80',color:'#b6ff3c'}};
@@ -1742,12 +1743,12 @@ function maybeModify(e){if(e.special||e.warden||e.finalboss||e.elite||e.stamp)re
  if(Math.random()<ch){const ks=Object.keys(EMODS);e.emod=ks[Math.floor(Math.random()*ks.length)];e.hp*=1.4;e.maxhp*=1.4;
   if(e.emod==='phase'){e.phT=rand(1,3);}if(e.emod==='infernal')e.trailT=0.25;}
  return e;}
-function spawnEnemy(typeId){const def=ETYPES[typeId],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+70,hp=def.hp*BAL.enemyHp(time);
- enemies.push(maybeModify({type:typeId,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.9,1.1),dmg:def.dmg*BAL.enemyDmg(time),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,boulder:!!def.boulder,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
-function spawnSpecial(id,hpMul){const def=ETYPES[id],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+90+def.r,sc=BAL.enemyHp(time)*(1+0.25*corruption+0.3*(corruptMods.bossUp||0))*corrScaleMul;
- enemies.push({type:id,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp:def.hp*sc*(hpMul||1),maxhp:def.hp*sc*(hpMul||1),speed:def.speed,dmg:(def.dmg||0)*BAL.enemyDmg(time),color:def.color,ranged:!!def.ranged,elite:!!def.elite,legendary:!!def.legendary,mage:!!def.mage,warden:!!def.warden,finalboss:!!def.finalboss,arch:def.arch||null,shape:def.shape||'ball',escortChecked:!!def.noEscort,mechTimer:rand(2.5,4),shootCd:rand(1,2),castCd:rand(1.5,3),hitFlash:0});if(corrScaleMul>1){const _e=enemies[enemies.length-1];_e.hp*=corrScaleMul;_e.maxhp*=corrScaleMul;_e.dmg=(_e.dmg||0)*corrScaleMul;}
+function spawnEnemy(typeId){const def=ETYPES[typeId],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+70,hp=def.hp*bHp();
+ enemies.push(maybeModify({type:typeId,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.9,1.1),dmg:def.dmg*bDmg(),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,boulder:!!def.boulder,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
+function spawnSpecial(id,hpMul){const def=ETYPES[id],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+90+def.r,sc=bHp()*(1+0.25*corruption+0.3*(corruptMods.bossUp||0));
+ enemies.push({type:id,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp:def.hp*sc*(hpMul||1),maxhp:def.hp*sc*(hpMul||1),speed:def.speed,dmg:(def.dmg||0)*bDmg(),color:def.color,ranged:!!def.ranged,elite:!!def.elite,legendary:!!def.legendary,mage:!!def.mage,warden:!!def.warden,finalboss:!!def.finalboss,arch:def.arch||null,shape:def.shape||'ball',escortChecked:!!def.noEscort,mechTimer:rand(2.5,4),shootCd:rand(1,2),castCd:rand(1.5,3),hitFlash:0});
  {const _se=enemies[enemies.length-1];if(_se&&_se.arch==='sun'&&Math.random()<0.35){_se.dying=true;_se.color='#ff5a3c';}}
- const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DYING SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD'};
+ const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DYING SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD',reflection:'THE REFLECTION'};
  if(id==='voidlord'){toast('THE VOID LORD AWAKENS');sfx('boss');screenShake=20;}
  else if(id==='omega'){toast('OMEGA PROTOCOL AWAKENS');sfx('boss');screenShake=18;}
  else if(def.warden){toast(t(names[id]||'A WARDEN')+t(' DESCENDS. SLAY IT FOR A BOON'));sfx('boss');screenShake=12;}
@@ -1796,20 +1797,20 @@ function spawnTriVolley(){
  const eg=endgame||lv>=100;
  // count scales: 16 at L12 up to 32 by L60, bee-swarm 40+ in endgame
  const n=eg?randi(40,64):clamp(Math.round(16+(lv-12)*0.34),16,32);
- const def=ETYPES.tri;const hpm=BAL.enemyHp(time)*0.9;
+ const def=ETYPES.tri;const hpm=bHp()*0.9;
  if(eg){
   // bee-swarm: many small clusters from all directions
   const clusters=randi(4,7);
   for(let c=0;c<clusters;c++){const arc=rand(0,TAU),per=Math.ceil(n/clusters);
    for(let i=0;i<per&&enemies.length<BAL.enemyCapQ();i++){const a=arc+rand(-0.5,0.5),dr=Math.max(W,H)/VIEW/2+rand(80,260);
-    const hp=def.hp*hpm;enemies.push(maybeModify({type:'tri',def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(1.0,1.25),dmg:def.dmg*BAL.enemyDmg(time),color:def.color,shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999}));}}
+    const hp=def.hp*hpm;enemies.push(maybeModify({type:'tri',def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(1.0,1.25),dmg:def.dmg*bDmg(),color:def.color,shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999}));}}
   gameAlert('THE SWARM','#ff5a6e','they come like a storm of knives');
  } else {
   // mid-game: 1-2 coordinated arrow-walls from a direction
   const dirs=lv>=30?2:1;
   for(let dd=0;dd<dirs;dd++){const arc=rand(0,TAU),spread=rand(0.6,1.2);
    for(let i=0;i<Math.ceil(n/dirs)&&enemies.length<BAL.enemyCapQ();i++){const a=arc+rand(-spread/2,spread/2),dr=Math.max(W,H)/VIEW/2+rand(70,180);
-    const hp=def.hp*hpm;enemies.push(maybeModify({type:'tri',def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(0.95,1.15),dmg:def.dmg*BAL.enemyDmg(time),color:def.color,shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999}));}}
+    const hp=def.hp*hpm;enemies.push(maybeModify({type:'tri',def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(0.95,1.15),dmg:def.dmg*bDmg(),color:def.color,shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999}));}}
   gameAlert('ARROWHEAD VOLLEY','#ff5a6e','sharp things, incoming');
  }
 }
@@ -1822,18 +1823,18 @@ function runSwarm(){
  const kinds=['swarm','runner','fastball','fastball'];if(lv>=12)kinds.push('tri','tri','tri');if(lv>=25)kinds.push('squish','bigball','bigball');if(lv>=35)kinds.push('sqM','sqM','laserball');if(lv>=55)kinds.push('sqL','sqL');if(lv>=70)kinds.push('sqH');
  const arc=rand(0,TAU),spread=rand(1.0,TAU);
  for(let i=0;i<base&&enemies.length<BAL.enemyCapQ();i++){
-  const a=arc+rand(-spread/2,spread/2),dr=Math.max(W,H)/VIEW/2+rand(70,260),id=pick(kinds),def=ETYPES[id],hp=def.hp*BAL.enemyHp(time)*1.05;
-  enemies.push(maybeModify({type:id,def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.95,1.15),dmg:def.dmg*BAL.enemyDmg(time),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
+  const a=arc+rand(-spread/2,spread/2),dr=Math.max(W,H)/VIEW/2+rand(70,260),id=pick(kinds),def=ETYPES[id],hp=def.hp*bHp()*1.05;
+  enemies.push(maybeModify({type:id,def,x:player.x+Math.cos(a)*dr,y:player.y+Math.sin(a)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.95,1.15),dmg:def.dmg*bDmg(),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
  const names=['SWARM INBOUND','THE DARK SURGES','HORDE BREACH','THEY COME IN NUMBERS','TIDE OF THE DEEP'];
  gameAlert(names[Math.min(names.length-1,swarmCount-1)]||'SWARM INBOUND');}
 function spawnStampede(){const ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+170,cx=player.x+Math.cos(ang)*dr,cy=player.y+Math.sin(ang)*dr;
- const px=-Math.sin(ang),py=Math.cos(ang),n=7+Math.floor(time/240),cdx=-Math.cos(ang),cdy=-Math.sin(ang),hp=ETYPES.stamped.hp*BAL.enemyHp(time)*1.1;
+ const px=-Math.sin(ang),py=Math.cos(ang),n=7+Math.floor(time/240),cdx=-Math.cos(ang),cdy=-Math.sin(ang),hp=ETYPES.stamped.hp*bHp()*1.1;
  for(let i=0;i<n;i++){const off=(i-(n-1)/2)*46+rand(-12,12);
-  enemies.push({type:'stamped',def:ETYPES.stamped,x:cx+px*off,y:cy+py*off,r:16,hp,maxhp:hp,speed:0,dmg:16*BAL.enemyDmg(time),color:'#ff9b4b',stamp:true,cdx,cdy,stampLife:12,kvx:cdx*420,kvy:cdy*420,shootCd:99,hitFlash:0});}
+  enemies.push({type:'stamped',def:ETYPES.stamped,x:cx+px*off,y:cy+py*off,r:16,hp,maxhp:hp,speed:0,dmg:16*bDmg(),color:'#ff9b4b',stamp:true,cdx,cdy,stampLife:12,kvx:cdx*420,kvy:cdy*420,shootCd:99,hitFlash:0});}
  toast('STAMPEDE INBOUND');sfx('boss');screenShake=Math.max(screenShake,6);}
-function spawnEscort(boss){const def=ETYPES[boss.type]||ETYPES.titan,ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+120,sc=BAL.enemyHp(time)*0.6*(1+0.25*corruption);
- enemies.push({type:boss.type,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r*0.8,hp:def.hp*sc,maxhp:def.hp*sc,speed:def.speed*1.15,dmg:(def.dmg||0)*BAL.enemyDmg(time),color:def.color,ranged:!!def.ranged,warden:!!def.warden,finalboss:false,elite:true,arch:def.arch||null,shape:def.shape||'ball',escortChecked:true,mechTimer:rand(3,5),shootCd:rand(1,2),castCd:rand(2,3),hitFlash:0});}
-function spawnDroneAt(x,y){const def=ETYPES.runner,hp=def.hp*BAL.enemyHp(time);enemies.push({type:'runner',def,x:x+rand(-30,30),y:y+rand(-30,30),r:12,hp,maxhp:hp,speed:112,dmg:9*BAL.enemyDmg(time),color:'#ffae3c',shootCd:2,hitFlash:0});}
+function spawnEscort(boss){const def=ETYPES[boss.type]||ETYPES.titan,ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+120,sc=bHp()*0.6*(1+0.25*corruption);
+ enemies.push({type:boss.type,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r*0.8,hp:def.hp*sc,maxhp:def.hp*sc,speed:def.speed*1.15,dmg:(def.dmg||0)*bDmg(),color:def.color,ranged:!!def.ranged,warden:!!def.warden,finalboss:false,elite:true,arch:def.arch||null,shape:def.shape||'ball',escortChecked:true,mechTimer:rand(3,5),shootCd:rand(1,2),castCd:rand(2,3),hitFlash:0});}
+function spawnDroneAt(x,y){const def=ETYPES.runner,hp=def.hp*bHp();enemies.push({type:'runner',def,x:x+rand(-30,30),y:y+rand(-30,30),r:12,hp,maxhp:hp,speed:112,dmg:9*bDmg(),color:'#ffae3c',shootCd:2,hitFlash:0});}
 function enemyShot(x,y,a,sp,r,dmg,life,color,boss,aura,pct){epjs.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,r:boss?r*1.7:r,dmg:boss?dmg*1.25:dmg,life,color,boss:!!boss,aura:aura||null,pct:pct||0,_ph:Math.random()*6.28,hp:boss?(15+player.level*1.2):1});}
 function bossMechanic(e){const dmg=e.dmg;e._mech=(e._mech||0)+1;const aim=Math.atan2(player.y-e.y,player.x-e.x);
  if(e.arch==='titan'){for(let i=0;i<4;i++)spawnDroneAt(e.x,e.y);
@@ -1865,16 +1866,98 @@ function bossMechanic(e){const dmg=e.dmg;e._mech=(e._mech||0)+1;const aim=Math.a
  else if(e.arch==='shepherd'){for(let i=0;i<5;i++)spawnDroneAt(e.x,e.y);e._herd=(e._herd||0)+1;if(e._herd%3===0)spawnSpecial('epic');for(let k=-2;k<=2;k++)enemyShot(e.x,e.y,aim+k*0.2,240,8,dmg*0.45,3.2,'#8affc0',true,null,0.045);}
  else if(e.arch==='omega'){const r=randi(0,3);if(r===0){for(let i=0;i<5;i++)spawnDroneAt(e.x,e.y);}else if(r===1){spawnHazard(player.x,player.y,'solar');for(let i=0;i<3;i++)spawnHazard(player.x+rand(-150,150),player.y+rand(-150,150),'boxzone');}else if(r===2){const s=bhSpot();spawnHazard(s.x,s.y,'blackhole');}else{spawnBeam(e,aim,{color:'#ff3df0',pct:0.5,track:0.9,charge:1.2,wide:38});}
   for(let k=0;k<16;k++)enemyShot(e.x,e.y,k/16*TAU+time,250,8,dmg*0.5,3.4,'#ff7df0',true,'#ffd0fa',0.05);}
- else if(e.arch==='blackhole'){bhBossMech(e);}}
+ else if(e.arch==='blackhole'){bhBossMech(e);}else if(e.arch==='reflection'){reflMech(e);}}
+// ===== V10 CORRUPTION CORE =====
+const TIER1_END=150,TIER2_END=200,CORR_LEVEL_SEC=45,CORR_G1=1.06,CORR_G2=1.09;
+const REFL_HP=4000000,BH_CYCLE=20,BH_OPEN=2.5,BH_TRICKLE=0.05;
+var corrClock=0,reflectionDown=false,reflRef=null,pressureT=4,pressureN=0,_bhToasts=0;
+// Difficulty multiplier as a pure function of LEVEL. Bounded by construction: x1 at the
+// freeze, ~x15.5 at 150, ~x1150 at 200, then a hard plateau forever. No time term at all,
+// so camping cannot move it and it can never overflow.
+function corrMulFor(lv){if(lv<=CORR_CAP_LEVEL)return 1;
+ const a=Math.pow(CORR_G1,Math.min(lv,TIER1_END)-CORR_CAP_LEVEL);
+ if(lv<=TIER1_END)return a;
+ return a*Math.pow(CORR_G2,Math.min(lv,TIER2_END)-TIER1_END);}
+// Time input for the pre-100 curves freezes the moment corruption locks; growth after that
+// comes only from corrMulFor(level).
+function bTime(){return corrFrozen?corrFreezeTime:time;}
+function bHp(){return BAL.enemyHp(bTime())*corrScaleMul;}
+function bDmg(){return BAL.enemyDmg(bTime())*corrScaleMul;}
+function spawnReflection(){spawnSpecial('reflection');const e=enemies[enemies.length-1];
+ if(!e||!e.reflection)return;
+ // fixed stats, independent of build and of every scaling curve: a skill gate, not a gear check
+ e.hp=REFL_HP;e.maxhp=REFL_HP;e.dmg=85;e.speed=26;e.bhGate=true;e.bhT=BH_CYCLE;e.bhOpen=false;e._age=0;e._enr=1;
+ reflRef=e;_bhToasts=0;
+ gameAlert('THE REFLECTION','#ff3df0','it wears your face - the deep made a mirror of you');}
+function reflTick(e,dt){if(e._dead)return;e._age+=dt;
+ // soft enrage: +8% damage per minute of fight, capped at 3x - the gate has an attrition clock
+ const enr=1+Math.min(2,Math.floor(e._age/60)*0.08);if(enr!==e._enr){e._enr=enr;e.dmg=85*enr;}
+ // breath cycle: closed 17.5s (telegraph in the last 1.5s), open 2.5s of real vulnerability
+ e.bhT-=dt;const wasOpen=e.bhOpen;e.bhOpen=(e.bhT<=BH_OPEN);
+ if(e.bhOpen&&!wasOpen){ring(e.x,e.y,e.r*1.6,'#ffd24b');screenShake=Math.max(screenShake,10);sfx('boss');
+  if(_bhToasts<3){_bhToasts++;toast('IT BREATHES - STRIKE NOW');}}
+ if(e.bhT<=0){e.bhT=BH_CYCLE;e.bhOpen=false;}
+ // constant gravitational pull on the player; spikes while it breathes
+ const dx=e.x-player.x,dy=e.y-player.y,d=Math.hypot(dx,dy)||1;
+ if(d<1100&&d>e.r+30){const pull=(e.bhOpen?240:115)*(1-d/1100);player.x+=dx/d*pull*dt;player.y+=dy/d*pull*dt;}
+ // expanding shockwave: dodge through it or take a slice
+ if(e._wave){const w=e._wave;w.r+=w.v*dt;
+  if(!w.hit&&player.iframes<=0&&player.bulwarkT<=0&&Math.abs(Math.hypot(player.x-e.x,player.y-e.y)-w.r)<26){w.hit=true;hitPlayer(0,'field',0.11);}
+  if(w.r>1300)e._wave=null;}}
+function reflMech(e){if(e.bhOpen)return; // it does not attack while it breathes - that is your window
+ e._bm=(e._bm||0)+1;const a=Math.atan2(player.y-e.y,player.x-e.x);const m=e._bm%4;
+ if(m===0){spawnBeam(e,a,{color:'#ff3df0',pct:0.5,track:0.4,charge:1.5,wide:46,len:3400});}
+ else if(m===1){e._wave={r:e.r+20,v:430,hit:false};ring(e.x,e.y,e.r*1.25,'#ff3df0');sfx('shot');}
+ else if(m===2){const sp=bhSpot();spawnHazard(sp.x,sp.y,'solar');spawnHazard(sp.x+rand(-140,140),sp.y+rand(-140,140),'solar');}
+ else{for(let k=0;k<16;k++)enemyShot(e.x,e.y,k/16*TAU+time*0.4,175,9,e.dmg*0.4,4.5,'#ff3df0',true,'#ffd0f4',0.05);}}
+function pressureTick(){pressureN++;const lv=player.level;
+ // during the gate fight: a fixed attrition tick so nobody camps the boss forever.
+ // after the kill (tier 2): ramps with level past any possible sustain. Bypasses armor and shield.
+ const pct=(!reflectionDown)?0.032:Math.min(0.20,0.015+0.0035*(lv-TIER1_END));
+ const amt=Math.max(1,player.maxHp*pct);
+ player._lastHitT=performance.now();player.hurtFlash=0.25;screenShake=Math.max(screenShake,4);
+ spawnText(player.x,player.y-30,'-'+Math.ceil(amt)+' PRESSURE','#3cc8ff',false,true);sfx('hurt');
+ player.hp-=amt;
+ if(player.hp<=0){if(player.phoenix){player.phoenix=false;player.hp=player.maxHp*0.5;player.iframes=2;toast('PHOENIX PROTOCOL');}else{player.hp=0;runOver='dead';}}
+ if(pressureN===1)gameAlert('ABYSSAL PRESSURE','#3cc8ff','the water itself wants you gone - no hull holds forever');}
+var _bossBarEl=null;
+function bossBarEl(){if(_bossBarEl)return _bossBarEl;try{
+ const d=document.createElement('div');d.id='bossbar';
+ d.style.cssText='position:fixed;top:calc(env(safe-area-inset-top,0px) + 44px);left:50%;transform:translateX(-50%);width:min(560px,88vw);z-index:60;pointer-events:none;display:none;text-align:center';
+ d.innerHTML='<div id="bbname" style="font-family:var(--disp),monospace;font-size:13px;letter-spacing:.22em;color:#ff3df0;text-shadow:0 0 12px rgba(255,61,240,0.55);margin-bottom:4px">THE REFLECTION</div>'+
+  '<div style="height:10px;border:1px solid rgba(255,61,240,0.5);border-radius:5px;background:rgba(10,6,20,0.7);overflow:hidden"><div id="bbfill" style="height:100%;width:100%;background:linear-gradient(90deg,#9b6dff,#ff3df0);transition:width .2s linear"></div></div>';
+ document.body.appendChild(d);_bossBarEl=d;}catch(e){}return _bossBarEl;}
+function bossBarTick(){const el=bossBarEl();if(!el)return;
+ if(!reflRef||reflRef._dead||reflRef.hp<=0||state!=='playing'){if(el.style.display!=='none')el.style.display='none';return;}
+ el.style.display='block';const f=document.getElementById('bbfill'),nm=document.getElementById('bbname');
+ if(f){f.style.width=Math.max(0,reflRef.hp/reflRef.maxhp*100)+'%';
+  // the bar itself breathes: gold and cracked-open during the vulnerability window
+  f.style.background=reflRef.bhOpen?'linear-gradient(90deg,#ffd24b,#ff9b3c)':'linear-gradient(90deg,#9b6dff,#ff3df0)';}
+ if(nm){nm.textContent=reflRef.bhOpen?'THE REFLECTION - IT BREATHES':'THE REFLECTION';nm.style.color=reflRef.bhOpen?'#ffd24b':'#ff3df0';}}
+function drawReflectionAura(e){const t=time;ctx.save();
+ for(let i=0;i<3;i++){const rr=e.r*(1.18+i*0.24)+Math.sin(t*2+i)*6;ctx.globalAlpha=0.4;ctx.strokeStyle=hexA((i%2)?'#ff3df0':'#9b6dff',0.5);ctx.lineWidth=3;ctx.beginPath();ctx.arc(e.x,e.y,rr,0,TAU);ctx.stroke();}
+ if(!e._g||e._gr!==e.r){e._gr=e.r;e._g=ctx.createRadialGradient(0,0,1,0,0,e.r);e._g.addColorStop(0,'#000000');e._g.addColorStop(0.66,'#0a0312');e._g.addColorStop(1,hexA('#ff3df0',0.35));}
+ ctx.translate(e.x,e.y);ctx.globalAlpha=1;ctx.fillStyle=e._g;ctx.beginPath();ctx.arc(0,0,e.r,0,TAU);ctx.fill();
+ // the mirror: a corrupted diver silhouette at the core, always facing you
+ const a=Math.atan2(player.y-e.y,player.x-e.x);ctx.rotate(a);
+ ctx.globalAlpha=0.9;ctx.strokeStyle=e.bhOpen?'#ffd24b':'#ff3df0';ctx.lineWidth=2.5;ctx.fillStyle='#05010a';
+ ctx.beginPath();ctx.arc(0,0,e.r*0.22,0,TAU);ctx.fill();ctx.stroke();
+ ctx.beginPath();ctx.moveTo(-e.r*0.22,-e.r*0.13);ctx.lineTo(-e.r*0.44,0);ctx.lineTo(-e.r*0.22,e.r*0.13);ctx.closePath();ctx.fill();ctx.stroke();
+ if(e.bhOpen){stampBloom('#ffd24b',0,0,e.r*0.55,0.85);
+  ctx.strokeStyle='#ffffff';ctx.lineWidth=1.5;ctx.globalAlpha=0.8;
+  for(let k=0;k<5;k++){const ka=k/5*TAU+t*0.7;ctx.beginPath();ctx.moveTo(Math.cos(ka)*e.r*0.24,Math.sin(ka)*e.r*0.24);ctx.lineTo(Math.cos(ka)*e.r*0.6,Math.sin(ka)*e.r*0.6);ctx.stroke();}}
+ else if(e.bhT<=BH_OPEN+1.5){ctx.globalAlpha=0.5+0.4*Math.sin(t*14);stampBloom('#ffd24b',0,0,e.r*0.3,0.5);}
+ ctx.restore();
+ if(particles.length<QX.maxParticles*0.6&&Math.random()<0.5){const aa=Math.random()*TAU,dd=e.r*rand(1.4,2.2);particles.push({x:e.x+Math.cos(aa)*dd,y:e.y+Math.sin(aa)*dd,vx:-Math.cos(aa)*rand(60,140),vy:-Math.sin(aa)*rand(60,140),life:0.6,color:Math.random()<0.5?'#ff3df0':'#9b6dff',r:rand(1.4,2.4)});}}
 function bhSpot(){const pv=Math.hypot(player.pvx,player.pvy);
  if(pv>40&&Math.random()<0.55){const ux=player.pvx/pv,uy=player.pvy/pv,dd=rand(280,460);return{x:player.x+ux*dd,y:player.y+uy*dd};}
  return{x:player.x+rand(-60,60),y:player.y+rand(-60,60)};}
 function mageCount(){let c=0;for(const e of enemies)if(e.mage&&!e._dead)c++;return c;}
 function spawnHazard(x,y,type){type=type||'mage';if(hazards.length>=BAL.hazardCap)hazards.shift();
  if(type==='meteor')hazards.push({type,x,y,r:95,tele:1.1,life:0.25,active:false});
- else if(type==='solar')hazards.push({type,x,y,r:135,tele:0.8,life:6,active:false,dps:72*BAL.enemyDmg(time)});
+ else if(type==='solar')hazards.push({type,x,y,r:135,tele:0.8,life:6,active:false,dps:72*bDmg()});
  else if(type==='tar')hazards.push({type,x,y,r:130,tele:0.65,life:6.5,active:false});
- else if(type==='blackhole')hazards.push({type,x,y,r:215,tele:0.9,life:6.5,active:false,pull:400,coreR:46,dps:140*BAL.enemyDmg(time),pctps:0.20});
+ else if(type==='blackhole')hazards.push({type,x,y,r:215,tele:0.9,life:6.5,active:false,pull:400,coreR:46,dps:140*bDmg(),pctps:0.20});
  else if(type==='boxzone')hazards.push({type,x,y,r:118,tele:0.75,life:4,active:false,pctps:0.10,box:true});
  else hazards.push({type:'mage',x,y,r:140,tele:1.3,life:8,ramp:0,active:false});}
 
@@ -1932,9 +2015,9 @@ function drawBossSats(e){if(!e._sorbs)return;const glow=QX&&QX.glow;
   ctx.restore();}
 }
 // ----- triangle drones (Spear of the Deep summons) -----
-function spawnTriDrones(e,n){const def=ETYPES.tri,hp=def.hp*BAL.enemyHp(time)*1.2;
+function spawnTriDrones(e,n){const def=ETYPES.tri,hp=def.hp*bHp()*1.2;
  for(let i=0;i<n&&enemies.length<BAL.enemyCapQ();i++){const a=Math.random()*TAU,d=e.r+rand(20,60);
-  enemies.push(maybeModify({type:'tri',def,x:e.x+Math.cos(a)*d,y:e.y+Math.sin(a)*d,r:def.r,hp,maxhp:hp,speed:def.speed*rand(1.0,1.2),dmg:def.dmg*BAL.enemyDmg(time),color:'#ff2a4e',shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999,_dark:true}));}}
+  enemies.push(maybeModify({type:'tri',def,x:e.x+Math.cos(a)*d,y:e.y+Math.sin(a)*d,r:def.r,hp,maxhp:hp,speed:def.speed*rand(1.0,1.2),dmg:def.dmg*bDmg(),color:'#ff2a4e',shape:'tri',sharp:true,hitFlash:0,shootCd:1,escortChecked:true,arch:null,mechTimer:999,_dark:true}));}}
 // ----- Black Hole boss (prototype, lvl-150 corruption) -----
 function bhBossMech(e){e._bm=(e._bm||0)+1;const a=Math.atan2(player.y-e.y,player.x-e.x);
  for(let k=-2;k<=2;k++)enemyShot(e.x,e.y,a+k*0.22,160,10,e.dmg*0.5,5,'#9b6dff',true,'#d0b8ff',0.05);
@@ -1944,6 +2027,7 @@ function bhBossMech(e){e._bm=(e._bm||0)+1;const a=Math.atan2(player.y-e.y,player
  toast('THE VOID CONTRACTS');}
 // ----- boss visual identity: scary auras + effects per shape -----
 function drawBossAura(e){const glow=QX&&QX.glow,t=time;ctx.save();
+ if(e.arch==='reflection'){drawReflectionAura(e);ctx.restore();return;}
  if(e.arch==='blackhole'){
   for(let i=0;i<3;i++){const rr=e.r*(1.18+i*0.24)+Math.sin(t*2+i)*6;ctx.globalAlpha=0.4;ctx.strokeStyle=hexA((i%2)?'#9b6dff':'#ff3df0',0.5);ctx.lineWidth=3;if(glow){ctx.shadowColor='#9b6dff';ctx.shadowBlur=18;}ctx.beginPath();ctx.arc(e.x,e.y,rr,0,TAU);ctx.stroke();}
   ctx.save();ctx.translate(e.x,e.y);ctx.rotate(t*0.5);ctx.scale(1,0.4);ctx.globalAlpha=0.45;ctx.strokeStyle='#ffae3c';if(glow){ctx.shadowColor='#ffae3c';ctx.shadowBlur=16;}ctx.lineWidth=5;ctx.beginPath();ctx.arc(0,0,e.r*1.45,0,TAU);ctx.stroke();ctx.restore();
@@ -1979,6 +2063,7 @@ function drawArenaRing(){if(!player||!player._arenaR)return;const t=time,R=playe
 
 /* ===== DAMAGE / DEATH ===== */
 function dealDamage(e,amount,opt){opt=opt||{};let dmg=amount,crit=false;
+ if(e.bhGate&&!e.bhOpen)dmg*=BH_TRICKLE; // the Reflection bleeds, barely, until it breathes
  if(!opt.tick&&player.crit>0&&Math.random()<player.crit){dmg*=(player.critMult||2);crit=true;}
  if(e.vulnT>0)dmg*=1.5;
  const mk=e.st&&e.st.mark;if(mk)dmg*=1+Math.min(0.75,0.015*mk.n);
@@ -2012,10 +2097,10 @@ function killEnemy(e){
  if(e._twinChild&&!enemies.some(x=>x!==e&&!x._dead&&x._twinChild))pendingBoons++;
  if(e.arch==='leviathan'){leviathanLock=false;gameAlert('THE LEVIATHAN FALLS','#6cffb0','the deep exhales \u00b7 ascent resumes');}
  if(obj&&obj.kind==='kill'&&(!obj.etype||e.type===obj.etype))obj.count++;
- if(e.emod==='volatile'){ring(e.x,e.y,80,'#ffb04b');burst(e.x,e.y,'#ffb04b',16);if(dist2(e.x,e.y,player.x,player.y)<6400&&player.iframes<=0&&!player.parryActive&&player.bulwarkT<=0)hitPlayer(10*BAL.enemyDmg(time));for(const x of queryNear(e.x,e.y,80)){if(x!==e&&!x._dead)dealDamage(x,14*player.damageMult,{tick:true});}}
+ if(e.emod==='volatile'){ring(e.x,e.y,80,'#ffb04b');burst(e.x,e.y,'#ffb04b',16);if(dist2(e.x,e.y,player.x,player.y)<6400&&player.iframes<=0&&!player.parryActive&&player.bulwarkT<=0)hitPlayer(10*bDmg());for(const x of queryNear(e.x,e.y,80)){if(x!==e&&!x._dead)dealDamage(x,14*player.damageMult,{tick:true});}}
  if(e.emod==='magnetic'){for(const o of orbs){if(dist2(e.x,e.y,o.x,o.y)<40000)o.mag=true;}}
  if(rs){if(e.elite)rs.elite++;if(e.warden||e.finalboss||e.legendary)rs.boss++;}
- if(endgame&&corruptMods.explode&&!e.elite&&!e.mage&&!isBig(e)){burst(e.x,e.y,'#ff5a3c',6);if(dist2(e.x,e.y,player.x,player.y)<4900&&player.iframes<=0)hitPlayer(7*BAL.enemyDmg(time));}
+ if(endgame&&corruptMods.explode&&!e.elite&&!e.mage&&!isBig(e)){burst(e.x,e.y,'#ff5a3c',6);if(dist2(e.x,e.y,player.x,player.y)<4900&&player.iframes<=0)hitPlayer(7*bDmg());}
  burst(e.x,e.y,e.color,e.finalboss?90:(e.legendary||e.warden?60:(e.elite?20:9)));spawnShards(e);
  const xpv=Math.ceil(e.def.xp||1);
  if(time<BAL.instantXpTime){gainXP(xpv);spawnText(e.x,e.y-e.r-14,'+'+Math.ceil(xpv*player.xpMult)+' rez','#6cffb0',false);}
@@ -2033,9 +2118,11 @@ function killEnemy(e){
   else if(roll<0.027)drops.push({type:'magnet',x:e.x,y:e.y,r:9,vx:0,vy:0});
   else if(roll<0.0295&&time-lastBombT>75){lastBombT=time;drops.push({type:'bomb',x:e.x,y:e.y,r:9,vx:0,vy:0});}
   else if(roll<0.032+BAL.chestChance&&chestCdT<=0){chests.push({x:e.x,y:e.y,r:14,vx:rand(-30,30),vy:rand(-30,30)});chestCdT=BAL.chestCooldown;}}
- if(e.splits){for(let i=0;i<2;i++){const a=Math.random()*TAU,hp=18*BAL.enemyHp(time);enemies.push({type:'runner',def:ETYPES.runner,x:e.x+Math.cos(a)*14,y:e.y+Math.sin(a)*14,r:12,hp,maxhp:hp,speed:100,dmg:8*BAL.enemyDmg(time),color:'#ff5a6e',shootCd:2,hitFlash:0});}}
+ if(e.splits){for(let i=0;i<2;i++){const a=Math.random()*TAU,hp=18*bHp();enemies.push({type:'runner',def:ETYPES.runner,x:e.x+Math.cos(a)*14,y:e.y+Math.sin(a)*14,r:12,hp,maxhp:hp,speed:100,dmg:8*bDmg(),color:'#ff5a6e',shootCd:2,hitFlash:0});}}
  if(player.killHeal>0)player.hp=clamp(player.hp+player.maxHp*player.killHeal,0,player.maxHp);
  if(e.warden){if(e.r>=200||e.finalboss)pendingBoons++;else{gold+=40+Math.floor(player.level*1.5);if(Math.random()<0.5)pendingChests++;}}
+ if(e.reflection){reflectionDown=true;reflRef=null;pressureT=6;gold+=800;pendingBoons+=2;
+  gameAlert('THE REFLECTION SHATTERS','#6cffb0','beyond this point the deep itself is the enemy');}
  if(e.finalboss)runOver='victory';
 }
 
@@ -2058,7 +2145,7 @@ function toast(msg){const t0=document.getElementById('toast');t0.textContent=t(m
 function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  
  chosenChar=charDef;player=makePlayer(charDef);
- enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];bossBeams=[];_arenaWasActive=false;bhBossDone=false;bhBossT=40;
+ enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];bossBeams=[];_arenaWasActive=false;bhBossDone=false;bhBossT=40;corrClock=0;reflectionDown=false;reflRef=null;pressureT=4;pressureN=0;_bhToasts=0;
  time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;camCX=0;camCY=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
  menuArmT=0;menuMaxT=0;_menuPend=0;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
@@ -2357,11 +2444,23 @@ function update(dt){
   updateZones(dt);
   updateBeams(dt);
   // BLACK HOLE BOSS (prototype): awakens deep in corruption mode, once per run, when the arena is clear.
-  if(endgame&&corruption>=1&&!bhBossDone){bhBossT-=dt;if(bhBossT<=0&&!bossArenaActive()){bhBossDone=true;spawnSpecial('voidlord');gameAlert('THE VOID LORD AWAKENS','#9b6dff','the 150th seal breaks \u00b7 it devours light itself');}}
+  if(false&&corruption>=1&&!bhBossDone){bhBossT-=dt; /* V10: superseded by the level-150 REFLECTION gate */if(bhBossT<=0&&!bossArenaActive()){bhBossDone=true;spawnSpecial('voidlord');gameAlert('THE VOID LORD AWAKENS','#9b6dff','the 150th seal breaks \u00b7 it devours light itself');}}
   if(seeds.length){for(const sd of seeds){sd.t-=dt;if(sd.t<=0){const tgt=nearestEnemy(sd.x,sd.y,420)||{x:sd.x,y:sd.y};ring(sd.x,sd.y,70,'#6cffb0');burst(sd.x,sd.y,'#6cffb0',16);for(const x of queryNear(tgt.x,tgt.y,90)){if(x._dead)continue;dealDamage(x,sd.dmg,{tick:true});}sd._dead=true;}}for(let i=seeds.length-1;i>=0;i--)if(seeds[i]._dead)seeds.splice(i,1);}
   if(corruption>0){corrWhisperT=(corrWhisperT||0)-dt;if(corrWhisperT<=0){corrWhisperT=rand(7,12);spawnText(player.x+rand(-80,80),player.y+rand(-60,-20),pick(CORRUPT_LINES),'#ff3df0',Math.random()<0.3,true);}}
   fpsWatchdog(dt);
-  if(corrFrozen){const mins=Math.floor((time-corrFreezeTime)/60);if(mins>corrScaleStep){corrScaleStep=mins;corrScaleMul=Math.pow(3,corrScaleStep);gameAlert('THE DEEP GROWS TEETH','#ff3df0','everything is 3x stronger');}}
+  if(corrFrozen){
+   corrScaleMul=corrMulFor(player.level);
+   const _gate=(player.level>=TIER1_END&&!reflectionDown);
+   if(player.level<TIER2_END&&!_gate){corrClock+=dt;
+    if(corrClock>=CORR_LEVEL_SEC){corrClock-=CORR_LEVEL_SEC;
+     player.level++;onLevelUp(player.level);player.xp=0;player.xpNext=BAL.xpNext(player.level);
+     player.hp=clamp(player.hp+player.maxHp*0.03,0,player.maxHp);
+     if(player.level===125){spawnSpecial('voidlord');gameAlert('THE VOID LORD','#9b6dff','the herald of what waits at 150');}
+     else if(player.level===TIER1_END){spawnReflection();}
+     else if(player.level%10===0)gameAlert('DEPTH MARK '+player.level,'#ff3df0','the pressure tightens');
+    }}
+   if(player.level>=TIER1_END){pressureT-=dt;if(pressureT<=0){pressureT=4;pressureTick();}}
+  }
   while(orbs.length>900){const oo=orbs.pop();if(orbs.length)orbs[(Math.random()*orbs.length)|0].v+=oo.v;}
   if(drops.length>200){for(let i=0;i<drops.length&&drops.length>200;i++){if(drops[i].type==='gold'){gold+=drops[i].v||1;drops.splice(i,1);i--;}}if(drops.length>220)drops.length=220;}
   if(epjs.length>650)epjs.splice(0,epjs.length-650);
@@ -2403,7 +2502,7 @@ function update(dt){
   if(e.emod){
    if(e.emod==='phase'){e.phT=(e.phT==null?2:e.phT)-dt;if(e.phT<=0){e.phased=!e.phased;e.phT=e.phased?3:2.5;}}
    else if(e.emod==='magnetic'){for(const o of orbs){if(o.mag)continue;const md=dist2(e.x,e.y,o.x,o.y);if(md<25600){const ma=Math.atan2(e.y-o.y,e.x-o.x);o.x+=Math.cos(ma)*220*dt;o.y+=Math.sin(ma)*220*dt;}}}
-   else if(e.emod==='infernal'){e.trailT-=dt;if(e.trailT<=0){e.trailT=0.28;if(trails.length<70)trails.push({x:e.x,y:e.y,r:24,life:2.4,dps:9*BAL.enemyDmg(time)});}}
+   else if(e.emod==='infernal'){e.trailT-=dt;if(e.trailT<=0){e.trailT=0.28;if(trails.length<70)trails.push({x:e.x,y:e.y,r:24,life:2.4,dps:9*bDmg()});}}
   }
   if(e.arch==='leviathan'){e._sunT=(e._sunT==null?60:e._sunT)-dt;if(e._sunT<=0){e._sunT=60;spawnSpecial(pick(['sunball','sunsq','suntri']));gameAlert('THE LEVIATHAN BIRTHS A SUN','#ff3df0');}}
   if(e.arch==='collector'){for(const o of orbs){if(o._got)continue;const od=dist2(e.x,e.y,o.x,o.y);
@@ -2414,7 +2513,8 @@ function update(dt){
     enemies.push({type:'twin',def:e.def,x:e.x+Math.cos(a2)*70,y:e.y+Math.sin(a2)*70,r:e.r*0.7,hp:hp2,maxhp:hp2,speed:e.speed*1.25,dmg:e.dmg*0.85,color:e.color,elite:true,_twinChild:true,shape:'ball',shootCd:1,hitFlash:0,escortChecked:true,arch:null,mechTimer:999});}
    burst(e.x,e.y,e.color,30);toast('THE TWIN DIVIDES');continue;}
   if((e.warden||e.finalboss)&&!e.escortChecked){const edist=Math.hypot(player.x-e.x,player.y-e.y);e.escortTrack=(e.escortTrack||0);if(edist>Math.max(W,H)/VIEW*0.62){e.escortTrack+=dt;if(e.escortTrack>2.5){e.escortChecked=true;spawnEscort(e);spawnEscort(e);toast('IT CALLS FOR REINFORCEMENTS');}}else e.escortTrack=0;}
-  if(!stunned&&(e.warden||e.finalboss)){e.mechTimer-=dt;if(e.mechTimer<=0){bossMechanic(e);e.mechTimer=e.finalboss?1.8:(e.arch==='spear'?1.2:(e.arch==='sun'?1.5:(e.arch==='leviathan'?1.7:(e.arch==='blackhole'?1.6:2.4))));}}
+  if(e.arch==='reflection'&&!stunned)reflTick(e,dt);
+  if(!stunned&&(e.warden||e.finalboss)){e.mechTimer-=dt;if(e.mechTimer<=0){bossMechanic(e);e.mechTimer=e.finalboss?1.8:(e.arch==='spear'?1.2:(e.arch==='sun'?1.5:(e.arch==='leviathan'?1.7:(e.arch==='blackhole'?1.6:(e.arch==='reflection'?2.2:2.4)))));}}
   // orbiting sun-orbs (Helios + big round wardens) keep firing on their own cadence
   if((e.warden||e.finalboss)&&!stunned&&e.arch!=='blackhole'&&(e.arch==='sun'||(e.r>=80&&(e.shape==='ball'||!e.shape)&&!e.boulder)))bossSats(e,dt);
   // Black Hole boss: a constant gravity drag toward it, so positioning is a fight in itself
@@ -2457,7 +2557,7 @@ function update(dt){
    if(e.hitFlash>0)e.hitFlash-=dt;continue;}
   if(e.laser){const want=300,dir=d>want?1:(d<want-80?-0.5:0);e.x+=dx/d*e.speed*spmul*dir*dt;e.y+=dy/d*e.speed*spmul*dir*dt;
    e.laserCd-=dt;
-   if(e.laserT>0){e.laserT-=dt;const ly=e.laserY;if(Math.abs(player.y-ly)<14+player.r&&player.iframes<=0&&!player.parryActive)hitPlayer(26*BAL.enemyDmg(time)*dt*4,'field');if(e.laserT<=0)e.laserCd=rand(3,4.5);}
+   if(e.laserT>0){e.laserT-=dt;const ly=e.laserY;if(Math.abs(player.y-ly)<14+player.r&&player.iframes<=0&&!player.parryActive)hitPlayer(26*bDmg()*dt*4,'field');if(e.laserT<=0)e.laserCd=rand(3,4.5);}
    else if(e.laserCd<=0){e.laserCharge=(e.laserCharge||0)+dt;if(e.laserCharge>=1.1){e.laserCharge=0;e.laserT=0.7;e.laserY=e.y;sfx('boss');}}
    if(e.hitFlash>0)e.hitFlash-=dt;continue;}
   if(e.mage){const want=360,dir=d>want?1:(d<want-80?-0.7:0);e.x+=dx/d*e.speed*spmul*dir*dt;e.y+=dy/d*e.speed*spmul*dir*dt;e.castCd-=dt;if(e.castCd<=0&&hazards.length<BAL.hazardCap){e.castCd=rand(5,7);spawnHazard(player.x,player.y,Math.random()<0.35?'tar':'mage');}}
@@ -2465,7 +2565,7 @@ function update(dt){
    if(e.shootCd<=0&&d<720){e.shootCd=big?0.9:rand(1.6,2.6);
     if(e.finalboss){for(let k=0;k<16;k++)enemyShot(e.x,e.y,k/16*TAU+time,250,7,e.dmg*0.5,3.5,'#ff7df0',true);}
     else if(big){const col=e.arch==='solar'?'#ff8a3c':'#ffd24b';for(let k=0;k<10;k++)enemyShot(e.x,e.y,k/10*TAU,220,7,e.dmg*0.5,3,col,true);}
-    else{const a=Math.atan2(dy,dx);enemyShot(e.x,e.y,a,240,6,ETYPES.shooter.dmg*BAL.enemyDmg(time)+10,3,'#5cd0ff',false);}}}
+    else{const a=Math.atan2(dy,dx);enemyShot(e.x,e.y,a,240,6,ETYPES.shooter.dmg*bDmg()+10,3,'#5cd0ff',false);}}}
   else{const esE=(e.sharp||e.speed>=300)?earlySpeedEase():1;const fdir=(e.fearT>0)?-1.15:1;if(e.sharp||e.stamp||e.speed>=180){e._svx=dx/d*e.speed*spmul*esE*fdir;e._svy=dy/d*e.speed*spmul*esE*fdir;}e.x+=dx/d*e.speed*spmul*esE*fdir*dt;e.y+=dy/d*e.speed*spmul*esE*fdir*dt;}
   if(e.hitFlash>0)e.hitFlash-=dt;
   if(e.dmg>0&&d<e.r+player.r&&player.iframes<=0&&!player.parryActive){
@@ -2551,7 +2651,7 @@ function update(dt){
  for(const hz of hazards){if(hz.tele>0){hz.tele-=dt;if(hz.tele<=0){hz.active=true;if(hz.box&&Math.abs(player.x-hz.x)<hz.r&&Math.abs(player.y-hz.y)<hz.r){hz.trapping=true;toast('TRAPPED');sfx('boss');}}continue;}hz.life-=dt;
   const dxh=player.x-hz.x,dyh=player.y-hz.y,dh=Math.hypot(dxh,dyh)||1;
   const sink=(v,pct)=>{if(player.parryActive)return;if(pct)v=Math.max(v,player.maxHp*pct);v*=(1-(player.perm.hazardRes||0));if(rs)rs.taken+=v;player.esDelay=2*player.esRecMul;if(player.es>0){const ab=Math.min(player.es,v);player.es-=ab;v-=ab;}if(v>0)player.hp-=v;player.hurtFlash=Math.max(player.hurtFlash,0.14);if(player.hp<=0){if(player.phoenix){player.phoenix=false;player.hp=player.maxHp*0.5;player.iframes=2;player.hurtFlash=0.4;ring(player.x,player.y,140,'#ff7a3c');toast('PHOENIX PROTOCOL');sfx('boss');}else{player.hp=0;runOver='dead';}}};
-  if(hz.type==='meteor'){if(!hz._boom){hz._boom=true;ring(hz.x,hz.y,hz.r,'#ff9b4b');screenShake=Math.max(screenShake,8);sfx('bomb');if(dh<hz.r)sink(40*BAL.enemyDmg(time));for(const x of queryNear(hz.x,hz.y,hz.r+40)){if(!x._dead&&dist2(hz.x,hz.y,x.x,x.y)<hz.r*hz.r)dealDamage(x,(80+time*0.4),{tick:true});}radialImpulse(hz.x,hz.y,hz.r+30,650);}}
+  if(hz.type==='meteor'){if(!hz._boom){hz._boom=true;ring(hz.x,hz.y,hz.r,'#ff9b4b');screenShake=Math.max(screenShake,8);sfx('bomb');if(dh<hz.r)sink(40*bDmg());for(const x of queryNear(hz.x,hz.y,hz.r+40)){if(!x._dead&&dist2(hz.x,hz.y,x.x,x.y)<hz.r*hz.r)dealDamage(x,(80+time*0.4),{tick:true});}radialImpulse(hz.x,hz.y,hz.r+30,650);}}
   else if(hz.type==='blackhole'){
    if(dh<hz.r&&!(player._bhImmuneT>0)){player._inBlackhole=true;player._bhEscX=dxh/dh;player._bhEscY=dyh/dh;const _bh=1-((player.mods&&player.mods.bhResist)||0);const f=hz.pull*earlyEase()*(1-dh/hz.r)*(1-(player.perm.hazardRes||0)*0.6)*_bh;const step=Math.min(f*dt,Math.max(0,dh-hz.coreR*0.55));if(step>0){player.x-=dxh/dh*step;player.y-=dyh/dh*step;}}
    if(dh<hz.coreR&&!(player._bhImmuneT>0))sink(hz.dps*earlyEase()*dt*(1-((player.mods&&player.mods.bhResist)||0)*0.7),(hz.pctps||0)*earlyEase()*dt);
@@ -2649,7 +2749,8 @@ function hitPlayer(dmg,srcType,pct){if(obj&&obj.kind==='nohit')obj.fail=true;pla
  if(onFire&&hk!=='heavy')hk='fire';
  hapDamage(hk);
  if(player.judgedT>0)dmg*=1.3;
-let real=Math.max(1,dmg-player.armor);if(rs)rs.taken+=real;player.esDelay=2.0*player.esRecMul;
+const _prc=(corrFrozen&&reflectionDown&&player.level>TIER1_END)?Math.min(0.6,(player.level-TIER1_END)*0.012):0;
+let real=Math.max(1,dmg-player.armor*(1-_prc));if(rs)rs.taken+=real;player.esDelay=2.0*player.esRecMul;
  if(player.es>0){const ab=Math.min(player.es,real);player.es-=ab;real-=ab;if(real<=0){player.iframes=BAL.playerIFrames;player.hurtFlash=0.2;sfx('shield');return;}}
  player.hp-=real;player.iframes=BAL.playerIFrames;player.hurtFlash=0.3;screenShake=Math.max(screenShake,7);const _nowS=performance.now();if(_nowS>=_hurtSfxT){_hurtSfxT=_nowS+140;sfx('hurt');}
  if(player.hp<=0){if(player.phoenix){player.phoenix=false;player.hp=player.maxHp*0.5;player.iframes=2;player.hurtFlash=0.4;ring(player.x,player.y,140,'#ff7a3c');toast('PHOENIX PROTOCOL');sfx('boss');}else{player.hp=0;runOver='dead';}}}
@@ -3076,8 +3177,14 @@ function updateHUD(){
  document.getElementById('hpfill').style.width=(player.hp/player.maxHp*100)+'%';
  const ew=document.getElementById('esbarwrap');if(ew){ew.classList.toggle('hidden',!(player.esMax>0));if(player.esMax>0)document.getElementById('esfill').style.width=(player.es/player.esMax*100)+'%';}
  document.getElementById('hptext').textContent=`${Math.ceil(player.hp)} / ${player.maxHp}`+(player.esMax>0?`  ◈ ${Math.ceil(player.es)}`:'');
- document.getElementById('xpfill').style.width=(player.xp/player.xpNext*100)+'%';
- document.getElementById('xptext').textContent=`${player.xp} / ${player.xpNext}`;
+ if(corrFrozen){const _gate=(player.level>=TIER1_END&&!reflectionDown);
+  document.getElementById('xpfill').style.width=((_gate||player.level>=TIER2_END)?100:corrClock/CORR_LEVEL_SEC*100)+'%';
+  document.getElementById('xptext').textContent=_gate?'SLAY YOUR REFLECTION':(player.level>=TIER2_END?'THE FLOOR OF THE WORLD':'THE DEEP METERS YOUR DESCENT');
+ }else{
+  document.getElementById('xpfill').style.width=(player.xp/player.xpNext*100)+'%';
+  document.getElementById('xptext').textContent=`${player.xp} / ${player.xpNext}`;
+ }
+ bossBarTick();
  const m=Math.floor(time/60),s=Math.floor(time%60);
  document.getElementById('clock').textContent=(Math.floor(time*8)).toLocaleString()+'m';document.getElementById('clock').title='DEPTH';
  {const __lk=document.getElementById('lvlk'),__ln=document.getElementById('lvlnum');if(corruption>0){__lk.textContent='\u26e7';__ln.textContent=Math.random()<0.05?'\u2593\u2593':'C'+corruption;__ln.style.color='#ff3df0';}else{__lk.textContent='LV';__ln.textContent=player.level;__ln.style.color='';}}
