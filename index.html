@@ -1984,6 +1984,9 @@ var corrClock=0,reflectionDown=false,reflRef=null,pressureT=4,pressureN=0,_bhToa
 // Difficulty multiplier as a pure function of LEVEL. Bounded by construction: x1 at the
 // freeze, ~x15.5 at 150, ~x1150 at 200, then a hard plateau forever. No time term at all,
 // so camping cannot move it and it can never overflow.
+// C-tier is a DISPLAY/RECORD band tied to level: C1=1-10 ... C10=100, C15=150, C20=200.
+// It is independent of the internal `corruption` scaling var (which drives V10's tuned math).
+function corrTier(lv){lv=lv||((typeof player!=='undefined'&&player)?player.level:0);return lv>0?Math.ceil(lv/10):0;}
 function corrMulFor(lv){if(lv<=CORR_CAP_LEVEL)return 1;
  const a=Math.pow(CORR_G1,Math.min(lv,TIER1_END)-CORR_CAP_LEVEL);
  if(lv<=TIER1_END)return a;
@@ -3299,7 +3302,7 @@ function updateHUD(){
  bossBarTick();
  const m=Math.floor(time/60),s=Math.floor(time%60);
  document.getElementById('clock').textContent=(Math.floor(time*8)).toLocaleString()+'m';document.getElementById('clock').title='DEPTH';
- {const __lk=document.getElementById('lvlk'),__ln=document.getElementById('lvlnum');if(corruption>0){__lk.textContent='\u26e7';__ln.textContent=Math.random()<0.05?'\u2593\u2593':'C'+corruption;__ln.style.color='#ff3df0';}else{__lk.textContent='LV';__ln.textContent=player.level;__ln.style.color='';}}
+ {const __lk=document.getElementById('lvlk'),__ln=document.getElementById('lvlnum');if(corruption>0){__lk.textContent='\u26e7';__ln.textContent=Math.random()<0.05?'\u2593\u2593':'C'+corrTier(player.level);__ln.style.color='#ff3df0';}else{__lk.textContent='LV';__ln.textContent=player.level;__ln.style.color='';}}
  document.getElementById('killnum').textContent=kills;
  document.getElementById('goldnum').textContent=gold;}
 function refreshDock(){const dock=document.getElementById('dock');dock.innerHTML='';
@@ -3784,7 +3787,7 @@ function recordRun(result){
   time:Math.round(time),level:player.level,kills,
   elite:rs?rs.elite:0,boss:rs?rs.boss:0,
   peak:Math.round(rs?rs.peak:0),total:Math.round(rs?rs.dmg:0),taken:Math.round(rs?rs.taken:0),
-  gold,corruption:corruption||Math.floor(time/210),
+  gold,corruption:(endgame?corrTier(player.level):0),
   reacts:rs?Object.assign({},rs.reacts):{},
   build:__snap};
  lastRecord=rec;runArchive.unshift(rec);if(runArchive.length>30)runArchive.length=30;saveRuns();
@@ -4383,7 +4386,7 @@ function statCardHTML(s,name,photo,about){
  const stat=(v,l)=>`<div class="dstat"><div class="v">${v}</div><div class="l">${l}</div></div>`;
  const _ph=safePhoto(photo);const av=_ph?`<img src="${esc(_ph)}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #b06bff">`:`<div class="pavatar" style="border-color:#b06bff">\ud83d\udc64</div>`;
  return `<div class="pcard"><div class="pname-row">${av}<div><div style="font-family:var(--disp);font-size:17px;letter-spacing:.1em;color:#eaf2ff">${esc(name)}</div><div style="font-size:12px;color:var(--dim);margin-top:5px">Main: <b style="color:${mc?mc.color:'#cde4ff'}">${mc?mc.glyph+' ':''}${s.main}</b> \u00b7 Style: <b style="color:#b06bff">${styleName}</b></div>${about?`<div style="font-size:12px;color:#9bb0d8;margin-top:6px;font-style:italic">${esc(about)}</div>`:''}</div></div></div>`+
-  `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in the Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'-','Max Corruption')+`</div></div>`+
+  `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in the Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr?'C'+s.maxCorr:'-','Max Corruption')+`</div></div>`+
   `<div class="pcard"><div class="ptitle">Playstyle Analysis</div>${svgRadar(s.axes,['MOBILITY','AGGRESSION','TANK','PRECISION','GREED','ENDURANCE'])}</div>`;}
 function svgRadar(vals,labels){const cx=110,cy=104,R=78,n=vals.length;
  const pt=(i,f)=>{const a=i/n*TAU-Math.PI/2;return (cx+Math.cos(a)*R*f).toFixed(1)+','+(cy+Math.sin(a)*R*f).toFixed(1);};
@@ -4442,7 +4445,7 @@ function openProfile(){hideAllScreens();state='profile';
   `<div class="pcard"><div class="ptitle">Stats</div><div class="dgrid">`+
    stat(gamesShown,'Total Runs')+stat(winsD,'Victories')+stat(gamesShown?Math.round(winsD/gamesShown*100)+'%':'-','Win Rate')+
    stat(fmtT(bestTime),'Best Time')+stat(fmtN(tkD),'Total Kills')+stat(hlD||'-','Highest Level')+
-   stat(fmtT(ttD),'Time in the Deep')+stat(fmtN(tgD),'Credits Earned')+stat(hcD||'-','Max Corruption')+
+   stat(fmtT(ttD),'Time in the Deep')+stat(fmtN(tgD),'Credits Earned')+stat(hcD?'C'+hcD:'-','Max Corruption')+
   `</div></div>`+
   `<div class="pcard"><div class="ptitle">Playstyle Analysis</div>${svgRadar(axesV,axesL)}</div>`+
   `<div class="pcard"><div class="ptitle">Loadout Affinity</div>
@@ -4536,7 +4539,7 @@ function openFriendProfile(fid,fname,fphoto){hideAllScreens();state='social';
    html+=`<div class="pcard">${capEmblem(fcap,fInfo)}</div>`;
    // wide grid: stats + radar
    html+='<div class="fp-grid">';
-   html+=`<div class="pcard"><div class="ptitle">Career Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr||'-','Max Corruption')+`</div></div>`;
+   html+=`<div class="pcard"><div class="ptitle">Career Stats</div><div class="dgrid">`+stat(s.total,'Total Runs')+stat(s.wins,'Victories')+stat(s.winRate+'%','Win Rate')+stat(fmtT(s.bestTime),'Best Time')+stat(fmtN(s.kills),'Total Kills')+stat(s.highLevel||'-','Highest Level')+stat(fmtT(s.timeIn),'Time in Deep')+stat(fmtN(s.gold),'Credits')+stat(s.maxCorr?'C'+s.maxCorr:'-','Max Corruption')+`</div></div>`;
    html+=`<div class="pcard"><div class="ptitle">Playstyle</div>${svgRadar(axes,['MOBILITY','AGGRESSION','TANK','PRECISION','GREED','ENDURANCE'])}</div>`;
    html+='</div>';
    // head-to-head comparison vs you
