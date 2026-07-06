@@ -735,7 +735,7 @@
   <div class="screen" id="menu">
     <canvas id="menufx"></canvas>
     <button class="lore-btn" id="loreBtn" aria-label="Lore"><span class="lore-rune">&#10070;</span><span class="lore-txt">LORE</span></button>
-    <div class="studiomark" style="position:relative;z-index:2">veil &amp; wire studio®</div>
+    <div class="studiomark" id="studiocredit" style="position:relative;z-index:2">veil &amp; wire studio®</div>
     <div class="logo" style="position:relative;z-index:2">ABYSS<small>SURVIVORS</small></div>
     <div class="msub">The starless deep &middot; 18,000m down &middot; it has noticed your light</div>
     <div class="menu-hub" style="position:relative;z-index:2">
@@ -1616,6 +1616,116 @@ let legendaryArmed=false,legendaryFirstLevel=5,legendaryWindowT=0,surgeEnded=fal
 let endgame=false,corruption=0,eliteTimer=75,meteorT=8,stampT=170,lastBombT=-999;
 let swarmT=150,swarmCount=0,bigT=200,alertText='',alertTime=0,swarmMax=150,trails=[],obj=null,objT=75,recycleT=0.5,megaCount=0,leviathanLock=false,triVolleyT=18;
 let _arenaWasActive=false,bhBossDone=false,bhBossT=40;
+// ===== V11 DEV SANDBOX =====
+const DEV_IDS=['2010252598'];           // Telegram user ids allowed to open the sandbox
+const DEV_PIN='2545';
+let devRun=false,devGod=false,devNoSpawn=false;
+function isDev(){try{return DEV_IDS.indexOf(String(TG_USER&&TG_USER.id))>=0;}catch(e){return false;}}
+// ---- warp: drop into any point of the run instantly ----
+function devWarp(lv){
+ if(!chosenChar){toast('DEV: pick a diver first');return;}
+ devRun=true;lv=Math.max(1,Math.min(300,lv|0));
+ // reuse the real run reset by starting a clean run, then fast-forward state
+ if(state!=='playing')startRun(chosenChar);
+ devRun=true;
+ // clear the field
+ enemies.length=0;pjs.length=0;epjs.length=0;hazards.length=0;bossBeams.length=0;reflRef=null;
+ if(lv<=100){
+  endgame=false;corrFrozen=false;corruption=0;corrScaleMul=1;reflectionDown=false;
+  player.level=lv;player.xp=0;player.xpNext=BAL.xpNext(lv);
+  // grant the passive milestones a natural run would have (regen etc.)
+  for(let L=2;L<=lv;L++)onLevelUp(L);
+  time=Math.max(time,(lv)*8);
+ }else{
+  endgame=true;corruption=Math.max(1,corruption);applyCorruption();
+  corrFrozen=true;corrFreezeTime=time>0?time:900;
+  for(let L=2;L<=Math.min(lv,CORR_CAP_LEVEL);L++)onLevelUp(L);
+  player.level=lv;player.xp=0;player.xpNext=BAL.xpNext(lv);corrClock=0;
+  corrScaleMul=corrMulFor(lv);
+  reflectionDown=(lv>TIER1_END);
+  if(lv===TIER1_END)spawnReflection();
+ }
+ player.hp=player.maxHp;player.iframes=2;state='playing';lastT=performance.now();
+ try{document.getElementById('devpanel').classList.add('hidden');}catch(e){}
+ toast('DEV WARP -> LEVEL '+lv+(lv===150?'  (THE REFLECTION)':''));
+}
+function devGrantLevels(k){if(!player){toast('DEV: no run');return;}devRun=true;for(let i=0;i<k;i++){if(player.level>=CORR_CAP_LEVEL&&corrFrozen)break;gainXP(player.xpNext);}toast('DEV +'+k+' LEVELS');}
+function devKillScreen(){devRun=true;for(const e of enemies){if(!e._dead&&!e.reflection)killEnemy(e);}toast('DEV: SCREEN CLEARED');}
+function devSpawn(id){if(state!=='playing'){toast('DEV: start a run first');return;}devRun=true;if(id==='reflection'){spawnReflection();}else{spawnSpecial(id);}toast('DEV SPAWN: '+id);}
+function devBreath(){if(reflRef){reflRef.bhT=BH_OPEN;reflRef.bhOpen=true;toast('DEV: FORCED BREATH');}else toast('DEV: no Reflection active');}
+// ---- the panel UI ----
+function devPanelEl(){let d=document.getElementById('devpanel');if(d)return d;
+ d=document.createElement('div');d.id='devpanel';d.className='hidden';
+ d.style.cssText='position:fixed;inset:0;z-index:100000;background:rgba(3,6,14,0.94);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px 40px;font-family:Rajdhani,system-ui,sans-serif;color:#eaf2ff';
+ d.innerHTML=`
+  <div style='max-width:520px;margin:0 auto'>
+   <div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px'>
+    <div style='font-family:var(--disp),monospace;font-size:18px;letter-spacing:.2em;color:#ff5a6e'>DEV SANDBOX</div>
+    <button id='devclose' style='background:none;border:1px solid #ff5a6e;color:#ff5a6e;border-radius:6px;padding:6px 12px;font-size:13px'>CLOSE</button>
+   </div>
+   <div id='devlive' style='font-family:monospace;font-size:12px;color:#6cffb0;background:rgba(0,0,0,0.4);border-radius:6px;padding:8px 10px;margin-bottom:14px;line-height:1.6'></div>
+   <div class='devsec'>WARP TO LEVEL</div>
+   <div style='display:flex;gap:6px;align-items:center;margin-bottom:8px'>
+    <input id='devlvl' type='number' min='1' max='300' value='150' style='flex:1;background:#0a1120;border:1px solid #2a3550;color:#eaf2ff;border-radius:6px;padding:9px;font-size:15px'>
+    <button class='devgo' id='devwarp'>WARP</button>
+   </div>
+   <div class='devgrid' id='devquick'></div>
+   <div class='devsec'>PLAYER</div>
+   <div class='devgrid'>
+    <button class='devbtn' id='devgod'>GOD: OFF</button>
+    <button class='devbtn' id='devheal'>FULL HULL</button>
+    <button class='devbtn' id='devgold'>+5000 CR</button>
+    <button class='devbtn' id='devlvup'>+5 LEVELS</button>
+    <button class='devbtn' id='devlvup1'>+1 LEVEL</button>
+    <button class='devbtn' id='devclear'>KILL SCREEN</button>
+   </div>
+   <div class='devsec'>THE REFLECTION</div>
+   <div class='devgrid'>
+    <button class='devbtn' id='devspawnrefl'>SPAWN REFLECTION</button>
+    <button class='devbtn' id='devbreath'>FORCE BREATH</button>
+    <button class='devbtn' id='devnospawn'>SWARM: ON</button>
+    <button class='devbtn' id='devkillrefl'>SHATTER IT</button>
+   </div>
+   <div class='devsec'>SPAWN BOSS</div>
+   <div class='devgrid' id='devbosses'></div>
+   <div style='margin-top:18px;font-size:11px;color:#ff9b3c;text-align:center;line-height:1.5'>Every action here flags this run as a DEV RUN.<br>Dev runs never reach the leaderboard or your stats.</div>
+  </div>`;
+ document.body.appendChild(d);
+ const st=document.createElement('style');st.textContent='.devsec{font-size:11px;letter-spacing:.18em;color:#6b7a9c;margin:16px 0 7px}.devgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.devbtn,.devgo{background:#0e1830;border:1px solid #2a3550;color:#cfe0ff;border-radius:7px;padding:11px 8px;font-size:13px;font-weight:600;letter-spacing:.03em;cursor:pointer}.devgo{background:#3a1030;border-color:#ff3df0;color:#ff8fe6}.devbtn:active,.devgo:active{transform:scale(0.97)}.devbtn.on{background:#0e3020;border-color:#6cffb0;color:#6cffb0}';
+ document.head.appendChild(st);
+ // wire quick-warp chips
+ const quick=[['L1',1],['L50',50],['L100',100],['L125',125],['L150',150],['L175',175],['L200',200]];
+ d.querySelector('#devquick').innerHTML=quick.map(q=>`<button class='devbtn' data-w='${q[1]}'>${q[0]}</button>`).join('');
+ d.querySelectorAll('#devquick .devbtn').forEach(b=>b.onclick=()=>devWarp(+b.dataset.w));
+ // wire boss list
+ const bosses=['epic','colossus','behemoth','leviathan','collector','judge','twin','shepherd','titan','solar','singularity','omega','voidlord'];
+ d.querySelector('#devbosses').innerHTML=bosses.map(b=>`<button class='devbtn' data-b='${b}'>${b}</button>`).join('');
+ d.querySelectorAll('#devbosses .devbtn').forEach(b=>b.onclick=()=>devSpawn(b.dataset.b));
+ // main controls
+ d.querySelector('#devclose').onclick=()=>{d.classList.add('hidden');if(state==='paused')doResume();};
+ d.querySelector('#devwarp').onclick=()=>devWarp(+document.getElementById('devlvl').value);
+ d.querySelector('#devgod').onclick=()=>{devGod=!devGod;devRun=true;d.querySelector('#devgod').classList.toggle('on',devGod);d.querySelector('#devgod').textContent='GOD: '+(devGod?'ON':'OFF');if(devGod&&player)player.hp=player.maxHp;};
+ d.querySelector('#devheal').onclick=()=>{if(player){devRun=true;player.hp=player.maxHp;player.es=player.esMax||0;toast('DEV: HULL RESTORED');}};
+ d.querySelector('#devgold').onclick=()=>{devRun=true;gold+=5000;toast('DEV +5000 CR');};
+ d.querySelector('#devlvup').onclick=()=>devGrantLevels(5);
+ d.querySelector('#devlvup1').onclick=()=>devGrantLevels(1);
+ d.querySelector('#devclear').onclick=()=>devKillScreen();
+ d.querySelector('#devspawnrefl').onclick=()=>devSpawn('reflection');
+ d.querySelector('#devbreath').onclick=()=>devBreath();
+ d.querySelector('#devkillrefl').onclick=()=>{if(reflRef){devRun=true;killEnemy(reflRef);toast('DEV: REFLECTION SHATTERED');}else toast('DEV: none active');};
+ d.querySelector('#devnospawn').onclick=()=>{devNoSpawn=!devNoSpawn;devRun=true;const b=d.querySelector('#devnospawn');b.classList.toggle('on',!devNoSpawn);b.textContent='SWARM: '+(devNoSpawn?'OFF':'ON');};
+ return d;
+}
+function openDevPanel(){if(!isDev())return;const d=devPanelEl();
+ d.querySelector('#devgod').classList.toggle('on',devGod);d.querySelector('#devgod').textContent='GOD: '+(devGod?'ON':'OFF');
+ d.classList.remove('hidden');if(state==='playing')doPause();
+ if(!d._live){d._live=setInterval(()=>{const el=document.getElementById('devlive');if(!el||d.classList.contains('hidden'))return;
+  const lv=player?player.level:0,mul=(typeof corrMulFor==='function'&&corrFrozen)?corrMulFor(lv).toFixed(1):'1.0';
+  const press=(corrFrozen&&lv>=TIER1_END)?((!reflectionDown?3.2:Math.min(20,1.5+0.35*(lv-TIER1_END)))).toFixed(1)+'%':'-';
+  const bh=reflRef?Math.round(reflRef.hp).toLocaleString()+' ('+(reflRef.bhOpen?'BREATHING':'armored')+')':'-';
+  el.innerHTML='level '+lv+'  ·  diff x'+mul+'  ·  pressure '+press+'<br>hull '+(player?Math.ceil(player.hp):0)+'/'+(player?player.maxHp:0)+'  ·  god '+(devGod?'ON':'off')+'<br>reflection HP '+bh;
+ },250);}
+}
 let shards=[],roadShown=false;
 const ROAD={px:1100,py:1300,w:96};
 function onRoadAt(x,y){const mx=((x%ROAD.px)+ROAD.px)%ROAD.px,my=((y%ROAD.py)+ROAD.py)%ROAD.py;return mx<ROAD.w||my<ROAD.w;}
@@ -1915,6 +2025,7 @@ function pressureTick(){pressureN++;const lv=player.level;
  // after the kill (tier 2): ramps with level past any possible sustain. Bypasses armor and shield.
  const pct=(!reflectionDown)?0.032:Math.min(0.20,0.015+0.0035*(lv-TIER1_END));
  const amt=Math.max(1,player.maxHp*pct);
+ if(devGod)return;
  player._lastHitT=performance.now();player.hurtFlash=0.25;screenShake=Math.max(screenShake,4);
  spawnText(player.x,player.y-30,'-'+Math.ceil(amt)+' PRESSURE','#3cc8ff',false,true);sfx('hurt');
  player.hp-=amt;
@@ -2145,7 +2256,7 @@ function toast(msg){const t0=document.getElementById('toast');t0.textContent=t(m
 function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  
  chosenChar=charDef;player=makePlayer(charDef);
- enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];bossBeams=[];_arenaWasActive=false;bhBossDone=false;bhBossT=40;corrClock=0;reflectionDown=false;reflRef=null;pressureT=4;pressureN=0;_bhToasts=0;
+ enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];bossBeams=[];_arenaWasActive=false;bhBossDone=false;bhBossT=40;corrClock=0;reflectionDown=false;reflRef=null;pressureT=4;pressureN=0;_bhToasts=0;devGod=false;devNoSpawn=false;
  time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;camCX=0;camCY=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
  menuArmT=0;menuMaxT=0;_menuPend=0;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
@@ -2427,7 +2538,7 @@ function update(dt){
   if(time>150&&!leviathanLock&&!bossArenaActive()){stampT-=dt;if(stampT<=0){stampT=rand(55,80);spawnStampede();}}
   // SWARM DIRECTOR: timed surges that escalate with the run, denser past L100
   if(!leviathanLock){swarmT-=dt;if(player.level>=12&&!bossArenaActive()){triVolleyT-=dt;if(triVolleyT<=0){const eg=endgame||player.level>=100;triVolleyT=eg?rand(7,12):rand(14,22);spawnTriVolley();}}}
-  if(swarmT<=0&&!bossArenaActive()){swarmCount++;
+  if(swarmT<=0&&!bossArenaActive()&&!devNoSpawn){swarmCount++;
    const lv=player.level,deep=endgame?(1+corruption*0.15):1;
    const interval=Math.max(28,(lv>100?34:62)-lv*0.25)/deep;
    swarmT=interval;swarmMax=interval;runSwarm();}
@@ -2740,7 +2851,8 @@ function hapDamage(kind){try{if(!OPT.vibration||!TG||!TG.HapticFeedback)return;c
  else { // normal contact
   H.impactOccurred('medium');}
 }catch(e){}}
-function hitPlayer(dmg,srcType,pct){if(obj&&obj.kind==='nohit')obj.fail=true;player._lastHitT=performance.now();
+function hitPlayer(dmg,srcType,pct){if(devGod)return; // DEV god mode: absorb everything
+ if(obj&&obj.kind==='nohit')obj.fail=true;player._lastHitT=performance.now();
  // percentage-of-max-hull contact damage: touching mobs costs a slice of your hull, so stacking
  // max HP or healing can't trivialize positioning. pct is a fraction (0.08 = 8% of max hull).
  if(pct){dmg=Math.max(dmg*0.35, player.maxHp*pct);}
@@ -4205,6 +4317,7 @@ let _sfx={t:0};
 function mergeServerRuns(sr){try{if(!Array.isArray(sr)||!sr.length)return false;const byDate={};for(const r of (runArchive||[]))if(r&&r.date!=null)byDate[r.date]=r;let added=false;for(const r of sr){if(!r||r.date==null)continue;if(!byDate[r.date]){byDate[r.date]=r;added=true;}}if(!added)return false;runArchive=Object.values(byDate).sort((a,b)=>(b.date||0)-(a.date||0)).slice(0,30);saveRuns();return true;}catch(e){return false;}}
 function netId(){return TG_USER&&TG_USER.id!=='guest'?String(TG_USER.id):'';}
 async function netSync(){const id=netId();if(!id)return;
+ if(devRun)return; // DEV: sandbox runs never sync to the secured backend
  try{const s=computeStats();let _cxp=0,_clv=1;try{_cxp=captainTotalXP();_clv=captainLevelInfo(_cxp).level;}catch(e){}const r=await apiFetch('sync',{id,name:profName,username:TG_USER.username||'',photo:TG_USER.photo||'',about:'',stats:{level:s.highLevel,wins:s.wins,kills:s.kills,best:s.bestTime,total:s.total,timeIn:s.timeIn,gold:s.gold,maxCorr:s.maxCorr,main:s.main,mainRuns:s.mainRuns,axes:s.axes,favEl:s.favEl,favRe:s.favRe,favGear:s.favGear,perDiver:s.perDiver,cap:_clv,capXp:_cxp},runs:(runArchive||[]).slice(0,8).map(r=>({date:r.date,result:r.result,char:r.char,time:r.time,level:r.level,kills:r.kills,corruption:r.corruption,gold:r.gold,peak:r.peak,total:r.total,taken:r.taken,reacts:r.reacts||{},build:r.build||null}))});
   const j=await r.json();if(j&&j.ok){NET.online=true;NET.friends=j.friends||[];const wasInbox=NET.inbox;NET.inbox=j.inboxCount||0;NET.lastSync=Date.now();
    // SYNC PERF (V8): friend stats ride on the sync payload, so the cache fills here with ZERO
@@ -4236,6 +4349,14 @@ let FRIENDS=[];
 function saveFriends(){try{window.storage.set('abyss_friends',JSON.stringify(FRIENDS.slice(0,60)));}catch(e){}}
 // TELEGRAM MINI APP: Telegram identity replaces the hardcoded default name (stored custom name still wins)
 if(TG_USER&&TG_USER.id!=='guest'){const __tn=(TG_USER.first_name||TG_USER.username||'').toUpperCase().slice(0,14);if(__tn)profName=__tn;}
+// DEV trigger: long-press the studio credit 2s -> PIN -> id check. Invisible to players.
+(function(){try{
+ const el=document.getElementById('studiocredit');if(!el)return;let t=null;
+ const begin=()=>{if(!isDev())return;t=setTimeout(()=>{const pin=prompt('\u25c8');if(pin===DEV_PIN)openDevPanel();},2000);};
+ const cancel=()=>{if(t){clearTimeout(t);t=null;}};
+ el.addEventListener('touchstart',begin,{passive:true});el.addEventListener('mousedown',begin);
+ ['touchend','touchmove','touchcancel','mouseup','mouseleave'].forEach(ev=>el.addEventListener(ev,cancel,{passive:true}));
+}catch(e){}})();
 const NEONS=['#00e5d4','#5cd0ff','#3cc8ff','#4b9bff','#7b9bff','#9bd0ff','#9b6dff','#b06bff','#c77bff','#ff5cf0','#ff3df0','#ff5ad0','#ff8ad0','#ff5a6e','#ff7a3c','#ff9b3c','#ffae3c','#ffc24b','#ffd24b','#ffe27a','#d6ff5c','#b6ff3c','#9bff5c','#7cff9b','#6cffb0','#8affc0','#5cffd0','#00ffc8','#66ffe9','#bfeaff','#eaf2ff','#ff2d4e','#ff6b9b','#8a6bd8','#5c79ff','#34d2eb'];
 const PSHAPES=['orb','diamond','hex','delta'];
 const PLOGOS=['⌖','🜂','🜃','🜁','🜄','🜅','武','◈','✦','♆','∞','☄'];
