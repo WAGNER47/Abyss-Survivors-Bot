@@ -1091,10 +1091,10 @@ const BAL={
   enemyCap:260,
   enemyCapQ(){const q=OPT.quality;const m=q==='potato'?0.42:q==='low'?0.60:q==='medium'?0.78:q==='high'?0.90:1;return Math.round(260*m);},
   xpNext(level){const base=52+level*16+Math.pow(level,2.02);let m=1;if(level<=3)m=0.6;else if(level<=8)m=0.85;else if(level<10)m=1.1;return Math.floor(base*m);},
-  playerIFrames:0.5, cellSize:80,
+  playerIFrames:0.55, cellSize:80,
   barrierLevel:5, barrierRecharge:0.8,
   regenLevel:10, regenPctPerSec:0.012,
-  levelUpHealPct:0.08,
+  levelUpHealPct:0.10,
   epicLevels:[2,6,7,10,15,30,34,35,36,100],
   mageCap:3, hazardCap:8, hazardMaxDps:900,
   weaponSlots:7, passiveSlots:7,
@@ -1473,13 +1473,13 @@ const EVOS={
 function wEls(w){return [(w.inf&&w.inf[0])||WEAPON_EL[w.id]||'kinetic'];}
 function evoName(id,tier){const n=EVOS[id]&&EVOS[id].names;return n?n[tier-1]:WEAPONS[id].name+' '+['Mk II','Mk III','Prime','Omega'][tier-1];}
 let CURW=null,CURP=null,DT=0;
-const DODGE={angler:{d:0,cd:99},vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.85},sniper:{d:340,cd:1.4},vyper:{d:300,cd:1.3},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99},salvager:{d:0,cd:99}};
+const DODGE={angler:{d:0,cd:99},vanguard:{d:0,cd:99},sentinel:{d:0,cd:99},ranger:{d:430,cd:0.78},sniper:{d:340,cd:1.15},vyper:{d:300,cd:1.15},yujin:{d:0,cd:99},rhino:{d:560,cd:1.0},sorcerer:{d:0,cd:99},salvager:{d:0,cd:99}};
 // SALVAGER kit (V12). cd is the deploy cooldown in seconds (scaled by his charCdMul).
 // inheritDmg: how much of the diver's %damage bonuses the nest receives (anti double-dip).
-const SENTRY={cd:6,max:5,blink:150,iframes:0.7,hp0:70,hpLv:3,range:290,fireCd:0.55,dmg0:6,dmgLv:2.2,decay:0.02,repairR:110,repair:0.06,perchR:34,inheritDmg:0.5};
-const BULWARK={dur:1.4,cd:4.5};const PARRY={win:0.34,cd:0.42};
+const SENTRY={cd:5.5,max:5,blink:150,iframes:0.7,hp0:70,hpLv:3,range:290,fireCd:0.55,dmg0:6,dmgLv:2.2,decay:0.015,repairR:110,repair:0.06,perchR:34,inheritDmg:0.5};
+const BULWARK={dur:1.6,cd:3.8};const PARRY={win:0.36,cd:0.42};
 const RHINO={trampleDmg:48,knock:1400,aftershock:1500,aftershockDmg:120,maxHold:4};
-const GRAPPLE={maxHold:1.15,baseLen:430,maxLen:820,hookSpeed:2600,zipSpeed:1950,pullSpeed:2450,dmg:34,corridorDmg:26,knock:950,rideHeal:0.00015,rideHealCap:0.12,hookHit:210,slamHit:340,skewer:600,skewerR:52};
+const GRAPPLE={maxHold:1.15,baseLen:430,maxLen:820,hookSpeed:2600,zipSpeed:1950,pullSpeed:2450,dmg:34,corridorDmg:26,knock:950,rideHeal:0.0002,rideHealCap:0.12,hookHit:210,slamHit:340,skewer:600,skewerR:52};
 let mseX=0,mseY=0,mseOn=false,camIx=0,camIy=0,camIz=1;
 // Angler aim priority: mouse cursor (desktop) > movement keys > velocity > last facing.
 function anglerAim(){
@@ -1488,7 +1488,7 @@ function anglerAim(){
  if(dx===0&&dy===0){const pv=Math.hypot(player.pvx,player.pvy);if(pv>10){dx=player.pvx/pv;dy=player.pvy/pv;}else{dx=player._face||1;dy=0;}}
  const dl=Math.hypot(dx,dy)||1;return{dx:dx/dl,dy:dy/dl};
 }
-const HEX={dur:2.6,cd:9,radius:200,pull:300};
+const HEX={dur:2.8,cd:7.5,radius:200,pull:300};
 /* ===== RARITY LADDER & BUILD CORES ===== */
 const RARITY=[
  {id:'common',name:'Common',w:40,color:'#9fb6e0'},
@@ -1533,44 +1533,44 @@ drone:{name:'Drone Bay',icon:'✜',color:'#8affc0',max:3,desc:l=>`+${l} combat c
 const CHARS=[
 {id:'vanguard',glyph:'🜂',name:'Vanguard',role:'The Reliable One',color:'#00e5d4',
  desc:'"Point me at the dark. I\'ll empty the mag and reload before you blink." Old school trigger discipline. Fast, far, and it hits where it counts.',
- perks:'<span>+20%</span> dmg · <span>+18%</span> fire rate · <b style="color:#ffe27a">+12% crit</b> · +1 pierce · dodge',
- start:'bolt',mods:{powerBase:0.20,charCdMul:0.82,projSpeedMul:1.30,projLifeMul:1.25,pierceBase:1,critBase:0.12,slowResBase:0.75}},
+ perks:'<span>+20%</span> dmg · <span>+18%</span> fire rate · <b style="color:#ffe27a">+12% crit</b> · +1 pierce · <b style="color:#00e5d4">armored hull + guard</b>',
+ start:'bolt',mods:{powerBase:0.20,charCdMul:0.82,projSpeedMul:1.30,projLifeMul:1.25,pierceBase:1,critBase:0.12,slowResBase:0.75,hpBase:35,armorBase:2,speedMul:1.06}},
 {id:'sentinel',glyph:'🜃',name:'Sentinel',role:'The Immovable',color:'#9b6dff',
  desc:'"Bullets? Cute. Come closer." A wall with a grudge. Fodder fire just pings off the field while the cold drags them in to die.',
  perks:'<span>permanent shield</span> · <b style="color:#9b6dff">chilling field</b> · faster guns in a crowd · no dodge, doesn\'t need it',
- start:'aura',mods:{hpBase:60,speedMul:1.0,areaBase:0.30,armorBase:2,regenBase:0.9,thornsBase:18,powerBase:0.15,charCdMul:0.90,slowResBase:0.6}},
+ start:'aura',mods:{hpBase:100,speedMul:1.04,areaBase:0.30,armorBase:4,regenBase:1.5,thornsBase:26,powerBase:0.15,charCdMul:0.90,slowResBase:0.75}},
 {id:'ranger',glyph:'🜁',name:'Ranger',role:'The Opportunist',color:'#ffc24b',
  desc:'"In, paid, gone. Heroics don\'t pay rent." Light on her feet, heavy on the loot, and the longest blink dash in the deep.',
  perks:'<span>+16%</span> speed · huge lure · <b style="color:#ffc24b">+25% loot</b> · +1 shot · <b style="color:#ffc24b">long dodge</b>',
- start:'spread',mods:{speedMul:1.16,magnetBase:80,charCdMul:0.90,multiBase:1,critBase:0.05,lootBase:0.25}},
+ start:'spread',mods:{speedMul:1.16,magnetBase:80,charCdMul:0.90,multiBase:1,critBase:0.08,lootBase:0.25}},
 {id:'sniper',glyph:'🜄',name:'Sniper',role:'The Cold Hand',color:'#ff5a6e',
  desc:'"One breath. One target. One hole." Made of glass and patience. The drone watches her back so she never has to.',
  perks:'<span>one shot rifle</span> · <b style="color:#8affc0">2 companion drones</b> · <b style="color:#ff5a6e">rifle kills feed resonance instantly</b> · fragile · long dodge',
- start:'rifle',mods:{powerBase:0.05,hpBase:-20,projSpeedMul:1.2,pierceBase:1,companionBase:2}},
+ start:'rifle',mods:{powerBase:0.05,hpBase:-10,projSpeedMul:1.25,pierceBase:1,companionBase:2}},
 {id:'vyper',glyph:'🜅',name:'Vyper',role:'The Whirlwind',color:'#7fe6ff',
  desc:'"Stay close. It\'s more fun when they can see it coming." Spins through the swarm flinging bodies, and the field eats their bullets so you never have to.',
  perks:'<span>+35%</span> speed · <span>+120</span> hull · <b style="color:#7fe6ff">projectile shield</b> · spinning Light Saber · dodge',
- start:'saber',mods:{speedMul:1.35,magnetBase:120,hpBase:120,areaBase:0.10,charCdMul:0.95}},
+ start:'saber',mods:{speedMul:1.35,magnetBase:120,hpBase:120,areaBase:0.14,charCdMul:0.95}},
 {id:'yujin',glyph:'武',name:'Yujin',role:'The Fallen Samurai',color:'#ffe27a',
  desc:'"A blade I lost. A discipline I kept." No dash, no shield, just footwork and a perfect parry with no cooldown. Glass body, river feet. Read the deep and turn its fury back on it.',
  perks:'<span>parry anything</span> (no cooldown) · <b style="color:#ffe27a">fastest movement</b> · martial fists · low hull · no dodge',
- start:'fists',mods:{speedMul:1.5,hpBase:-30,charCdMul:0.92,accelMul:2.0,critBase:0.08,slowResBase:0.5}},
+ start:'fists',mods:{speedMul:1.5,hpBase:-20,charCdMul:0.92,accelMul:2.0,critBase:0.10,slowResBase:0.5}},
 {id:'rhino',glyph:'◉',name:'Rhino',role:'The Juggernaut',color:'#ff9b4b',
  desc:'No gun. No brakes. He hunts the way a real beast does, by running things down. Hold to dig in and build a charge, release to barrel through the swarm untouchable and send bodies flying. The longer the hold, the harder the deep breaks.',
  perks:'<span>no weapon, the charge is everything</span> · <b style="color:#ff9b4b">hold up to 4s: more range, damage, knockback</b> · invincible mid-charge · trample + aftershock · huge hull',
- start:null,mods:{hpBase:150,speedMul:0.92,armorBase:3,knockBase:0.6,powerBase:0.10,slowResBase:0.9,charCdMul:1.0}},
+ start:null,mods:{hpBase:180,speedMul:0.96,armorBase:4,knockBase:0.6,powerBase:0.10,slowResBase:0.9,charCdMul:1.0}},
 {id:'sorcerer',glyph:'⚛',name:'Flux',role:'The Reaction Weaver',color:'#b6ff3c',
  desc:'Elements never settle around him, they collide. His Catalyst fuses lightning and plasma into instant Overloads, his Hex warps the swarm into walking loot, and he drifts untouched through the black holes that swallow everyone else.',
  perks:'<span>starts with the Catalyst (instant Overload)</span> · <b style="color:#b6ff3c">stronger reactions and bigger zones</b> · Hex: warp the swarm + go untouchable · shrugs off fields · walks black holes',
- start:'duality',mods:{hpBase:-25,speedMul:1.04,reactAmpBase:0.5,zoneScaleBase:0.4,hazResBase:0.45,bhResist:0.72,powerBase:0.05}},
+ start:'duality',mods:{hpBase:-15,speedMul:1.04,reactAmpBase:0.5,zoneScaleBase:0.4,hazResBase:0.45,bhResist:0.72,powerBase:0.05}},
 {id:'angler',glyph:'\u2693',name:'Angler',role:'The Strongarm',color:'#4bd8ff',
  desc:'"Haul anchor, sweetheart. The deep and I go way back." A dockside legend with arms like mooring chains and a grin to match. Hold to spin the hook, release to throw: almost anything he catches gets DRAGGED to his boots. Only true giants can anchor him, and then he rides the rope in, laughing, healing with every meter.',
  perks:'<span>grapple hook dive button</span> \u00b7 <b style="color:#4bd8ff">drags almost ANYTHING to your boots</b> \u00b7 only giants anchor you: ride the rope + heal per distance \u00b7 mouse aim on desktop \u00b7 Triton Burst sidearm',
- start:'trident',mods:{hpBase:45,speedMul:1.0,knockBase:0.3,charCdMul:0.95,critBase:0.05,slowResBase:0.45}},
+ start:'trident',mods:{hpBase:55,speedMul:1.0,knockBase:0.3,charCdMul:0.95,critBase:0.05,slowResBase:0.45}},
 {id:'salvager',glyph:'\u2692',name:'Salvager',role:'The Wrecksmith',color:'#4be8a0',
  desc:'"The deep breaks everything. I bolt it back together with a grudge." Every wreck down here is spare parts to him. Drop a sentry, blink clear, and let the scrap do the arguing.',
  perks:'<span>rivet machine gun</span> \u00b7 <b style="color:#4be8a0">up to 5 sentry turrets</b> \u00b7 deploy blinks you back + brief immunity \u00b7 repairs turrets up close \u00b7 <b style="color:#4be8a0">stand on a turret: immune to hazards</b>',
- start:'mgun',mods:{powerBase:-0.10,hpBase:10,speedMul:1.02,charCdMul:0.95,slowResBase:0.35}},
+ start:'mgun',mods:{powerBase:-0.06,hpBase:20,speedMul:1.02,charCdMul:0.95,slowResBase:0.35}},
 ];
 
 /* ===== LEGENDARY RELICS (chest gacha) & WARDEN BOONS ===== */
@@ -4282,7 +4282,7 @@ Object.assign(I18N.fa,{
 "Rhino":"کرگدن","The Juggernaut":"کوه‌پیکر",
 "Flux":"فلاکس","The Reaction Weaver":"بافنده‌ی واکنش‌ها",
 /* char perk lines (HTML preserved) */
-"<span>+20%</span> dmg · <span>+18%</span> fire rate · <b style=\"color:#ffe27a\">+12% crit</b> · +1 pierce · dodge":"<span>+20%</span> آسیب · <span>+18%</span> شتابِ آتش · <b style=\"color:#ffe27a\">+12% ضربه‌ی کاری</b> · +1 رخنه · جاخالی",
+"<span>+20%</span> dmg · <span>+18%</span> fire rate · <b style=\"color:#ffe27a\">+12% crit</b> · +1 pierce · <b style=\"color:#00e5d4\">armored hull + guard</b>":"<span>+20%</span> آسیب · <span>+18%</span> شتابِ آتش · <b style=\"color:#ffe27a\">+12% ضربه‌ی کاری</b> · +1 رخنه · <b style=\"color:#00e5d4\">بدنه‌ی زره‌پوش + گارد</b>",
 "<span>permanent shield</span> · <b style=\"color:#9b6dff\">chilling field</b> · faster guns in a crowd · no dodge, doesn't need it":"<span>سپرِ همیشگی</span> · <b style=\"color:#9b6dff\">میدانِ سرما</b> · در شلوغی تندتر می‌بارد · جاخالی ندارد، نیازی هم ندارد",
 "<span>+16%</span> speed · huge lure · <b style=\"color:#ffc24b\">+25% loot</b> · +1 shot · <b style=\"color:#ffc24b\">long dodge</b>":"<span>+16%</span> شتاب · ربایشِ پهناور · <b style=\"color:#ffc24b\">+25% غنیمت</b> · +1 شلیک · <b style=\"color:#ffc24b\">جاخالیِ بلند</b>",
 "<span>one shot rifle</span> · <b style=\"color:#8affc0\">2 companion drones</b> · <b style=\"color:#ff5a6e\">rifle kills feed resonance instantly</b> · fragile · long dodge":"<span>تفنگِ تک‌شلیک</span> · <b style=\"color:#8affc0\">۲ پهپادِ همراه</b> · <b style=\"color:#ff5a6e\">شکارِ تفنگ بی‌درنگ رِزونانس می‌دهد</b> · شکننده · جاخالیِ بلند",
