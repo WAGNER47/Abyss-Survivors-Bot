@@ -331,6 +331,126 @@
    #runselect .logo,#runselect .studiomark,.rs-card,#rsback{animation:none!important}
    #rsFree::after,.rs-sweep,.rs-blip,.rs-eye{animation:none!important}
   }
+  /* ===== V16 SONAR CHART: THE CHART ROOM ===== */
+  #sonar{background:
+    radial-gradient(72% 46% at 50% -6%,rgba(64,150,255,.14),transparent 62%),
+    radial-gradient(85% 70% at 50% 112%,rgba(4,8,24,.9),transparent 68%),
+    linear-gradient(180deg,#07182f 0%,#051228 34%,#030a1c 68%,#020610 100%);backdrop-filter:none}
+  #sonar .studiomark{color:#7df0ff;text-shadow:0 0 14px rgba(25,227,255,.5);animation:mSurface .6s cubic-bezier(.2,1,.3,1) both}
+  #sonar .logo{background:linear-gradient(180deg,#f2ffff 0%,#8ff5ea 40%,#19e3ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(25,227,255,.35);animation:mSurface .65s cubic-bezier(.2,1,.3,1) .05s both}
+  .sn-hint{font-family:var(--ui);font-size:10.5px;letter-spacing:.14em;color:rgba(127,160,207,.75);text-transform:uppercase;margin-top:8px;animation:mSurface .7s cubic-bezier(.2,1,.3,1) .1s both}
+  .sn-legend{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:9px;animation:mSurface .7s cubic-bezier(.2,1,.3,1) .12s both}
+  .sn-lg{display:flex;align-items:center;gap:5px;font-family:var(--disp);font-size:8px;letter-spacing:.16em;color:#5f7fae;text-transform:uppercase}
+  .sn-lg::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--lc);box-shadow:0 0 8px var(--lc)}
+  .sn-lg:last-child .sn-lgn{color:#ffb08a}
+  /* ===== V18 WALLET + PAYOUT ===== */
+  .wallet{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px auto 0;animation:mSurface .8s cubic-bezier(.2,1,.3,1) .16s both}
+  .wl-chip{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:18px;cursor:pointer;font-family:var(--disp);color:#e8fbff;
+    background:linear-gradient(90deg,rgba(10,32,58,.72),rgba(6,18,40,.72));border:1px solid color-mix(in srgb,var(--wc,#19e3ff) 40%,transparent);
+    box-shadow:0 0 14px -6px var(--wc,#19e3ff);transition:transform .12s,box-shadow .2s}
+  .wl-chip:hover{transform:translateY(-1px);box-shadow:0 0 18px -4px var(--wc,#19e3ff)}
+  .wl-chip:active{transform:scale(.97)}
+  .wl-ic{font-size:11px;color:var(--wc,#19e3ff);text-shadow:0 0 8px var(--wc,#19e3ff)}
+  .wl-v{font-size:11.5px;letter-spacing:.06em;font-weight:700}
+  .wallet-sn{margin-top:10px}
+  .pay-row{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .pay-c{font-family:var(--disp);font-size:11px;letter-spacing:.1em;padding:6px 12px;border-radius:14px;color:var(--pc,#8ff5ea);
+    border:1px solid color-mix(in srgb,var(--pc,#8ff5ea) 50%,transparent);background:color-mix(in srgb,var(--pc,#8ff5ea) 8%,transparent);text-shadow:0 0 10px var(--pc,#8ff5ea)}
+  .sn-goal{font-family:var(--disp);font-size:11px;letter-spacing:.1em;color:#a8f3ff}
+  /* ===== V19 PERCEPTION ===== */
+  #percbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 58px);left:50%;transform:translateX(-50%);z-index:40;pointer-events:none;
+    font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:.14em;color:#cdd6ff;padding:8px 18px;border-radius:20px;
+    background:linear-gradient(90deg,rgba(16,20,52,.78),rgba(10,14,38,.78));border:1px solid rgba(138,155,255,.5);
+    box-shadow:0 0 22px -6px #8a9bff;text-shadow:0 0 12px rgba(138,155,255,.7)}
+  #percbar.pcrit{color:#ffb4a8;border-color:rgba(255,122,110,.6);box-shadow:0 0 26px -6px #ff5a4b;animation:pcritPulse .8s ease-in-out infinite}
+  @keyframes pcritPulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.05)}}
+  .rs-best{font-family:var(--disp);font-size:9px;letter-spacing:.16em;color:#aeb9ff;margin-top:4px;text-shadow:0 0 8px rgba(138,155,255,.5)}
+  /* ===== V20 PERCEPTION SUBLEVEL CHART ===== */
+  #percfx{position:absolute !important;inset:0;width:100% !important;height:100% !important;z-index:0;pointer-events:none}
+  #percmap>*:not(#percfx){position:relative;z-index:2}
+  #percmap{background:
+    radial-gradient(72% 46% at 50% -6%,rgba(96,110,255,.15),transparent 62%),
+    radial-gradient(85% 70% at 50% 112%,rgba(4,8,24,.9),transparent 68%),
+    linear-gradient(180deg,#0a1030 0%,#070c26 34%,#04081c 68%,#020510 100%);backdrop-filter:none}
+  #percmap::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(120% 90% at 50% 46%,transparent 52%,rgba(1,3,10,.62) 100%)}
+  #percmap .studiomark{color:#aeb9ff;text-shadow:0 0 14px rgba(138,155,255,.55);animation:mSurface .6s cubic-bezier(.2,1,.3,1) both}
+  #percmap .logo{background:linear-gradient(180deg,#f2f4ff 0%,#c3ccff 40%,#8a9bff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(138,155,255,.4);animation:mSurface .65s cubic-bezier(.2,1,.3,1) .05s both}
+  #percmap .sn-hint{color:rgba(160,172,224,.8)}
+  .pm-wrap{display:flex;gap:16px;align-items:stretch;justify-content:center;flex-wrap:wrap;margin-top:14px;width:min(880px,96vw)}
+  .pm-road{position:relative;flex:none;width:min(380px,92vw);height:clamp(480px,62vh,600px);border-radius:18px;overflow:hidden;
+    border:1px solid rgba(138,155,255,.34);background:linear-gradient(180deg,rgba(14,20,52,.55),rgba(6,10,32,.65));
+    box-shadow:0 0 34px -10px #8a9bff,inset 0 0 40px rgba(4,8,28,.8);animation:mSurface .7s cubic-bezier(.2,1,.3,1) .12s both}
+  .pm-svg{position:absolute;inset:0;width:100%;height:100%}
+  .pm-line-base{fill:none;stroke:rgba(138,155,255,.22);stroke-width:2.4;vector-effect:non-scaling-stroke}
+  .pm-line-flow{fill:none;stroke:#8a9bff;stroke-width:1.6;vector-effect:non-scaling-stroke;stroke-linecap:round;
+    stroke-dasharray:3 9;filter:drop-shadow(0 0 5px #8a9bff);animation:pmFlow 2.6s linear infinite}
+  @keyframes pmFlow{to{stroke-dashoffset:-24}}
+  .pm-node{position:absolute;transform:translate(-50%,-50%);width:52px;height:52px;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:.06em;
+    color:#cdd6ff;background:radial-gradient(circle at 40% 32%,rgba(30,40,90,.9),rgba(8,12,36,.92));
+    border:1.5px solid rgba(138,155,255,.6);box-shadow:0 0 16px -4px #8a9bff,inset 0 0 12px rgba(138,155,255,.12);
+    transition:transform .14s,box-shadow .2s;animation:mSurface .6s cubic-bezier(.2,1,.3,1) both}
+  .pm-node:hover{transform:translate(-50%,-50%) scale(1.08)}
+  .pm-node.done{border-color:#7df5c8;color:#baffe4;box-shadow:0 0 18px -4px #4be8a0,inset 0 0 14px rgba(75,232,160,.18)}
+  .pm-node.done::after{content:"\2713";position:absolute;right:-4px;top:-4px;width:18px;height:18px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:10px;color:#02131f;background:#4be8a0;box-shadow:0 0 10px #4be8a0}
+  .pm-node.open{animation:mSurface .6s cubic-bezier(.2,1,.3,1) both,pmBreathe 2.4s ease-in-out 1s infinite}
+  @keyframes pmBreathe{0%,100%{box-shadow:0 0 16px -4px #8a9bff,inset 0 0 12px rgba(138,155,255,.12)}50%{box-shadow:0 0 28px -2px #aeb9ff,inset 0 0 16px rgba(138,155,255,.24)}}
+  .pm-node.locked{color:#5a6690;border-color:rgba(110,124,180,.4);box-shadow:none;filter:saturate(.6)}
+  .pm-node.ghost{color:#485078;border-style:dashed;border-color:rgba(110,124,180,.35);background:rgba(8,12,32,.5);box-shadow:none}
+  .pm-node.sel{outline:none}
+  .pm-node.sel::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:1.5px dashed #e6eaff;
+    animation:pmSpin 6s linear infinite;filter:drop-shadow(0 0 6px #aeb9ff)}
+  @keyframes pmSpin{to{transform:rotate(360deg)}}
+  .pm-lock{position:absolute;bottom:-5px;right:-3px;font-size:11px;filter:grayscale(1) brightness(1.3)}
+  .pm-best{position:absolute;top:54px;left:50%;transform:translateX(-50%);white-space:nowrap;font-family:var(--disp);font-size:8px;letter-spacing:.14em;color:#9fb0ff;text-shadow:0 0 8px rgba(138,155,255,.6)}
+  .pm-card{--fc:#8a9bff;min-height:220px}
+  .pm-micro{font-family:var(--disp);font-size:9px;letter-spacing:.2em;color:#6a76b0;text-transform:uppercase}
+  @media(max-width:760px){.pm-card{max-width:min(420px,92vw)}}
+  @media (prefers-reduced-motion:reduce){#percmap .logo,#percmap .studiomark,.pm-road,.pm-card,.pm-node{animation:none!important}.pm-line-flow,.pm-node.sel::before{animation:none!important}}
+  @media (prefers-reduced-motion:reduce){.wallet{animation:none!important}}
+  .sn-wrap{display:flex;gap:16px;align-items:stretch;justify-content:center;flex-wrap:wrap;margin-top:16px;width:min(880px,96vw)}
+  .sn-scope{position:relative;flex:none;width:min(420px,92vw,52vh);aspect-ratio:1/1;border-radius:50%;
+    border:1px solid rgba(25,227,255,.4);
+    background:radial-gradient(circle at 50% 42%,rgba(10,34,62,.85),rgba(3,10,24,.92));
+    box-shadow:0 0 40px -8px rgba(25,227,255,.4),inset 0 0 60px rgba(3,10,26,.9),inset 0 0 22px rgba(25,227,255,.1);
+    animation:mSurface .7s cubic-bezier(.2,1,.3,1) .14s both;overflow:hidden}
+  #sonarcv{position:absolute;inset:0;width:100% !important;height:100% !important;cursor:pointer}
+  .sn-card{flex:1;min-width:260px;max-width:400px;display:flex;flex-direction:column;gap:9px;text-align:left;padding:16px;border-radius:15px;
+    border:1px solid color-mix(in srgb,var(--fc,#49c7ff) 36%,transparent);
+    background:linear-gradient(135deg,rgba(8,22,44,.8),rgba(4,12,28,.8));
+    box-shadow:0 8px 26px rgba(0,0,0,.42),0 0 22px -10px var(--fc,#49c7ff);
+    animation:mSurface .7s cubic-bezier(.2,1,.3,1) .2s both}
+  .sn-empty{margin:auto;text-align:center;font-family:var(--disp);font-size:11px;letter-spacing:.22em;color:#5f7fae;text-transform:uppercase}
+  .sn-name{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.08em;color:#e8fbff;text-shadow:0 0 14px color-mix(in srgb,var(--fc,#49c7ff) 50%,transparent)}
+  .sn-coord{font-family:var(--disp);font-size:10px;letter-spacing:.16em;color:var(--fc,#49c7ff);text-shadow:0 0 8px var(--fc,#49c7ff)}
+  .sn-badges{display:flex;gap:6px;flex-wrap:wrap}
+  .sn-b{font-family:var(--disp);font-size:8.5px;letter-spacing:.14em;padding:4px 9px;border-radius:12px;text-transform:uppercase;
+    color:var(--bc,#49c7ff);border:1px solid color-mix(in srgb,var(--bc,#49c7ff) 55%,transparent);background:color-mix(in srgb,var(--bc,#49c7ff) 10%,transparent)}
+  .sn-l{font-family:var(--disp);font-size:8.5px;letter-spacing:.2em;color:#5f7fae;text-transform:uppercase;margin-top:3px}
+  .sn-chips{display:flex;gap:6px;flex-wrap:wrap}
+  .sn-e{display:flex;align-items:center;gap:5px;font-family:var(--disp);font-size:9px;letter-spacing:.1em;padding:4px 8px;border-radius:9px;
+    color:var(--ec,#cde4ff);border:1px solid color-mix(in srgb,var(--ec,#cde4ff) 40%,transparent);background:rgba(4,12,28,.6);text-transform:uppercase}
+  .sn-mut{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#cde4ff;padding:3px 0;border-bottom:1px dashed rgba(95,127,174,.2)}
+  .sn-mut b{font-family:var(--disp);font-size:10px;letter-spacing:.1em;color:#a8f3ff}
+  .sn-mut span{color:#ffd98a;font-family:var(--disp);font-size:10px}
+  .sn-rw{display:flex;gap:12px;font-family:var(--disp);font-size:11px;letter-spacing:.08em}
+  .sn-rw i{font-style:normal;color:var(--gold)}
+  .sn-rw em{font-style:normal;color:var(--mint)}
+  .sn-exp{font-family:var(--disp);font-size:10px;letter-spacing:.14em;color:#ff9b8a;text-shadow:0 0 8px rgba(255,120,110,.4)}
+  #sndeploy{margin-top:auto;font-family:var(--disp);font-weight:800;letter-spacing:.16em;font-size:13px;cursor:pointer;color:#02131f;border:none;border-radius:0;
+    padding:14px 10px;text-transform:uppercase;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+    background:linear-gradient(120deg,#8ff5ea,var(--fc,#19e3ff) 60%,#1e90ff);box-shadow:0 0 22px -4px var(--fc,#19e3ff);transition:transform .12s}
+  #sndeploy:hover{transform:translateY(-2px)}
+  #sndeploy:active{transform:scale(.98)}
+  #pmdeploy{margin-top:auto;font-family:var(--disp);font-weight:800;letter-spacing:.16em;font-size:13px;cursor:pointer;color:#0a0620;border:none;border-radius:0;
+    padding:14px 10px;text-transform:uppercase;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);
+    background:linear-gradient(120deg,#c3ccff,#8a9bff 60%,#6a7dff);box-shadow:0 0 22px -4px #8a9bff;transition:transform .12s}
+  #pmdeploy:hover{transform:translateY(-2px)}
+  #pmdeploy:active{transform:scale(.98)}
+  .rtl-ui .sn-card{text-align:right}
+  @media(max-width:760px){.sn-card{max-width:min(420px,92vw)}}
+  @media (prefers-reduced-motion:reduce){#sonar .logo,#sonar .studiomark,.sn-hint,.sn-scope,.sn-card{animation:none!important}}
   .hint{margin-top:26px;color:var(--dim);font-size:13px;letter-spacing:.06em;text-align:center}
   .hint b{color:var(--teal);font-weight:600}
 
@@ -836,6 +956,7 @@
     <div class="logo" style="position:relative;z-index:2">ABYSS<small>SURVIVORS</small></div>
     <div class="msub">The starless deep &middot; 18,000m down &middot; it has noticed your light</div>
     <div class="mribbon"><i class="mrb-dot"></i><b>NEW &middot; THE WRECKSMITH &middot; ALL DIVERS REFORGED</b></div>
+    <div class="wallet" id="walletMenu"></div>
     <div class="menu-hub" style="position:relative;z-index:2">
       <div class="mplayer" id="mplayer" style="display:none"></div>
       <button class="btn mdesc" id="startbtn">DESCEND</button>
@@ -956,18 +1077,51 @@
         <span class="rs-tx"><b class="rs-name">FREE DESCENT</b><span class="rs-sub">The endless drop. The run you know.</span></span>
         <span class="rs-go">&#8250;</span>
       </button>
-      <button class="rs-card rs-locked" id="rsChart" style="--rc:#49c7ff">
+      <button class="rs-card" id="rsChart" style="--rc:#49c7ff">
         <span class="rs-ic"><span class="rs-radar"><i></i><i class="rd2"></i><span class="rs-sweep"></span><span class="rs-blip b1"></span><span class="rs-blip b2"></span></span></span>
         <span class="rs-tx"><b class="rs-name">SONAR CHART</b><span class="rs-sub">Pick your dive site. Deploy anywhere.</span></span>
-        <span class="rs-badge">SOON</span>
+        <span class="rs-go">&#8250;</span>
       </button>
-      <button class="rs-card rs-locked" id="rsPerc" style="--rc:#8a9bff">
+      <button class="rs-card" id="rsPerc" style="--rc:#8a9bff">
         <span class="rs-ic"><span class="rs-glyph rs-eye">&#8857;</span></span>
-        <span class="rs-tx"><b class="rs-name">PERCEPTION</b><span class="rs-sub">A sealed chamber. It studies you back.</span></span>
-        <span class="rs-badge">SOON</span>
+        <span class="rs-tx"><b class="rs-name">PERCEPTION</b><span class="rs-sub">A sealed chamber. It studies you back.</span><b class="rs-best" id="percBestLine"></b></span>
+        <span class="rs-go">&#8250;</span>
       </button>
     </div>
     <button class="btn ghost" id="rsback" style="margin-top:16px">Back</button>
+  </div>
+
+  <!-- Perception sublevel chart (V20) -->
+  <div class="screen hidden" id="percmap">
+    <canvas id="percfx"></canvas>
+    <div class="studiomark">the sealed chambers</div>
+    <div class="logo" style="font-size:clamp(22px,5vw,36px)">PERCEPTION</div>
+    <div class="sn-hint">It studies you in stages.</div>
+    <div class="pm-wrap">
+      <div class="pm-road">
+        <svg class="pm-svg" viewBox="0 0 100 106" preserveAspectRatio="none" aria-hidden="true">
+          <path class="pm-line-base" d="M50,8 C50,18 26,18 26,26 C26,36 68,32 68,42 C68,52 30,48 30,58 C30,68 66,63 66,73 C66,83 34,78 34,88 C34,96 58,92 58,97" />
+          <path class="pm-line-flow" d="M50,8 C50,18 26,18 26,26 C26,36 68,32 68,42 C68,52 30,48 30,58 C30,68 66,63 66,73 C66,83 34,78 34,88 C34,96 58,92 58,97" />
+        </svg>
+        <div id="pmnodes"></div>
+      </div>
+      <div class="sn-card pm-card" id="pmcard"></div>
+    </div>
+    <button class="btn ghost" id="pmback" style="margin-top:14px">Back</button>
+  </div>
+
+  <!-- Sonar chart / floor contracts (V16) -->
+  <div class="screen hidden" id="sonar">
+    <div class="studiomark">the chart room</div>
+    <div class="logo" style="font-size:clamp(22px,5vw,36px)">SONAR CHART</div>
+    <div class="sn-hint">New signals surface as old ones fade.</div>
+    <div class="sn-legend"><span class="sn-lg" style="--lc:#8aa6da"><i class="sn-lgn">FAINT</i></span><span class="sn-lg" style="--lc:#49c7ff"><i class="sn-lgn">CLEAR</i></span><span class="sn-lg" style="--lc:#b06bff"><i class="sn-lgn">STRONG</i></span><span class="sn-lg" style="--lc:#ffc24b"><i class="sn-lgn">LEGENDARY</i></span><span class="sn-lg" style="--lc:#ff7a3c"><i class="sn-lgn">UNIQUE</i></span></div>
+    <div class="wallet wallet-sn" id="walletSonar"></div>
+    <div class="sn-wrap">
+      <div class="sn-scope"><canvas id="sonarcv"></canvas></div>
+      <div class="sn-card" id="sonarcard"></div>
+    </div>
+    <button class="btn ghost" id="sonarback" style="margin-top:14px">Back</button>
   </div>
 
   <!-- Character select -->
@@ -997,6 +1151,8 @@
     </div>
   </div>
 
+  <div id="percbar" class="hidden"></div>
+
   <!-- Game over -->
   <div class="screen hidden" id="gameover">
     <div class="go-title" id="gotitle">LIGHTS OUT</div>
@@ -1006,6 +1162,7 @@
       <div class="stat"><div class="v" id="go-kills">--</div><div class="l">Kills</div></div>
       <div class="stat"><div class="v" id="go-best">--</div><div class="l">Best Time</div></div>
     </div>
+    <div class="pay-row" id="go-pay"></div>
     <div class="deathline" id="deathline">You didn't just fail. You disappointed me.</div>
     <div class="go-row">
       <button class="btn" id="againbtn">Descend Again</button>
@@ -1038,6 +1195,7 @@
       <div class="stat"><div class="v" id="vy-kills">--</div><div class="l">Kills</div></div>
       <div class="stat"><div class="v" id="vy-gold">--</div><div class="l">Credits</div></div>
     </div>
+    <div class="pay-row" id="vy-pay"></div>
     <div class="deathline" style="color:#ffd24b;text-shadow:0 0 18px rgba(255,210,75,.35)">Your light will never go out down here. Now go make it burn up there, in the real world, survivor.</div>
     <div class="go-row">
       <button class="btn" id="endgamebtn" style="background:linear-gradient(180deg,#ff8a8a,#ff3d56);box-shadow:0 0 24px rgba(255,61,86,.4)">Enter the Corruption</button>
@@ -1739,6 +1897,29 @@ const BOONS=[
 /* ===== STATE ===== */
 let state='menu';
 let player,enemies,pjs,epjs,orbs,drops,particles,texts,arcs,fx,hazards,chests,turrets=[];
+let FLOOR=null;const SON={list:[],t:0,sel:null,last:0,sweep:0};
+/* ===== V18 WALLET: the deep pays in three coins beyond credit ===== */
+let WBAL={g:0,p:0,e:0},runPay={g:0,p:0,e:0},_settledRun=false;
+const WALLET_TUNE={gLv:2,gKill:0.05,gMin:3,gVictory:200,gFloorDiv:160,gFloorMin:1.1,
+ pWarden:0.06,pReflection:2,pClear:[0.20,0.35,0.70,1.0,1.0],pClearX:[0,0,0,0.35,1.0],
+ clearLv:30,echoAmt:1};
+const CUR={cr:{ic:'CR',c:'#ffd24b',d:'Credits. The everyday coin of the deep.'},
+ g:{n:'GLINT',ic:'\u2727',c:'#8ff5ea',d:'Bioluminescent motes. Earned every descent; brighter floors pay more.'},
+ p:{n:'PEARL',ic:'\u25CF',c:'#e8d6ff',d:'The deep gives these up rarely. Wardens and cleared floors.'},
+ e:{n:'ECHO',ic:'\u224B',c:'#ff7a3c',d:'Only a cleared UNIQUE signal leaves one behind.'}};
+/* ===== V19 PERCEPTION: the sealed chamber ===== */
+let PERC=false,_percDone=false,_percHello=false,percT=0,percScore=0,percBest=0,percSpawnT=0;
+const PERC_TUNE={dur:300,rampLo:1.5,rampHi:4.0,perceptCap:3,perceptEvery:17,perceptHold:15,
+ studyT:3.2,strikeT:1.1,studySpd:130,strikeSpd:345,wallInset:30};
+const PERC_CH={w:900,h:1400};
+let PERC_RUN=PERC_TUNE,percLvl=0;
+const PERC_ROMAN=['I','II','III','IV','V','VI','VII'];
+// one entry = one chamber. cfg overrides PERC_TUNE for that sublevel only.
+const PERC_LEVELS=[
+ {name:'OBSERVATION',cfg:{}},
+ {name:'CALIBRATION',cfg:{rampLo:1.8,rampHi:4.6,perceptCap:4,perceptEvery:14,hpMul:1.15,dmgMul:1.1}}];
+const PERC_GHOSTS=5; // sealed future nodes shown on the road
+let percProg={u:0,c:[],b:[]}; // unlocked index, cleared flags, per-level bests
 let time=0,kills=0,gold=0,spawnTimer=0,screenShake=0,shakeX=0,shakeY=0;
 let camZoom=1,camZoomTarget=1,camPunch=0,camCX=0,camCY=0;
 let pendingLevels=0,pendingBoons=0,pendingChests=0,bestTime=0,runOver=false;
@@ -1781,6 +1962,7 @@ function devWarp(lv){
   if(lv===TIER1_END)spawnReflection();
  }
  player.hp=player.maxHp;player.iframes=2;state='playing';lastT=performance.now();
+ if(FLOOR)gameAlert(FLOOR.name,FLOOR.tc,'grid '+FLOOR.coord+' \u00b7 '+t(FLOOR.tn)+' \u00b7 '+t(FLOOR.rn));
  try{document.getElementById('devpanel').classList.add('hidden');}catch(e){}
  toast('DEV WARP -> LEVEL '+lv+(lv===150?'  (THE REFLECTION)':''));
 }
@@ -1921,7 +2103,7 @@ function recalc(p,init){
   p.area=(1+(m.areaBase||0))+0.14*g('area')+pm.area;
   const greedL=g('greed'),loot=(m.lootBase||0);
   p.xpMult=(1+0.20*g('wisdom')+0.12*greedL+loot)*pm.lootMul;
-  p.goldMult=(1+0.18*greedL+loot)*pm.lootMul;
+  p.goldMult=(1+0.18*greedL+loot)*pm.lootMul*(FLOOR?FLOOR.loot:1);
   p.pickupRange=140+(m.magnetBase||0)+50*g('magnet')+30*greedL;
   p.regen=(m.regenBase||0)+1.0*g('regen');
   p.armor=(m.armorBase||0)+3*g('armor')+2*g('bulwark');
@@ -1994,6 +2176,7 @@ function updateSentries(dt){
 const ETYPES={
 swarm:{hp:10,speed:130,dmg:5,r:9,color:'#ff8ad0',xp:1,gold:.25,after:0},
 runner:{hp:20,speed:94,dmg:8,r:12,color:'#ff8f4b',xp:1,gold:.35,after:0},
+percept:{hp:150,speed:0,dmg:16,r:16,color:'#8a9bff',xp:14,gold:1.5,after:999999,percept:true},
 brute:{hp:46,speed:60,dmg:13,r:18,color:'#ff7a4b',xp:3,gold:.5,after:28},
 shooter:{hp:32,speed:50,dmg:0,r:14,color:'#5cd0ff',xp:4,gold:.6,after:55,ranged:true},
 tank:{hp:150,speed:36,dmg:20,r:26,color:'#9b6dff',xp:7,gold:.8,after:62},
@@ -2032,16 +2215,22 @@ omega:{hp:52000,speed:40,dmg:55,r:150,color:'#ff3df0',xp:500,special:true,finalb
 voidlord:{hp:90000,speed:30,dmg:64,r:230,color:'#9b6dff',xp:4000,special:true,warden:true,arch:'blackhole',noEscort:true},
 reflection:{hp:4000000,speed:26,dmg:85,r:210,color:'#ff3df0',xp:9000,special:true,warden:true,arch:'reflection',noEscort:true,reflection:true},
 };
-function enemyMix(t){const m=['swarm','runner','runner'];for(const id in ETYPES){const e=ETYPES[id];if(e.special)continue;if(t>=e.after&&id!=='swarm'&&id!=='runner'){const w=id==='boulder'?2:((id==='tri'||id==='fastball')?5:((e.shape==='square'||id==='bigball')?3:2));for(let k=0;k<w;k++)m.push(id);}}return m;}
+function enemyMix(t){const m=['swarm','runner','runner'];for(const id in ETYPES){const e=ETYPES[id];if(e.special)continue;if(t>=e.after&&id!=='swarm'&&id!=='runner'){const w=id==='boulder'?2:((id==='tri'||id==='fastball')?5:((e.shape==='square'||id==='bigball')?3:2));for(let k=0;k<w;k++)m.push(id);}}
+ if(FLOOR&&FLOOR.species)for(const s of FLOOR.species){if(m.includes(s))for(let k=0;k<4;k++)m.push(s);}
+ if(PERC){const c=m.filter(id=>{const d=ETYPES[id];return d&&d.shape!=='tri'&&d.shape!=='square'&&!d.special;});return c.length?c:['swarm','runner'];}
+ return m;}
 const EMODS={volatile:{icon:'\u26a1',color:'#ffb04b'},magnetic:{icon:'\ud83e\uddf2',color:'#5cd0ff'},phase:{icon:'\ud83d\udc7b',color:'#b9c8ff'},infernal:{icon:'\ud83d\udd25',color:'#ff7a3c'},necrotic:{icon:'\ud83d\udc80',color:'#b6ff3c'}};
 function maybeModify(e){if(e.special||e.warden||e.finalboss||e.elite||e.stamp)return e;
- const ch=Math.min(0.14,0.03+time/1800*0.12);
+ if(FLOOR&&FLOOR.spd)e.speed*=FLOOR.spd;
+ let ch=Math.min(0.14,0.03+time/1800*0.12);if(FLOOR&&FLOOR.elite>1)ch=Math.min(0.34,ch*FLOOR.elite);
  if(Math.random()<ch){const ks=Object.keys(EMODS);e.emod=ks[Math.floor(Math.random()*ks.length)];e.hp*=1.4;e.maxhp*=1.4;
   if(e.emod==='phase'){e.phT=rand(1,3);}if(e.emod==='infernal')e.trailT=0.25;}
  return e;}
 function spawnEnemy(typeId){const def=ETYPES[typeId],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+70,hp=def.hp*bHp();
- enemies.push(maybeModify({type:typeId,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.9,1.1),dmg:def.dmg*bDmg(),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,boulder:!!def.boulder,bomber:!!def.bomber,snare:!!def.snare,ambush:!!def.ambush,brood:!!def.brood,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
-function spawnSpecial(id,hpMul){const def=ETYPES[id],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+90+def.r,sc=bHp()*(1+0.25*corruption+0.3*(corruptMods.bossUp||0));
+ let sx=player.x+Math.cos(ang)*dr,sy=player.y+Math.sin(ang)*dr;
+ if(PERC){const p=percWallPoint();sx=p.x;sy=p.y;}
+ enemies.push(maybeModify({type:typeId,def,x:sx,y:sy,r:def.r,hp,maxhp:hp,speed:def.speed*rand(.9,1.1),dmg:def.dmg*bDmg(),color:def.color,ranged:!!def.ranged,splits:!!def.splits,shape:def.shape||'ball',laser:!!def.laser,squish:!!def.squish,sharp:!!def.sharp,boulder:!!def.boulder,bomber:!!def.bomber,snare:!!def.snare,ambush:!!def.ambush,brood:!!def.brood,percept:!!def.percept,mat:PERC?0.7:0,pph:0,pst:0,laserCd:rand(2.5,4),shootCd:rand(1.2,2.4),hitFlash:0}));}
+function spawnSpecial(id,hpMul){if(PERC)return;const def=ETYPES[id],ang=Math.random()*TAU,dr=Math.max(W,H)/VIEW/2+90+def.r,sc=bHp()*(1+0.25*corruption+0.3*(corruptMods.bossUp||0))*(FLOOR?FLOOR.bossHp:1);
  enemies.push({type:id,def,x:player.x+Math.cos(ang)*dr,y:player.y+Math.sin(ang)*dr,r:def.r,hp:def.hp*sc*(hpMul||1),maxhp:def.hp*sc*(hpMul||1),speed:def.speed,dmg:(def.dmg||0)*bDmg(),color:def.color,ranged:!!def.ranged,elite:!!def.elite,legendary:!!def.legendary,mage:!!def.mage,warden:!!def.warden,finalboss:!!def.finalboss,arch:def.arch||null,shape:def.shape||'ball',escortChecked:!!def.noEscort,mechTimer:rand(2.5,4),shootCd:rand(1,2),castCd:rand(1.5,3),hitFlash:0});
  {const _se=enemies[enemies.length-1];if(_se&&_se.arch==='sun'&&Math.random()<0.35){_se.dying=true;_se.color='#ff5a3c';}}
  const names={titan:'TITAN CORE',solar:'SOLAR CONSTRUCT',singularity:'THE SINGULARITY',collector:'THE COLLECTOR',judge:'THE JUDGE',twin:'THE TWIN',shepherd:'THE SHEPHERD',sunball:'HELIOS, THE DYING SUN',sunsq:'THE MONOLITH',suntri:'THE SPEAR OF THE DEEP',leviathan:'THE LEVIATHAN',voidlord:'THE VOID LORD',reflection:'THE REFLECTION'};
@@ -2190,8 +2379,8 @@ function corrMulFor(lv){if(lv<=CORR_CAP_LEVEL)return 1;
 // Time input for the pre-100 curves freezes the moment corruption locks; growth after that
 // comes only from corrMulFor(level).
 function bTime(){return corrFrozen?corrFreezeTime:time;}
-function bHp(){return BAL.enemyHp(bTime())*corrScaleMul;}
-function bDmg(){return BAL.enemyDmg(bTime())*corrScaleMul;}
+function bHp(){return BAL.enemyHp(bTime())*corrScaleMul*(FLOOR?FLOOR.hp:1)*(PERC?(PERC_RUN.hpMul||1):1);}
+function bDmg(){return BAL.enemyDmg(bTime())*corrScaleMul*(FLOOR?FLOOR.dmg:1)*(PERC?(PERC_RUN.dmgMul||1):1);}
 function spawnReflection(){spawnSpecial('reflection');const e=enemies[enemies.length-1];
  if(!e||!e.reflection)return;
  // fixed stats, independent of build and of every scaling curve: a skill gate, not a gear check
@@ -2412,7 +2601,7 @@ function killEnemy(e){
  if(rs){if(e.elite)rs.elite++;if(e.warden||e.finalboss||e.legendary)rs.boss++;}
  if(endgame&&corruptMods.explode&&!e.elite&&!e.mage&&!isBig(e)){burst(e.x,e.y,'#ff5a3c',6);if(dist2(e.x,e.y,player.x,player.y)<4900&&player.iframes<=0)hitPlayer(7*bDmg());}
  burst(e.x,e.y,e.color,e.finalboss?90:(e.legendary||e.warden?60:(e.elite?20:9)));spawnShards(e);
- const xpv=Math.ceil(e.def.xp||1);
+ const xpv=Math.ceil((e.def.xp||1)*(FLOOR?FLOOR.xp:1));
  if(time<BAL.instantXpTime){gainXP(xpv);spawnText(e.x,e.y-e.r-14,'+'+Math.ceil(xpv*player.xpMult)+' rez','#6cffb0',false);}
  else if(player.level>=40){gainXP(xpv);}
  else if(player.char.id==='sniper'&&CURP&&CURP.srcW==='rifle'){gainXP(xpv);spawnText(e.x,e.y-e.r-14,'+'+Math.ceil(xpv*player.xpMult)+' rez','#ff5a6e',false);}
@@ -2430,8 +2619,9 @@ function killEnemy(e){
   else if(roll<0.032+BAL.chestChance&&chestCdT<=0){chests.push({x:e.x,y:e.y,r:14,vx:rand(-30,30),vy:rand(-30,30)});chestCdT=BAL.chestCooldown;}}
  if(e.splits){for(let i=0;i<2;i++){const a=Math.random()*TAU,hp=18*bHp();enemies.push({type:'runner',def:ETYPES.runner,x:e.x+Math.cos(a)*14,y:e.y+Math.sin(a)*14,r:12,hp,maxhp:hp,speed:100,dmg:8*bDmg(),color:'#ff5a6e',shootCd:2,hitFlash:0});}}
  if(player.killHeal>0)player.hp=clamp(player.hp+player.maxHp*player.killHeal,0,player.maxHp);
- if(e.warden){if(e.r>=200||e.finalboss)pendingBoons++;else{gold+=40+Math.floor(player.level*1.5);if(Math.random()<0.5)pendingChests++;}}
- if(e.reflection){reflectionDown=true;reflRef=null;pressureT=6;gold+=800;pendingBoons+=2;
+ if(e.warden){if(Math.random()<WALLET_TUNE.pWarden){grantCurrency('p',1);toast('PEARL RECOVERED');spawnText(e.x,e.y-e.r-30,'+1 PEARL','#e8d6ff',true);}
+  if(e.r>=200||e.finalboss)pendingBoons++;else{gold+=40+Math.floor(player.level*1.5);if(Math.random()<0.5)pendingChests++;}}
+ if(e.reflection){reflectionDown=true;reflRef=null;pressureT=6;gold+=800;pendingBoons+=2;grantCurrency('p',WALLET_TUNE.pReflection);toast('PEARL RECOVERED');
   gameAlert('THE REFLECTION SHATTERS','#6cffb0','beyond this point the deep itself is the enemy');}
  if(e.finalboss)runOver='victory';
 }
@@ -2457,6 +2647,11 @@ function startRun(charDef){tgHideShare(); // TELEGRAM MINI APP
  chosenChar=charDef;player=makePlayer(charDef);
  enemies=[];pjs=[];epjs=[];orbs=[];drops=[];particles=[];texts=[];arcs=[];fx=[];hazards=[];chests=[];zones=[];seeds=[];turrets=[];bossBeams=[];_arenaWasActive=false;bhBossDone=false;bhBossT=40;corrClock=0;reflectionDown=false;reflRef=null;pressureT=4;pressureN=0;_bhToasts=0;devGod=false;devNoSpawn=false;
  time=0;kills=0;gold=0;spawnTimer=0;screenShake=0;camZoom=1;camZoomTarget=1;camPunch=0;camCX=0;camCY=0;pendingLevels=0;pendingBoons=0;pendingChests=0;runOver=false;
+ runPay={g:0,p:0,e:0};_settledRun=false;if(FLOOR)FLOOR._cleared=false; // each attempt can clear its floor once
+ PERC_RUN=PERC?Object.assign({},PERC_TUNE,(PERC_LEVELS[percLvl]&&PERC_LEVELS[percLvl].cfg)||{}):PERC_TUNE;
+ _percDone=false;_percHello=false;percScore=0;percT=PERC?PERC_RUN.dur:0;percSpawnT=PERC?6:0;_pbEl=null;
+ const _pb0=document.getElementById('percbar');if(_pb0)_pb0.classList.toggle('hidden',!PERC);
+ if(PERC)percSize();
  menuArmT=0;menuMaxT=0;_menuPend=0;
  legendaryArmed=false;legendaryFirstLevel=randi(3,9);legendaryWindowT=0;surgeEnded=false;chestCdT=0;
  rs={dmg:0,taken:0,elite:0,boss:0,peak:0,acc:0,t:0,dodges:0,reacts:{}};
@@ -2736,7 +2931,7 @@ function update(dt){
  if(player.iframes>0)player.iframes-=dt;if(player.hurtFlash>0)player.hurtFlash-=dt;
 
  spawnTimer-=dt;
- if(spawnTimer<=0&&enemies.length<BAL.enemyCapQ()&&!leviathanLock&&!bossArenaActive()){spawnTimer=BAL.spawnInterval(time);const batch=BAL.spawnBatch(time),mix=enemyMix(time);for(let i=0;i<batch&&enemies.length<BAL.enemyCapQ();i++)spawnEnemy(pick(mix));}
+ if(spawnTimer<=0&&enemies.length<BAL.enemyCapQ()&&!leviathanLock&&!bossArenaActive()){spawnTimer=BAL.spawnInterval(time)/((FLOOR?FLOOR.spawn:1)*(PERC?(PERC_RUN.rampLo+(PERC_RUN.rampHi-PERC_RUN.rampLo)*Math.min(1,(PERC_RUN.dur-percT)/PERC_RUN.dur)):1));const batch=BAL.spawnBatch(time),mix=enemyMix(time);for(let i=0;i<batch&&enemies.length<BAL.enemyCapQ();i++)spawnEnemy(pick(mix));}
  recycleT-=dt;
  if(recycleT<=0){recycleT=0.5;const rr=Math.max(W,H)/VIEW*0.85+260,rr2=rr*rr;const pv=Math.hypot(player.pvx,player.pvy);
   for(const e of enemies){if(e._dead||e.stamp)continue;
@@ -2747,7 +2942,7 @@ function update(dt){
     if(isBig(e)||e.elite){burst(e.x,e.y,e.color,5);burst(nx,ny,e.color,7);ring(nx,ny,e.r+12,e.color);} // mirror-blink so big foes can't be outrun
     e.x=nx;e.y=ny;e.kvx=0;e.kvy=0;}}}
  if(legendaryArmed&&player.level>=10&&player.level<BAL.finalLevel){legendaryWindowT+=dt;if(legendaryWindowT>=300){legendaryWindowT-=300;if(Math.random()<0.10)spawnSpecial('legendary');}}
- if(time>90&&!bossArenaActive()){eliteTimer-=dt;if(eliteTimer<=0){eliteTimer=rand(40,60);spawnSpecial('epic');if(corruptMods.double)spawnSpecial('epic');}}
+ if(time>90&&!bossArenaActive()){eliteTimer-=dt;if(eliteTimer<=0){eliteTimer=rand(40,60)*(FLOOR?FLOOR.bossT:1);spawnSpecial('epic');if(corruptMods.double)spawnSpecial('epic');}}
   if(time>150&&!leviathanLock&&!bossArenaActive()){stampT-=dt;if(stampT<=0){stampT=rand(55,80);spawnStampede();}}
   // SWARM DIRECTOR: timed surges that escalate with the run, denser past L100
   if(!leviathanLock){swarmT-=dt;if(player.level>=12&&!bossArenaActive()){triVolleyT-=dt;if(triVolleyT<=0){const eg=endgame||player.level>=100;triVolleyT=eg?rand(7,12):rand(14,22);spawnTriVolley();}}}
@@ -2960,6 +3155,7 @@ function update(dt){
  } else player.companions.length=0;
 
  updateSentries(dt);
+ updatePerception(dt);
 
  for(const p of pjs){
   if(p.kind==='seek'){const t=nearestEnemy(p.x,p.y,520);if(t){const a=Math.atan2(t.y-p.y,t.x-p.x),ca=Math.atan2(p.vy,p.vx),na=ca+clamp(((a-ca+Math.PI*3)%TAU)-Math.PI,-4*dt,4*dt);p.vx=Math.cos(na)*p.speed;p.vy=Math.sin(na)*p.speed;}}
@@ -3049,7 +3245,8 @@ function update(dt){
  if(!isFinite(camZoom))camZoom=1;if(!isFinite(camPunch))camPunch=0;
  camZoom=clamp(camZoom,0.75,1.5);camPunch=clamp(camPunch,-0.45,0.6);
  // --- smoothed camera centre with subtle look-ahead + a hard leash that keeps the diver on screen ---
- {let _tx=player.x+clamp(player.pvx*0.06,-70,70),_ty=player.y+clamp(player.pvy*0.06,-70,70);
+ if(PERC){camCX=0;camCY=0;camZoom=1;camZoomTarget=1;}
+ else{let _tx=player.x+clamp(player.pvx*0.06,-70,70),_ty=player.y+clamp(player.pvy*0.06,-70,70);
   if(!isFinite(camCX)||!isFinite(camCY)){camCX=player.x;camCY=player.y;}
   const _k=1-Math.exp(-dt/0.05);camCX+=(_tx-camCX)*_k;camCY+=(_ty-camCY)*_k;
   const _lx=camCX-player.x,_ly=camCY-player.y,_ld=Math.hypot(_lx,_ly),_maxL=Math.min(W,H)*0.16/(VIEW||1);
@@ -3136,6 +3333,7 @@ function paceTarget(t){
  return Math.min(CORR_CAP_LEVEL,100+(t-660)/120);}
 function forceLevels(n){for(let i=0;i<(n||1);i++){if(player.level>=CORR_CAP_LEVEL)return;player.xp=0;player.level++;onLevelUp(player.level);if(isChoiceLevel(player.level))pendingLevels++;else{player.hp=clamp(player.hp+player.maxHp*0.04,0,player.maxHp);gold+=6+Math.floor(player.level/4);}player.xpNext=BAL.xpNext(player.level);}}
 function gainXP(v){
+ if(PERC)percScore+=v;
  if(leviathanLock){player.xp=Math.min(player.xp+1,player.xpNext-1);return;}
  if(player.level>=CORR_CAP_LEVEL){player.xp=0;return;}
  const ahead=player.level-paceTarget(time);
@@ -3147,6 +3345,7 @@ function gainXP(v){
   player.xpNext=BAL.xpNext(player.level);}}
 function onLevelUp(lv){
  player.hp=clamp(player.hp+player.maxHp*BAL.levelUpHealPct,0,player.maxHp);
+ if(FLOOR&&!FLOOR._cleared&&lv>=WALLET_TUNE.clearLv)settleFloorClear();
  if(lv>=BAL.barrierLevel&&!player.hasBarrier){player.hasBarrier=true;player.barrier={ready:true,cd:0};toast('BARRIER ONLINE');sfx('shield');}
  if(lv>=BAL.regenLevel&&!player.hasRegen){player.hasRegen=true;toast('REGENERATION ONLINE');sfx('levelup');}
  if(BAL.epicLevels.includes(lv))spawnSpecial('epic');
@@ -3197,6 +3396,7 @@ function render(){
   else if(d.type==='heart'){ctx.save();ctx.shadowColor='#ff5a6e';ctx.shadowBlur=14;ctx.fillStyle='#ff8a9e';ctx.font='18px sans-serif';ctx.textAlign='center';ctx.fillText('❤',d.x,d.y+6);ctx.restore();}
   else if(d.type==='magnet')drawSymbol(d.x,d.y,'⊚','#5cd0ff');else if(d.type==='bomb')drawSymbol(d.x,d.y,'✸','#ffc24b');else if(d.type==='shard')drawSymbol(d.x,d.y,'◈','#9bd0ff');
   if(d.type!=='gold'){ctx.save();const pu=0.5+0.5*Math.sin(time*5+d.x*0.01);const dc=d.type==='heart'?'#ff5a6e':(d.type==='magnet'?'#5cd0ff':'#ffc24b');ctx.globalAlpha=0.35+0.4*pu;ctx.strokeStyle=dc;ctx.shadowColor=dc;ctx.shadowBlur=12;ctx.lineWidth=2;ctx.beginPath();ctx.arc(d.x,d.y,13+5*pu,0,TAU);ctx.stroke();ctx.restore();}}
+ drawChamber();
  drawSentries();
  const aw=player.weapons.find(x=>x.id==='aura');
  if(aw&&aw._render){const r=aw._render.radius;ctx.save();if(!aw._gr||aw._grR!==r){aw._grR=r;aw._gr=ctx.createRadialGradient(0,0,r*0.3,0,0,r);aw._gr.addColorStop(0,'rgba(155,109,255,0)');aw._gr.addColorStop(0.7,'rgba(155,109,255,0.10)');aw._gr.addColorStop(1,'rgba(155,109,255,0.28)');}ctx.translate(player.x,player.y);ctx.fillStyle=aw._gr;ctx.beginPath();ctx.arc(0,0,r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(155,109,255,0.5)';ctx.lineWidth=2;ctx.stroke();ctx.restore();}
@@ -3341,6 +3541,7 @@ function drawProjectile(p){
 function drawSymbol(x,y,ch,color){ctx.save();ctx.shadowColor=color;ctx.shadowBlur=12;ctx.fillStyle=color;ctx.font='17px sans-serif';ctx.textAlign='center';ctx.fillText(ch,x,y+6);ctx.restore();}
 function drawBoltLine(x1,y1,x2,y2){const seg=6;ctx.beginPath();ctx.moveTo(x1,y1);for(let i=1;i<seg;i++){const t=i/seg;ctx.lineTo(x1+(x2-x1)*t+rand(-7,7),y1+(y2-y1)*t+rand(-7,7));}ctx.lineTo(x2,y2);ctx.stroke();}
 function drawEnemy(e){if(!onScreen(e.x,e.y,e.r+70))return;ctx.save();const big=e.elite||e.mage||isBig(e);
+ if(e.percept){drawPercept(e);ctx.restore();return;}
  if(e.warden||e.finalboss||e.legendary||(e.elite&&e.r>=60)){try{drawBossAura(e);}catch(_e){}}
  if(e._sorbs){try{drawBossSats(e);}catch(_e){}}
  if(big&&((QX&&QX.glow)||e.finalboss||e.warden||e.legendary)){ctx.shadowColor=e.color;ctx.shadowBlur=e.finalboss?Math.min(70,Math.max(42,e.r*0.5)):((e.legendary||e.warden)?Math.min(60,Math.max(30,e.r*0.42)):18);}
@@ -3706,7 +3907,7 @@ function grantChest(){
 /* ===== PAUSE / END ===== */
 function doPause(){if(state!=='playing')return;state='paused';document.getElementById('pause').classList.remove('hidden');}
 function doResume(){if(state!=='paused')return;state='playing';document.getElementById('pause').classList.add('hidden');lastT=performance.now();}
-function hideAllScreens(){['menu','runselect','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics','lore'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
+function hideAllScreens(){['menu','runselect','sonar','percmap','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics','lore'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
 function showNavToggle(){const nt=document.getElementById('navToggle');if(nt)nt.style.display='flex';}
 
 function runStats(){return{time,level:player.level,kills,dodges:rs?rs.dodges:0,reacts:rs?rs.reacts:{},taken:rs?Math.round(rs.taken):0,peak:rs?Math.round(rs.peak):0,gold,char:chosenChar.name,
@@ -3724,10 +3925,22 @@ async function gameOver(){
  document.getElementById('go-kills').textContent=kills;
  const bm=Math.floor(bestTime/60),bs=Math.floor(bestTime%60);
  document.getElementById('go-best').textContent=`${bm}:${String(bs).padStart(2,'0')}`;
+ settleRun(false);
  showHUD(false);try{recordRun(endgame?'Victory':'Defeat');}catch(e){}
+ if(PERC){const sc=Math.round(percScore);
+  if(sc>(percProg.b[percLvl]||0))percProg.b[percLvl]=sc;
+  let unlocked=false;
+  if(_percDone){percProg.c[percLvl]=true;
+   if(percLvl===percProg.u&&percLvl+1<PERC_LEVELS.length){percProg.u=percLvl+1;unlocked=true;}}
+  percBest=Math.max(0,...percProg.b.map(v=>v||0));savePercProg();
+  document.getElementById('gotitle').textContent=_percDone?t('TRIAL COMPLETE'):t('THE CHAMBER KEEPS YOU');
+  const _dl=document.getElementById('deathline');
+  if(_dl)_dl.textContent=t(PERC_LEVELS[percLvl].name)+' '+(PERC_ROMAN[percLvl]||'')+' \u00b7 '+t('SCORE')+' '+sc.toLocaleString()+' \u00b7 '+t('BEST')+' '+(percProg.b[percLvl]||0).toLocaleString()+(unlocked?' \u00b7 '+t('NEXT CHAMBER UNLOCKED'):'');
+  const _pb=document.getElementById('percbar');if(_pb)_pb.classList.add('hidden');}
  document.getElementById('gameover').classList.remove('hidden');
  }
 async function victory(){
+ settleRun(true);
  state='victory';TG_SHARE=tgShareText();tgShowShare(); // TELEGRAM MINI APP
  runOver=false;
  if(time>bestTime){bestTime=time;saveBest();}
@@ -3804,7 +4017,7 @@ function loop(now){requestAnimationFrame(loop);
  catch(err){console.error('ABYSS update error:',err);sanitizeState();if(!window._abyssErr){window._abyssErr=true;try{toast('GLITCH CONTAINED. RUN CONTINUES');}catch(e3){}}}
  try{if(player)render();}
  catch(err){console.error('ABYSS render error:',err);sanitizeState();}
- try{if(state==='menu'||state==='profile'||state==='credits'||state==='codex')menuFX(dt);}catch(err){}
+ try{if(state==='menu'||state==='profile'||state==='credits'||state==='codex'){menuFX(dt);sonarFX(dt);}}catch(err){}
  try{if(state==='cosmetics')cosPreviewTick(dt);}catch(err){}
  try{if(state==='social')socialFXTick(dt);}catch(err){}}
 requestAnimationFrame(loop);
@@ -4277,11 +4490,11 @@ function hapPop(){try{if(!OPT.vibration)return;if(!TG||!TG.HapticFeedback)return
 let LANG='en';
 const LANG_LIST=[['en','EN'],['fa','فارسی'],['zh','中文'],['hi','हिंदी'],['es','ES'],['ru','RU']];
 const I18N={
-fa:{"Profile":"پروفایل","Captain":"کاپیتان","Cosmetics":"ظاهر","Social":"دوستان","Leaderboard":"جدول امتیازات","Run Archive":"آرشیو ران‌ها","Guides":"راهنماها","Settings":"تنظیمات","Credits":"سازندگان","view profile ›":"مشاهده پروفایل ›","Language":"زبان","DESCEND":"فرود","Customize":"شخصی‌سازی","Dive Network":"شبکه غواصان","Friends":"دوستان","Your record":"رکورد شما","Codex":"دانشنامه","Bestiary":"هیولانامه","Options":"تنظیمات","Thanks":"سپاس","LORE":"روایت","The starless deep · 18,000m down · it has noticed your light":"ژرفای بی‌ستاره · ۱۸٬۰۰۰ متر پایین · نورت را دیده است","HULL":"بدنه","LV":"سطح","KILLS":"شکار","CR":"اعتبار","REZ":"REZ","DODGE":"جاخالی","THREAT":"تهدید","DEPTH":"عمق","PARRY":"دفع","GUARD":"گارد","CHARGE":"یورش","HEX":"طلسم","DEPLOY":"برپا","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"جدید · آهنگرِ لاشه‌ها · بازتوازنِ کاملِ غواص‌ها","dive protocol":"پروتکلِ فرود","CHOOSE YOUR DESCENT":"فرودت را انتخاب کن","FREE DESCENT":"فرودِ آزاد","The endless drop. The run you know.":"سقوطِ بی‌پایان. همان رانِ همیشگی.","SONAR CHART":"نقشه‌ی سونار","Pick your dive site. Deploy anywhere.":"جای فرودت را انتخاب کن. هر کجا که بخواهی.","PERCEPTION":"ادراک","A sealed chamber. It studies you back.":"محفظه‌ای مهروموم. او نیز تو را می‌کاود.","SOON":"به‌زودی","The chart room is still mapping the deep. Dive sites arrive in a future update.":"اتاقِ نقشه هنوز ژرفا را ترسیم می‌کند. سایت‌های غواصی در آپدیتی آینده از راه می‌رسند.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"محفظه هنوز مهروموم می‌شود. وقتی گشوده شود، هیچ‌چیزِ درونش آشنا نخواهد بود.","LEVEL UP":"ارتقا","CHOOSE YOUR REWARD":"پاداشت را انتخاب کن","WARDEN BOON":"موهبت نگهبان","GET TO SAFETY":"به جای امن برو","SELECT YOUR DIVER":"غواصت را انتخاب کن","Tap a diver to begin the descent.":"برای شروع فرود، روی یک غواص بزن.","Choose an augment":"یک تقویت انتخاب کن","Reroll":"قرعه دوباره","PAUSED":"توقف","Resume":"ادامه","Abandon Run":"رها کردن ران","LIGHTS OUT":"خاموشی","Survived":"دوام آوردی","Level":"سطح","Kills":"شکارها","Best Time":"بهترین زمان","Descend Again":"فرود دوباره","Run Details":"جزئیات ران","Main Menu":"منوی اصلی","WARDEN FELLED":"نگهبان سقوط کرد","Claim a permanent boon":"یک موهبت دائمی بردار","SUPPLY CACHE":"محموله تدارکات","A reward from the deep":"پاداشی از اعماق","Claim":"برداشتن","VICTORY":"پیروزی","THE ABYSS YIELDS":"مغاک تسلیم شد","Enter the Corruption":"ورود به فساد","Back":"بازگشت","OK":"باشه","RUN ARCHIVE":"آرشیو ران‌ها","LEADERBOARD":"جدول امتیازات","global rankings":"رده‌بندی جهانی","OPTIONS":"تنظیمات","system":"سیستم","SOCIAL":"دوستان","dive network":"شبکه غواصان","Invites":"دعوت‌ها","Add Friend":"افزودن دوست","OPERATOR":"اپراتور","the one behind the diver":"کسی که پشت غواص است","CAPTAIN":"کاپیتان","account ascension":"صعود حساب","COSMETICS":"ظاهر","deep couture":"مد اعماق","CREDITS":"سازندگان","field manual":"دفترچه میدانی","THE DEEP, EXPLAINED":"اعماق، به زبان ساده","NEW":"جدید","WEAPON":"سلاح","PASSIVE":"پسیو","EVOLVE":"تکامل","INFUSE":"عنصر","RECOVER":"ترمیم","SALVAGE":"غنیمت","Instant":"فوری","Evolution":"تکامل","Locks Element (permanent)":"قفل عنصر (دائمی)","DEFLECTOR ONLINE":"دفلکتور فعال شد","DEFLECTOR OVERLOADED":"دفلکتور از کار افتاد","TRAPPED":"گیر افتادی","NEW FRIEND REQUEST · check Social":"درخواست دوستی جدید · بخش دوستان را ببین","Repair Kit":"کیت تعمیر","Credit Cache":"بسته اعتبار","Resume Run":"ادامه ران","Language":"زبان","Choose your language":"زبان خود را انتخاب کن","Lore":"روایت","The story":"داستان"},
-zh:{"Profile":"个人资料","Captain":"舰长","Cosmetics":"外观","Social":"好友","Leaderboard":"排行榜","Run Archive":"战绩存档","Guides":"指南","Settings":"设置","Credits":"制作人员","view profile ›":"查看资料 ›","Language":"语言","DESCEND":"下潜","Customize":"自定义","Dive Network":"潜航网络","Friends":"好友","Your record":"你的记录","Codex":"图鉴","Bestiary":"怪物图鉴","Options":"设置","Thanks":"鸣谢","LORE":"传说","The starless deep · 18,000m down · it has noticed your light":"无星深渊 · 下潜18,000米 · 它注意到了你的光","HULL":"船体","LV":"等级","KILLS":"击杀","CR":"信用点","REZ":"REZ","DODGE":"闪避","THREAT":"威胁","DEPTH":"深度","PARRY":"格挡","GUARD":"防御","CHARGE":"冲锋","HEX":"咒术","DEPLOY":"部署","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"新 · 残骸铁匠登场 · 全体潜航员重铸","dive protocol":"下潜协议","CHOOSE YOUR DESCENT":"选择你的下潜","FREE DESCENT":"自由下潜","The endless drop. The run you know.":"无尽的坠落。你熟悉的那一局。","SONAR CHART":"声呐海图","Pick your dive site. Deploy anywhere.":"选择你的潜点。任意部署。","PERCEPTION":"感知","A sealed chamber. It studies you back.":"密封的舱室。它也在研究你。","SOON":"敬请期待","The chart room is still mapping the deep. Dive sites arrive in a future update.":"海图室仍在绘制深渊。潜点将在未来更新中到来。","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"舱室仍在密封中。开启之时，里面没有任何熟悉之物。","LEVEL UP":"升级","CHOOSE YOUR REWARD":"选择你的奖励","WARDEN BOON":"守望者恩赐","GET TO SAFETY":"快到安全处","SELECT YOUR DIVER":"选择你的潜航员","Tap a diver to begin the descent.":"点击潜航员开始下潜。","Choose an augment":"选择一项强化","Reroll":"重掷","PAUSED":"已暂停","Resume":"继续","Abandon Run":"放弃本局","LIGHTS OUT":"灯灭了","Survived":"存活","Level":"等级","Kills":"击杀","Best Time":"最佳时间","Descend Again":"再次下潜","Run Details":"本局详情","Main Menu":"主菜单","WARDEN FELLED":"守望者已陨落","Claim a permanent boon":"领取永久恩赐","SUPPLY CACHE":"补给箱","A reward from the deep":"来自深渊的奖励","Claim":"领取","VICTORY":"胜利","THE ABYSS YIELDS":"深渊臣服了","Enter the Corruption":"进入侵蚀","Back":"返回","OK":"确定","RUN ARCHIVE":"战绩存档","LEADERBOARD":"排行榜","global rankings":"全球排名","OPTIONS":"设置","system":"系统","SOCIAL":"好友","dive network":"潜航网络","Invites":"邀请","Add Friend":"添加好友","OPERATOR":"操作员","the one behind the diver":"潜航员背后的人","CAPTAIN":"舰长","account ascension":"账号升阶","COSMETICS":"外观","deep couture":"深渊时装","CREDITS":"制作人员","field manual":"战地手册","THE DEEP, EXPLAINED":"深渊解读","NEW":"新","WEAPON":"武器","PASSIVE":"被动","EVOLVE":"进化","INFUSE":"元素","RECOVER":"恢复","SALVAGE":"回收","Instant":"立即","Evolution":"进化","Locks Element (permanent)":"锁定元素（永久）","DEFLECTOR ONLINE":"偏导护盾已上线","DEFLECTOR OVERLOADED":"偏导护盾过载","TRAPPED":"被困住了","NEW FRIEND REQUEST · check Social":"新好友请求 · 查看好友页","Repair Kit":"维修包","Credit Cache":"信用点宝箱","Resume Run":"继续本局"},
-hi:{"Profile":"प्रोफ़ाइल","Captain":"कैप्टन","Cosmetics":"कॉस्मेटिक्स","Social":"मित्र","Leaderboard":"लीडरबोर्ड","Run Archive":"रन आर्काइव","Guides":"गाइड","Settings":"सेटिंग्स","Credits":"क्रेडिट्स","view profile ›":"प्रोफ़ाइल देखें ›","Language":"भाषा","DESCEND":"नीचे उतरो","Customize":"कस्टमाइज़","Dive Network":"डाइव नेटवर्क","Friends":"मित्र","Your record":"आपका रिकॉर्ड","Codex":"कोडेक्स","Bestiary":"जीव-सूची","Options":"विकल्प","Thanks":"धन्यवाद","LORE":"कथा","The starless deep · 18,000m down · it has noticed your light":"तारों-रहित गहराई · 18,000 मीटर नीचे · उसने आपकी रोशनी देख ली है","HULL":"हल","LV":"लेवल","KILLS":"किल्स","CR":"क्रेडिट","REZ":"REZ","DODGE":"डॉज","THREAT":"खतरा","DEPTH":"गहराई","PARRY":"पैरी","GUARD":"गार्ड","CHARGE":"चार्ज","HEX":"हेक्स","DEPLOY":"तैनाती","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"नया · व्रेकस्मिथ आ गया · सभी डाइवर्स और मज़बूत","dive protocol":"डाइव प्रोटोकॉल","CHOOSE YOUR DESCENT":"अपना डिसेंट चुनो","FREE DESCENT":"फ्री डिसेंट","The endless drop. The run you know.":"अंतहीन गिरावट। वही जानी-पहचानी रन।","SONAR CHART":"सोनार चार्ट","Pick your dive site. Deploy anywhere.":"अपनी डाइव साइट चुनो। कहीं भी उतरो।","PERCEPTION":"परसेप्शन","A sealed chamber. It studies you back.":"एक सीलबंद कक्ष। वह भी तुम्हें परख रहा है।","SOON":"जल्द ही","The chart room is still mapping the deep. Dive sites arrive in a future update.":"चार्ट रूम अभी भी गहराई का नक्शा बना रहा है। डाइव साइट्स भविष्य के अपडेट में आएँगी।","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"कक्ष अभी सील किया जा रहा है। जब खुलेगा, अंदर कुछ भी जाना-पहचाना नहीं होगा।","LEVEL UP":"लेवल अप","CHOOSE YOUR REWARD":"अपना इनाम चुनें","WARDEN BOON":"वार्डन का वरदान","GET TO SAFETY":"सुरक्षित जगह जाओ","SELECT YOUR DIVER":"अपना डाइवर चुनें","Tap a diver to begin the descent.":"उतरना शुरू करने के लिए डाइवर पर टैप करें।","Choose an augment":"एक ऑगमेंट चुनें","Reroll":"फिर से रोल","PAUSED":"रुका हुआ","Resume":"जारी रखें","Abandon Run":"रन छोड़ें","LIGHTS OUT":"बत्ती गुल","Survived":"जीवित रहे","Level":"लेवल","Kills":"किल्स","Best Time":"सर्वश्रेष्ठ समय","Descend Again":"फिर से उतरो","Run Details":"रन विवरण","Main Menu":"मुख्य मेनू","WARDEN FELLED":"वार्डन गिर गया","Claim a permanent boon":"स्थायी वरदान लें","SUPPLY CACHE":"सप्लाई कैश","A reward from the deep":"गहराई से एक इनाम","Claim":"लें","VICTORY":"विजय","THE ABYSS YIELDS":"अगाध झुक गया","Enter the Corruption":"करप्शन में प्रवेश","Back":"वापस","OK":"ठीक है","RUN ARCHIVE":"रन आर्काइव","LEADERBOARD":"लीडरबोर्ड","global rankings":"वैश्विक रैंकिंग","OPTIONS":"विकल्प","system":"सिस्टम","SOCIAL":"मित्र","dive network":"डाइव नेटवर्क","Invites":"निमंत्रण","Add Friend":"मित्र जोड़ें","OPERATOR":"ऑपरेटर","the one behind the diver":"डाइवर के पीछे वाला","CAPTAIN":"कैप्टन","account ascension":"खाता उन्नति","COSMETICS":"कॉस्मेटिक्स","deep couture":"गहराई का फ़ैशन","CREDITS":"क्रेडिट्स","field manual":"फ़ील्ड मैनुअल","THE DEEP, EXPLAINED":"गहराई, समझाई गई","NEW":"नया","WEAPON":"हथियार","PASSIVE":"पैसिव","EVOLVE":"विकास","INFUSE":"तत्व","RECOVER":"मरम्मत","SALVAGE":"लूट","Instant":"तुरंत","Evolution":"विकास","Locks Element (permanent)":"तत्व लॉक (स्थायी)","DEFLECTOR ONLINE":"डिफ्लेक्टर चालू","DEFLECTOR OVERLOADED":"डिफ्लेक्टर ओवरलोड","TRAPPED":"फँस गए","NEW FRIEND REQUEST · check Social":"नया मित्र अनुरोध · मित्र पेज देखें","Repair Kit":"रिपेयर किट","Credit Cache":"क्रेडिट कैश","Resume Run":"रन जारी रखें"},
-es:{"Profile":"Perfil","Captain":"Capitán","Cosmetics":"Cosméticos","Social":"Social","Leaderboard":"Clasificación","Run Archive":"Archivo de partidas","Guides":"Guías","Settings":"Ajustes","Credits":"Créditos","view profile ›":"ver perfil ›","Language":"Idioma","DESCEND":"DESCIENDE","Customize":"Personalizar","Dive Network":"Red de buceo","Friends":"Amigos","Your record":"Tu récord","Codex":"Códice","Bestiary":"Bestiario","Options":"Opciones","Thanks":"Gracias","LORE":"HISTORIA","The starless deep · 18,000m down · it has noticed your light":"La profundidad sin estrellas · 18.000 m abajo · ha notado tu luz","HULL":"CASCO","LV":"NV","KILLS":"BAJAS","CR":"CR","REZ":"REZ","DODGE":"ESQUIVAR","THREAT":"AMENAZA","DEPTH":"PROFUNDIDAD","PARRY":"PARADA","GUARD":"GUARDIA","CHARGE":"CARGA","HEX":"MALEFICIO","DEPLOY":"DESPLEGAR","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"NUEVO · EL WRECKSMITH · TODOS LOS BUZOS REFORJADOS","dive protocol":"protocolo de inmersión","CHOOSE YOUR DESCENT":"ELIGE TU DESCENSO","FREE DESCENT":"DESCENSO LIBRE","The endless drop. The run you know.":"La caída sin fin. La partida de siempre.","SONAR CHART":"CARTA DE SONAR","Pick your dive site. Deploy anywhere.":"Elige tu sitio de buceo. Despliega donde quieras.","PERCEPTION":"PERCEPCIÓN","A sealed chamber. It studies you back.":"Una cámara sellada. Ella también te estudia.","SOON":"PRONTO","The chart room is still mapping the deep. Dive sites arrive in a future update.":"La sala de cartas aún está trazando las profundidades. Los sitios de buceo llegarán en una futura actualización.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"La cámara aún se está sellando. Cuando se abra, nada en su interior te resultará familiar.","LEVEL UP":"SUBES DE NIVEL","CHOOSE YOUR REWARD":"ELIGE TU RECOMPENSA","WARDEN BOON":"DON DEL GUARDIÁN","GET TO SAFETY":"PONTE A SALVO","SELECT YOUR DIVER":"ELIGE TU BUZO","Tap a diver to begin the descent.":"Toca un buzo para comenzar el descenso.","Choose an augment":"Elige una mejora","Reroll":"Volver a tirar","PAUSED":"PAUSA","Resume":"Continuar","Abandon Run":"Abandonar partida","LIGHTS OUT":"LUCES FUERA","Survived":"Sobreviviste","Level":"Nivel","Kills":"Bajas","Best Time":"Mejor tiempo","Descend Again":"Desciende otra vez","Run Details":"Detalles de la partida","Main Menu":"Menú principal","WARDEN FELLED":"GUARDIÁN ABATIDO","Claim a permanent boon":"Reclama un don permanente","SUPPLY CACHE":"ALIJO DE SUMINISTROS","A reward from the deep":"Una recompensa de las profundidades","Claim":"Reclamar","VICTORY":"VICTORIA","THE ABYSS YIELDS":"EL ABISMO CEDE","Enter the Corruption":"Entrar en la Corrupción","Back":"Atrás","OK":"OK","RUN ARCHIVE":"ARCHIVO DE PARTIDAS","LEADERBOARD":"CLASIFICACIÓN","global rankings":"clasificación global","OPTIONS":"OPCIONES","system":"sistema","SOCIAL":"SOCIAL","dive network":"red de buceo","Invites":"Invitaciones","Add Friend":"Añadir amigo","OPERATOR":"OPERADOR","the one behind the diver":"quien está detrás del buzo","CAPTAIN":"CAPITÁN","account ascension":"ascensión de cuenta","COSMETICS":"COSMÉTICOS","deep couture":"alta costura del abismo","CREDITS":"CRÉDITOS","field manual":"manual de campo","THE DEEP, EXPLAINED":"EL ABISMO, EXPLICADO","NEW":"NUEVO","WEAPON":"ARMA","PASSIVE":"PASIVA","EVOLVE":"EVOLUCIÓN","INFUSE":"ELEMENTO","RECOVER":"RECUPERAR","SALVAGE":"BOTÍN","Instant":"Instantáneo","Evolution":"Evolución","Locks Element (permanent)":"Fija el elemento (permanente)","DEFLECTOR ONLINE":"DEFLECTOR EN LÍNEA","DEFLECTOR OVERLOADED":"DEFLECTOR SOBRECARGADO","TRAPPED":"ATRAPADO","NEW FRIEND REQUEST · check Social":"NUEVA SOLICITUD DE AMISTAD · mira Social","Repair Kit":"Kit de reparación","Credit Cache":"Alijo de créditos","Resume Run":"Continuar partida"},
-ru:{"Profile":"Профиль","Captain":"Капитан","Cosmetics":"Косметика","Social":"Друзья","Leaderboard":"Таблица лидеров","Run Archive":"Архив забегов","Guides":"Гайды","Settings":"Настройки","Credits":"Титры","view profile ›":"открыть профиль ›","Language":"Язык","DESCEND":"ПОГРУЖЕНИЕ","Customize":"Кастомизация","Dive Network":"Сеть дайверов","Friends":"Друзья","Your record":"Твой рекорд","Codex":"Кодекс","Bestiary":"Бестиарий","Options":"Настройки","Thanks":"Благодарности","LORE":"ЛОР","The starless deep · 18,000m down · it has noticed your light":"Беззвёздная бездна · 18 000 м вниз · она заметила твой свет","HULL":"КОРПУС","LV":"УР","KILLS":"УБИЙСТВА","CR":"КР","REZ":"REZ","DODGE":"РЫВОК","THREAT":"УГРОЗА","DEPTH":"ГЛУБИНА","PARRY":"ПАРИРОВАНИЕ","GUARD":"ЗАЩИТА","CHARGE":"РЫВОК","HEX":"ПРОКЛЯТИЕ","DEPLOY":"РАЗВЕРНУТЬ","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"НОВОЕ · КУЗНЕЦ ОБЛОМКОВ · ВСЕ ДАЙВЕРЫ УСИЛЕНЫ","dive protocol":"протокол погружения","CHOOSE YOUR DESCENT":"ВЫБЕРИ СВОЙ СПУСК","FREE DESCENT":"СВОБОДНЫЙ СПУСК","The endless drop. The run you know.":"Бесконечное падение. Тот самый забег.","SONAR CHART":"СОНАРНАЯ КАРТА","Pick your dive site. Deploy anywhere.":"Выбери точку погружения. Высаживайся где угодно.","PERCEPTION":"ВОСПРИЯТИЕ","A sealed chamber. It studies you back.":"Запечатанная камера. Она изучает тебя в ответ.","SOON":"СКОРО","The chart room is still mapping the deep. Dive sites arrive in a future update.":"Картографическая ещё наносит глубины на карту. Точки погружения появятся в будущем обновлении.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"Камеру ещё запечатывают. Когда она откроется, внутри не будет ничего знакомого.","LEVEL UP":"НОВЫЙ УРОВЕНЬ","CHOOSE YOUR REWARD":"ВЫБЕРИ НАГРАДУ","WARDEN BOON":"ДАР СМОТРИТЕЛЯ","GET TO SAFETY":"УХОДИ В БЕЗОПАСНОСТЬ","SELECT YOUR DIVER":"ВЫБЕРИ ДАЙВЕРА","Tap a diver to begin the descent.":"Нажми на дайвера, чтобы начать погружение.","Choose an augment":"Выбери усиление","Reroll":"Переброс","PAUSED":"ПАУЗА","Resume":"Продолжить","Abandon Run":"Покинуть забег","LIGHTS OUT":"СВЕТ ПОГАС","Survived":"Продержался","Level":"Уровень","Kills":"Убийства","Best Time":"Лучшее время","Descend Again":"Погрузиться снова","Run Details":"Детали забега","Main Menu":"Главное меню","WARDEN FELLED":"СМОТРИТЕЛЬ ПОВЕРЖЕН","Claim a permanent boon":"Забери постоянный дар","SUPPLY CACHE":"ТАЙНИК ПРИПАСОВ","A reward from the deep":"Награда из глубин","Claim":"Забрать","VICTORY":"ПОБЕДА","THE ABYSS YIELDS":"БЕЗДНА УСТУПАЕТ","Enter the Corruption":"Войти в Скверну","Back":"Назад","OK":"ОК","RUN ARCHIVE":"АРХИВ ЗАБЕГОВ","LEADERBOARD":"ТАБЛИЦА ЛИДЕРОВ","global rankings":"мировой рейтинг","OPTIONS":"НАСТРОЙКИ","system":"система","SOCIAL":"ДРУЗЬЯ","dive network":"сеть дайверов","Invites":"Приглашения","Add Friend":"Добавить друга","OPERATOR":"ОПЕРАТОР","the one behind the diver":"тот, кто за дайвером","CAPTAIN":"КАПИТАН","account ascension":"восхождение аккаунта","COSMETICS":"КОСМЕТИКА","deep couture":"мода глубин","CREDITS":"ТИТРЫ","field manual":"полевой устав","THE DEEP, EXPLAINED":"БЕЗДНА, ОБЪЯСНЁННАЯ","NEW":"НОВОЕ","WEAPON":"ОРУЖИЕ","PASSIVE":"ПАССИВКА","EVOLVE":"ЭВОЛЮЦИЯ","INFUSE":"СТИХИЯ","RECOVER":"РЕМОНТ","SALVAGE":"ДОБЫЧА","Instant":"Мгновенно","Evolution":"Эволюция","Locks Element (permanent)":"Закрепляет стихию (навсегда)","DEFLECTOR ONLINE":"ДЕФЛЕКТОР ВКЛЮЧЁН","DEFLECTOR OVERLOADED":"ДЕФЛЕКТОР ПЕРЕГРУЖЕН","TRAPPED":"В ЛОВУШКЕ","NEW FRIEND REQUEST · check Social":"НОВАЯ ЗАЯВКА В ДРУЗЬЯ · смотри Друзья","Repair Kit":"Ремкомплект","Credit Cache":"Тайник кредитов","Resume Run":"Продолжить забег"}
+fa:{"Profile":"پروفایل","Captain":"کاپیتان","Cosmetics":"ظاهر","Social":"دوستان","Leaderboard":"جدول امتیازات","Run Archive":"آرشیو ران‌ها","Guides":"راهنماها","Settings":"تنظیمات","Credits":"سازندگان","view profile ›":"مشاهده پروفایل ›","Language":"زبان","DESCEND":"فرود","Customize":"شخصی‌سازی","Dive Network":"شبکه غواصان","Friends":"دوستان","Your record":"رکورد شما","Codex":"دانشنامه","Bestiary":"هیولانامه","Options":"تنظیمات","Thanks":"سپاس","LORE":"روایت","The starless deep · 18,000m down · it has noticed your light":"ژرفای بی‌ستاره · ۱۸٬۰۰۰ متر پایین · نورت را دیده است","HULL":"بدنه","LV":"سطح","KILLS":"شکار","CR":"اعتبار","REZ":"REZ","DODGE":"جاخالی","THREAT":"تهدید","DEPTH":"عمق","PARRY":"دفع","GUARD":"گارد","CHARGE":"یورش","HEX":"طلسم","DEPLOY":"برپا","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"جدید · آهنگرِ لاشه‌ها · بازتوازنِ کاملِ غواص‌ها","dive protocol":"پروتکلِ فرود","CHOOSE YOUR DESCENT":"فرودت را انتخاب کن","FREE DESCENT":"فرودِ آزاد","The endless drop. The run you know.":"سقوطِ بی‌پایان. همان رانِ همیشگی.","SONAR CHART":"نقشه‌ی سونار","Pick your dive site. Deploy anywhere.":"جای فرودت را انتخاب کن. هر کجا که بخواهی.","PERCEPTION":"ادراک","A sealed chamber. It studies you back.":"محفظه‌ای مهروموم. او نیز تو را می‌کاود.","SOON":"به‌زودی","The chart room is still mapping the deep. Dive sites arrive in a future update.":"اتاقِ نقشه هنوز ژرفا را ترسیم می‌کند. سایت‌های غواصی در آپدیتی آینده از راه می‌رسند.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"محفظه هنوز مهروموم می‌شود. وقتی گشوده شود، هیچ‌چیزِ درونش آشنا نخواهد بود.","the chart room":"اتاقِ نقشه","New signals surface as old ones fade.":"سیگنال‌های تازه سر برمی‌آورند و کهنه‌ها محو می‌شوند.","SELECT A SIGNAL":"یک سیگنال انتخاب کن","GRID":"مختصات","DIFFICULTY":"دشواری","HOSTILE FORECAST":"پیش‌بینی دشمنان","WARDEN":"نگهبان","CONDITIONS":"شرایط","REWARDS":"پاداش‌ها","EXPIRES":"انقضا","DEPLOY TO FLOOR":"فرود به مختصات","ABYSSAL":"مغاکی","HADAL":"هادال","SUNLESS":"بی‌خورشید","NIGHTMARE":"کابوس","FAINT":"کم‌سو","CLEAR":"شفاف","STRONG":"قوی","LEGENDARY":"افسانه‌ای","THICK HIDE":"پوستِ سخت","SHARP TEETH":"دندان‌های تیز","RIPTIDE":"جریانِ مرگبار","SWARM TIDE":"موجِ انبوه","APEX PACK":"گله‌ی برتر","IRON WARDEN":"نگهبانِ آهنین","HUNGRY DARK":"تاریکیِ گرسنه","RICH VEIN":"رگه‌ی غنی","DEEP GLOW":"تابشِ ژرف","UNIQUE":"یگانه","GLINT":"سوسو","PEARL":"مروارید","ECHO":"پژواک","GOAL":"هدف","PEARL RECOVERED":"مروارید به دست آمد","SIGNAL CLEARED":"سیگنال پاکسازی شد","Credits. The everyday coin of the deep.":"اعتبار. سکه‌ی هرروزه‌ی ژرفا.","Bioluminescent motes. Earned every descent; brighter floors pay more.":"ذره‌های شب‌تاب. در هر فرود به دست می‌آید؛ کف‌های درخشان‌تر بیشتر می‌پردازند.","The deep gives these up rarely. Wardens and cleared floors.":"ژرفا این‌ها را به‌ندرت پس می‌دهد. از نگهبان‌ها و کف‌های پاکسازی‌شده.","Only a cleared UNIQUE signal leaves one behind.":"تنها سیگنالِ یگانه‌ی پاکسازی‌شده یکی به جا می‌گذارد.","THE CHAMBER SEALS":"محفظه مهروموم می‌شود","five minutes. it is watching.":"پنج دقیقه. او تماشا می‌کند.","TRIAL COMPLETE":"آزمون کامل شد","THE CHAMBER KEEPS YOU":"محفظه تو را نگه می‌دارد","SCORE":"امتیاز","BEST":"بهترین","the sealed chambers":"محفظه‌های مهروموم","It studies you in stages.":"او تو را مرحله‌به‌مرحله می‌کاود.","OBSERVATION":"مشاهده","CALIBRATION":"واسنجی","Clear the previous chamber first.":"نخست محفظه‌ی پیشین را پاکسازی کن.","NEXT CHAMBER UNLOCKED":"محفظه‌ی بعدی گشوده شد","LEVEL UP":"ارتقا","CHOOSE YOUR REWARD":"پاداشت را انتخاب کن","WARDEN BOON":"موهبت نگهبان","GET TO SAFETY":"به جای امن برو","SELECT YOUR DIVER":"غواصت را انتخاب کن","Tap a diver to begin the descent.":"برای شروع فرود، روی یک غواص بزن.","Choose an augment":"یک تقویت انتخاب کن","Reroll":"قرعه دوباره","PAUSED":"توقف","Resume":"ادامه","Abandon Run":"رها کردن ران","LIGHTS OUT":"خاموشی","Survived":"دوام آوردی","Level":"سطح","Kills":"شکارها","Best Time":"بهترین زمان","Descend Again":"فرود دوباره","Run Details":"جزئیات ران","Main Menu":"منوی اصلی","WARDEN FELLED":"نگهبان سقوط کرد","Claim a permanent boon":"یک موهبت دائمی بردار","SUPPLY CACHE":"محموله تدارکات","A reward from the deep":"پاداشی از اعماق","Claim":"برداشتن","VICTORY":"پیروزی","THE ABYSS YIELDS":"مغاک تسلیم شد","Enter the Corruption":"ورود به فساد","Back":"بازگشت","OK":"باشه","RUN ARCHIVE":"آرشیو ران‌ها","LEADERBOARD":"جدول امتیازات","global rankings":"رده‌بندی جهانی","OPTIONS":"تنظیمات","system":"سیستم","SOCIAL":"دوستان","dive network":"شبکه غواصان","Invites":"دعوت‌ها","Add Friend":"افزودن دوست","OPERATOR":"اپراتور","the one behind the diver":"کسی که پشت غواص است","CAPTAIN":"کاپیتان","account ascension":"صعود حساب","COSMETICS":"ظاهر","deep couture":"مد اعماق","CREDITS":"سازندگان","field manual":"دفترچه میدانی","THE DEEP, EXPLAINED":"اعماق، به زبان ساده","NEW":"جدید","WEAPON":"سلاح","PASSIVE":"پسیو","EVOLVE":"تکامل","INFUSE":"عنصر","RECOVER":"ترمیم","SALVAGE":"غنیمت","Instant":"فوری","Evolution":"تکامل","Locks Element (permanent)":"قفل عنصر (دائمی)","DEFLECTOR ONLINE":"دفلکتور فعال شد","DEFLECTOR OVERLOADED":"دفلکتور از کار افتاد","TRAPPED":"گیر افتادی","NEW FRIEND REQUEST · check Social":"درخواست دوستی جدید · بخش دوستان را ببین","Repair Kit":"کیت تعمیر","Credit Cache":"بسته اعتبار","Resume Run":"ادامه ران","Language":"زبان","Choose your language":"زبان خود را انتخاب کن","Lore":"روایت","The story":"داستان"},
+zh:{"Profile":"个人资料","Captain":"舰长","Cosmetics":"外观","Social":"好友","Leaderboard":"排行榜","Run Archive":"战绩存档","Guides":"指南","Settings":"设置","Credits":"制作人员","view profile ›":"查看资料 ›","Language":"语言","DESCEND":"下潜","Customize":"自定义","Dive Network":"潜航网络","Friends":"好友","Your record":"你的记录","Codex":"图鉴","Bestiary":"怪物图鉴","Options":"设置","Thanks":"鸣谢","LORE":"传说","The starless deep · 18,000m down · it has noticed your light":"无星深渊 · 下潜18,000米 · 它注意到了你的光","HULL":"船体","LV":"等级","KILLS":"击杀","CR":"信用点","REZ":"REZ","DODGE":"闪避","THREAT":"威胁","DEPTH":"深度","PARRY":"格挡","GUARD":"防御","CHARGE":"冲锋","HEX":"咒术","DEPLOY":"部署","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"新 · 残骸铁匠登场 · 全体潜航员重铸","dive protocol":"下潜协议","CHOOSE YOUR DESCENT":"选择你的下潜","FREE DESCENT":"自由下潜","The endless drop. The run you know.":"无尽的坠落。你熟悉的那一局。","SONAR CHART":"声呐海图","Pick your dive site. Deploy anywhere.":"选择你的潜点。任意部署。","PERCEPTION":"感知","A sealed chamber. It studies you back.":"密封的舱室。它也在研究你。","SOON":"敬请期待","The chart room is still mapping the deep. Dive sites arrive in a future update.":"海图室仍在绘制深渊。潜点将在未来更新中到来。","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"舱室仍在密封中。开启之时，里面没有任何熟悉之物。","the chart room":"海图室","New signals surface as old ones fade.":"新信号不断浮现，旧信号逐渐消散。","SELECT A SIGNAL":"选择一个信号","GRID":"坐标","DIFFICULTY":"难度","HOSTILE FORECAST":"敌情预报","WARDEN":"守望者","CONDITIONS":"条件","REWARDS":"奖励","EXPIRES":"失效","DEPLOY TO FLOOR":"部署至此层","ABYSSAL":"深渊","HADAL":"超深渊","SUNLESS":"无光","NIGHTMARE":"梦魇","FAINT":"微弱","CLEAR":"清晰","STRONG":"强烈","LEGENDARY":"传奇","THICK HIDE":"厚甲","SHARP TEETH":"利齿","RIPTIDE":"激流","SWARM TIDE":"蜂群之潮","APEX PACK":"顶级掠群","IRON WARDEN":"铁之守望者","HUNGRY DARK":"饥饿黑暗","RICH VEIN":"富矿脉","DEEP GLOW":"深层辉光","UNIQUE":"独特","GLINT":"微光","PEARL":"珍珠","ECHO":"回响","GOAL":"目标","PEARL RECOVERED":"寻获珍珠","SIGNAL CLEARED":"信号已通关","Credits. The everyday coin of the deep.":"信用点。深渊的日常货币。","Bioluminescent motes. Earned every descent; brighter floors pay more.":"生物荧光微尘。每次下潜均可获得；更亮的层付得更多。","The deep gives these up rarely. Wardens and cleared floors.":"深渊很少交出这些。来自守望者与已通关的层。","Only a cleared UNIQUE signal leaves one behind.":"只有通关的独特信号才会留下一枚。","THE CHAMBER SEALS":"舱室封闭","five minutes. it is watching.":"五分钟。它在注视。","TRIAL COMPLETE":"试炼完成","THE CHAMBER KEEPS YOU":"舱室留下了你","SCORE":"得分","BEST":"最佳","the sealed chambers":"密封舱群","It studies you in stages.":"它分阶段研究你。","OBSERVATION":"观察","CALIBRATION":"校准","Clear the previous chamber first.":"先通关上一间舱室。","NEXT CHAMBER UNLOCKED":"下一舱室已解锁","LEVEL UP":"升级","CHOOSE YOUR REWARD":"选择你的奖励","WARDEN BOON":"守望者恩赐","GET TO SAFETY":"快到安全处","SELECT YOUR DIVER":"选择你的潜航员","Tap a diver to begin the descent.":"点击潜航员开始下潜。","Choose an augment":"选择一项强化","Reroll":"重掷","PAUSED":"已暂停","Resume":"继续","Abandon Run":"放弃本局","LIGHTS OUT":"灯灭了","Survived":"存活","Level":"等级","Kills":"击杀","Best Time":"最佳时间","Descend Again":"再次下潜","Run Details":"本局详情","Main Menu":"主菜单","WARDEN FELLED":"守望者已陨落","Claim a permanent boon":"领取永久恩赐","SUPPLY CACHE":"补给箱","A reward from the deep":"来自深渊的奖励","Claim":"领取","VICTORY":"胜利","THE ABYSS YIELDS":"深渊臣服了","Enter the Corruption":"进入侵蚀","Back":"返回","OK":"确定","RUN ARCHIVE":"战绩存档","LEADERBOARD":"排行榜","global rankings":"全球排名","OPTIONS":"设置","system":"系统","SOCIAL":"好友","dive network":"潜航网络","Invites":"邀请","Add Friend":"添加好友","OPERATOR":"操作员","the one behind the diver":"潜航员背后的人","CAPTAIN":"舰长","account ascension":"账号升阶","COSMETICS":"外观","deep couture":"深渊时装","CREDITS":"制作人员","field manual":"战地手册","THE DEEP, EXPLAINED":"深渊解读","NEW":"新","WEAPON":"武器","PASSIVE":"被动","EVOLVE":"进化","INFUSE":"元素","RECOVER":"恢复","SALVAGE":"回收","Instant":"立即","Evolution":"进化","Locks Element (permanent)":"锁定元素（永久）","DEFLECTOR ONLINE":"偏导护盾已上线","DEFLECTOR OVERLOADED":"偏导护盾过载","TRAPPED":"被困住了","NEW FRIEND REQUEST · check Social":"新好友请求 · 查看好友页","Repair Kit":"维修包","Credit Cache":"信用点宝箱","Resume Run":"继续本局"},
+hi:{"Profile":"प्रोफ़ाइल","Captain":"कैप्टन","Cosmetics":"कॉस्मेटिक्स","Social":"मित्र","Leaderboard":"लीडरबोर्ड","Run Archive":"रन आर्काइव","Guides":"गाइड","Settings":"सेटिंग्स","Credits":"क्रेडिट्स","view profile ›":"प्रोफ़ाइल देखें ›","Language":"भाषा","DESCEND":"नीचे उतरो","Customize":"कस्टमाइज़","Dive Network":"डाइव नेटवर्क","Friends":"मित्र","Your record":"आपका रिकॉर्ड","Codex":"कोडेक्स","Bestiary":"जीव-सूची","Options":"विकल्प","Thanks":"धन्यवाद","LORE":"कथा","The starless deep · 18,000m down · it has noticed your light":"तारों-रहित गहराई · 18,000 मीटर नीचे · उसने आपकी रोशनी देख ली है","HULL":"हल","LV":"लेवल","KILLS":"किल्स","CR":"क्रेडिट","REZ":"REZ","DODGE":"डॉज","THREAT":"खतरा","DEPTH":"गहराई","PARRY":"पैरी","GUARD":"गार्ड","CHARGE":"चार्ज","HEX":"हेक्स","DEPLOY":"तैनाती","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"नया · व्रेकस्मिथ आ गया · सभी डाइवर्स और मज़बूत","dive protocol":"डाइव प्रोटोकॉल","CHOOSE YOUR DESCENT":"अपना डिसेंट चुनो","FREE DESCENT":"फ्री डिसेंट","The endless drop. The run you know.":"अंतहीन गिरावट। वही जानी-पहचानी रन।","SONAR CHART":"सोनार चार्ट","Pick your dive site. Deploy anywhere.":"अपनी डाइव साइट चुनो। कहीं भी उतरो।","PERCEPTION":"परसेप्शन","A sealed chamber. It studies you back.":"एक सीलबंद कक्ष। वह भी तुम्हें परख रहा है।","SOON":"जल्द ही","The chart room is still mapping the deep. Dive sites arrive in a future update.":"चार्ट रूम अभी भी गहराई का नक्शा बना रहा है। डाइव साइट्स भविष्य के अपडेट में आएँगी।","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"कक्ष अभी सील किया जा रहा है। जब खुलेगा, अंदर कुछ भी जाना-पहचाना नहीं होगा।","the chart room":"चार्ट रूम","New signals surface as old ones fade.":"नए सिग्नल उभरते हैं, पुराने मिट जाते हैं।","SELECT A SIGNAL":"एक सिग्नल चुनो","GRID":"निर्देशांक","DIFFICULTY":"कठिनाई","HOSTILE FORECAST":"दुश्मन पूर्वानुमान","WARDEN":"वार्डन","CONDITIONS":"शर्तें","REWARDS":"इनाम","EXPIRES":"समाप्ति","DEPLOY TO FLOOR":"इस फ्लोर पर उतरो","ABYSSAL":"अगाध","HADAL":"हडाल","SUNLESS":"सूर्यहीन","NIGHTMARE":"दुःस्वप्न","FAINT":"धुंधला","CLEAR":"स्पष्ट","STRONG":"प्रबल","LEGENDARY":"पौराणिक","THICK HIDE":"मोटी खाल","SHARP TEETH":"तेज़ दाँत","RIPTIDE":"तेज़ धारा","SWARM TIDE":"झुंड की लहर","APEX PACK":"शिखर झुंड","IRON WARDEN":"लौह वार्डन","HUNGRY DARK":"भूखा अंधकार","RICH VEIN":"समृद्ध शिरा","DEEP GLOW":"गहरी चमक","UNIQUE":"अद्वितीय","GLINT":"झिलमिल","PEARL":"मोती","ECHO":"प्रतिध्वनि","GOAL":"लक्ष्य","PEARL RECOVERED":"मोती मिला","SIGNAL CLEARED":"सिग्नल क्लियर","Credits. The everyday coin of the deep.":"क्रेडिट। गहराई का रोज़मर्रा सिक्का।","Bioluminescent motes. Earned every descent; brighter floors pay more.":"जैव-दीप्त कण। हर डिसेंट में मिलते हैं; चमकीले फ्लोर ज़्यादा देते हैं।","The deep gives these up rarely. Wardens and cleared floors.":"गहराई इन्हें कम ही देती है। वार्डन और क्लियर किए फ्लोर से।","Only a cleared UNIQUE signal leaves one behind.":"केवल क्लियर किया गया यूनिक सिग्नल एक छोड़ता है।","THE CHAMBER SEALS":"कक्ष सील हो गया","five minutes. it is watching.":"पाँच मिनट। वह देख रहा है।","TRIAL COMPLETE":"परीक्षण पूर्ण","THE CHAMBER KEEPS YOU":"कक्ष ने तुम्हें रोक लिया","SCORE":"स्कोर","BEST":"सर्वश्रेष्ठ","the sealed chambers":"सीलबंद कक्ष","It studies you in stages.":"वह तुम्हें चरण-दर-चरण परखता है।","OBSERVATION":"अवलोकन","CALIBRATION":"अंशांकन","Clear the previous chamber first.":"पहले पिछला कक्ष क्लियर करो।","NEXT CHAMBER UNLOCKED":"अगला कक्ष अनलॉक हुआ","LEVEL UP":"लेवल अप","CHOOSE YOUR REWARD":"अपना इनाम चुनें","WARDEN BOON":"वार्डन का वरदान","GET TO SAFETY":"सुरक्षित जगह जाओ","SELECT YOUR DIVER":"अपना डाइवर चुनें","Tap a diver to begin the descent.":"उतरना शुरू करने के लिए डाइवर पर टैप करें।","Choose an augment":"एक ऑगमेंट चुनें","Reroll":"फिर से रोल","PAUSED":"रुका हुआ","Resume":"जारी रखें","Abandon Run":"रन छोड़ें","LIGHTS OUT":"बत्ती गुल","Survived":"जीवित रहे","Level":"लेवल","Kills":"किल्स","Best Time":"सर्वश्रेष्ठ समय","Descend Again":"फिर से उतरो","Run Details":"रन विवरण","Main Menu":"मुख्य मेनू","WARDEN FELLED":"वार्डन गिर गया","Claim a permanent boon":"स्थायी वरदान लें","SUPPLY CACHE":"सप्लाई कैश","A reward from the deep":"गहराई से एक इनाम","Claim":"लें","VICTORY":"विजय","THE ABYSS YIELDS":"अगाध झुक गया","Enter the Corruption":"करप्शन में प्रवेश","Back":"वापस","OK":"ठीक है","RUN ARCHIVE":"रन आर्काइव","LEADERBOARD":"लीडरबोर्ड","global rankings":"वैश्विक रैंकिंग","OPTIONS":"विकल्प","system":"सिस्टम","SOCIAL":"मित्र","dive network":"डाइव नेटवर्क","Invites":"निमंत्रण","Add Friend":"मित्र जोड़ें","OPERATOR":"ऑपरेटर","the one behind the diver":"डाइवर के पीछे वाला","CAPTAIN":"कैप्टन","account ascension":"खाता उन्नति","COSMETICS":"कॉस्मेटिक्स","deep couture":"गहराई का फ़ैशन","CREDITS":"क्रेडिट्स","field manual":"फ़ील्ड मैनुअल","THE DEEP, EXPLAINED":"गहराई, समझाई गई","NEW":"नया","WEAPON":"हथियार","PASSIVE":"पैसिव","EVOLVE":"विकास","INFUSE":"तत्व","RECOVER":"मरम्मत","SALVAGE":"लूट","Instant":"तुरंत","Evolution":"विकास","Locks Element (permanent)":"तत्व लॉक (स्थायी)","DEFLECTOR ONLINE":"डिफ्लेक्टर चालू","DEFLECTOR OVERLOADED":"डिफ्लेक्टर ओवरलोड","TRAPPED":"फँस गए","NEW FRIEND REQUEST · check Social":"नया मित्र अनुरोध · मित्र पेज देखें","Repair Kit":"रिपेयर किट","Credit Cache":"क्रेडिट कैश","Resume Run":"रन जारी रखें"},
+es:{"Profile":"Perfil","Captain":"Capitán","Cosmetics":"Cosméticos","Social":"Social","Leaderboard":"Clasificación","Run Archive":"Archivo de partidas","Guides":"Guías","Settings":"Ajustes","Credits":"Créditos","view profile ›":"ver perfil ›","Language":"Idioma","DESCEND":"DESCIENDE","Customize":"Personalizar","Dive Network":"Red de buceo","Friends":"Amigos","Your record":"Tu récord","Codex":"Códice","Bestiary":"Bestiario","Options":"Opciones","Thanks":"Gracias","LORE":"HISTORIA","The starless deep · 18,000m down · it has noticed your light":"La profundidad sin estrellas · 18.000 m abajo · ha notado tu luz","HULL":"CASCO","LV":"NV","KILLS":"BAJAS","CR":"CR","REZ":"REZ","DODGE":"ESQUIVAR","THREAT":"AMENAZA","DEPTH":"PROFUNDIDAD","PARRY":"PARADA","GUARD":"GUARDIA","CHARGE":"CARGA","HEX":"MALEFICIO","DEPLOY":"DESPLEGAR","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"NUEVO · EL WRECKSMITH · TODOS LOS BUZOS REFORJADOS","dive protocol":"protocolo de inmersión","CHOOSE YOUR DESCENT":"ELIGE TU DESCENSO","FREE DESCENT":"DESCENSO LIBRE","The endless drop. The run you know.":"La caída sin fin. La partida de siempre.","SONAR CHART":"CARTA DE SONAR","Pick your dive site. Deploy anywhere.":"Elige tu sitio de buceo. Despliega donde quieras.","PERCEPTION":"PERCEPCIÓN","A sealed chamber. It studies you back.":"Una cámara sellada. Ella también te estudia.","SOON":"PRONTO","The chart room is still mapping the deep. Dive sites arrive in a future update.":"La sala de cartas aún está trazando las profundidades. Los sitios de buceo llegarán en una futura actualización.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"La cámara aún se está sellando. Cuando se abra, nada en su interior te resultará familiar.","the chart room":"la sala de cartas","New signals surface as old ones fade.":"Nuevas señales emergen mientras las viejas se desvanecen.","SELECT A SIGNAL":"ELIGE UNA SEÑAL","GRID":"CUADRÍCULA","DIFFICULTY":"DIFICULTAD","HOSTILE FORECAST":"PRONÓSTICO HOSTIL","WARDEN":"GUARDIÁN","CONDITIONS":"CONDICIONES","REWARDS":"RECOMPENSAS","EXPIRES":"EXPIRA","DEPLOY TO FLOOR":"DESPLEGAR AQUÍ","ABYSSAL":"ABISAL","HADAL":"HADAL","SUNLESS":"SIN SOL","NIGHTMARE":"PESADILLA","FAINT":"DÉBIL","CLEAR":"CLARA","STRONG":"FUERTE","LEGENDARY":"LEGENDARIA","THICK HIDE":"PIEL GRUESA","SHARP TEETH":"DIENTES AFILADOS","RIPTIDE":"RESACA","SWARM TIDE":"MAREA DE ENJAMBRE","APEX PACK":"MANADA ALFA","IRON WARDEN":"GUARDIÁN DE HIERRO","HUNGRY DARK":"OSCURIDAD HAMBRIENTA","RICH VEIN":"VETA RICA","DEEP GLOW":"BRILLO PROFUNDO","UNIQUE":"ÚNICA","GLINT":"DESTELLO","PEARL":"PERLA","ECHO":"ECO","GOAL":"OBJETIVO","PEARL RECOVERED":"PERLA RECUPERADA","SIGNAL CLEARED":"SEÑAL DESPEJADA","Credits. The everyday coin of the deep.":"Créditos. La moneda diaria del abismo.","Bioluminescent motes. Earned every descent; brighter floors pay more.":"Motas bioluminiscentes. Se ganan en cada descenso; los pisos más brillantes pagan más.","The deep gives these up rarely. Wardens and cleared floors.":"El abismo rara vez las entrega. Guardianes y pisos despejados.","Only a cleared UNIQUE signal leaves one behind.":"Solo una señal ÚNICA despejada deja uno.","THE CHAMBER SEALS":"LA CÁMARA SE SELLA","five minutes. it is watching.":"cinco minutos. te observa.","TRIAL COMPLETE":"PRUEBA COMPLETA","THE CHAMBER KEEPS YOU":"LA CÁMARA TE RETIENE","SCORE":"PUNTOS","BEST":"RÉCORD","the sealed chambers":"las cámaras selladas","It studies you in stages.":"Te estudia por etapas.","OBSERVATION":"OBSERVACIÓN","CALIBRATION":"CALIBRACIÓN","Clear the previous chamber first.":"Despeja primero la cámara anterior.","NEXT CHAMBER UNLOCKED":"SIGUIENTE CÁMARA DESBLOQUEADA","LEVEL UP":"SUBES DE NIVEL","CHOOSE YOUR REWARD":"ELIGE TU RECOMPENSA","WARDEN BOON":"DON DEL GUARDIÁN","GET TO SAFETY":"PONTE A SALVO","SELECT YOUR DIVER":"ELIGE TU BUZO","Tap a diver to begin the descent.":"Toca un buzo para comenzar el descenso.","Choose an augment":"Elige una mejora","Reroll":"Volver a tirar","PAUSED":"PAUSA","Resume":"Continuar","Abandon Run":"Abandonar partida","LIGHTS OUT":"LUCES FUERA","Survived":"Sobreviviste","Level":"Nivel","Kills":"Bajas","Best Time":"Mejor tiempo","Descend Again":"Desciende otra vez","Run Details":"Detalles de la partida","Main Menu":"Menú principal","WARDEN FELLED":"GUARDIÁN ABATIDO","Claim a permanent boon":"Reclama un don permanente","SUPPLY CACHE":"ALIJO DE SUMINISTROS","A reward from the deep":"Una recompensa de las profundidades","Claim":"Reclamar","VICTORY":"VICTORIA","THE ABYSS YIELDS":"EL ABISMO CEDE","Enter the Corruption":"Entrar en la Corrupción","Back":"Atrás","OK":"OK","RUN ARCHIVE":"ARCHIVO DE PARTIDAS","LEADERBOARD":"CLASIFICACIÓN","global rankings":"clasificación global","OPTIONS":"OPCIONES","system":"sistema","SOCIAL":"SOCIAL","dive network":"red de buceo","Invites":"Invitaciones","Add Friend":"Añadir amigo","OPERATOR":"OPERADOR","the one behind the diver":"quien está detrás del buzo","CAPTAIN":"CAPITÁN","account ascension":"ascensión de cuenta","COSMETICS":"COSMÉTICOS","deep couture":"alta costura del abismo","CREDITS":"CRÉDITOS","field manual":"manual de campo","THE DEEP, EXPLAINED":"EL ABISMO, EXPLICADO","NEW":"NUEVO","WEAPON":"ARMA","PASSIVE":"PASIVA","EVOLVE":"EVOLUCIÓN","INFUSE":"ELEMENTO","RECOVER":"RECUPERAR","SALVAGE":"BOTÍN","Instant":"Instantáneo","Evolution":"Evolución","Locks Element (permanent)":"Fija el elemento (permanente)","DEFLECTOR ONLINE":"DEFLECTOR EN LÍNEA","DEFLECTOR OVERLOADED":"DEFLECTOR SOBRECARGADO","TRAPPED":"ATRAPADO","NEW FRIEND REQUEST · check Social":"NUEVA SOLICITUD DE AMISTAD · mira Social","Repair Kit":"Kit de reparación","Credit Cache":"Alijo de créditos","Resume Run":"Continuar partida"},
+ru:{"Profile":"Профиль","Captain":"Капитан","Cosmetics":"Косметика","Social":"Друзья","Leaderboard":"Таблица лидеров","Run Archive":"Архив забегов","Guides":"Гайды","Settings":"Настройки","Credits":"Титры","view profile ›":"открыть профиль ›","Language":"Язык","DESCEND":"ПОГРУЖЕНИЕ","Customize":"Кастомизация","Dive Network":"Сеть дайверов","Friends":"Друзья","Your record":"Твой рекорд","Codex":"Кодекс","Bestiary":"Бестиарий","Options":"Настройки","Thanks":"Благодарности","LORE":"ЛОР","The starless deep · 18,000m down · it has noticed your light":"Беззвёздная бездна · 18 000 м вниз · она заметила твой свет","HULL":"КОРПУС","LV":"УР","KILLS":"УБИЙСТВА","CR":"КР","REZ":"REZ","DODGE":"РЫВОК","THREAT":"УГРОЗА","DEPTH":"ГЛУБИНА","PARRY":"ПАРИРОВАНИЕ","GUARD":"ЗАЩИТА","CHARGE":"РЫВОК","HEX":"ПРОКЛЯТИЕ","DEPLOY":"РАЗВЕРНУТЬ","NEW · THE WRECKSMITH · ALL DIVERS REFORGED":"НОВОЕ · КУЗНЕЦ ОБЛОМКОВ · ВСЕ ДАЙВЕРЫ УСИЛЕНЫ","dive protocol":"протокол погружения","CHOOSE YOUR DESCENT":"ВЫБЕРИ СВОЙ СПУСК","FREE DESCENT":"СВОБОДНЫЙ СПУСК","The endless drop. The run you know.":"Бесконечное падение. Тот самый забег.","SONAR CHART":"СОНАРНАЯ КАРТА","Pick your dive site. Deploy anywhere.":"Выбери точку погружения. Высаживайся где угодно.","PERCEPTION":"ВОСПРИЯТИЕ","A sealed chamber. It studies you back.":"Запечатанная камера. Она изучает тебя в ответ.","SOON":"СКОРО","The chart room is still mapping the deep. Dive sites arrive in a future update.":"Картографическая ещё наносит глубины на карту. Точки погружения появятся в будущем обновлении.","The chamber is still being sealed. When it opens, nothing inside will be familiar.":"Камеру ещё запечатывают. Когда она откроется, внутри не будет ничего знакомого.","the chart room":"картографическая","New signals surface as old ones fade.":"Новые сигналы всплывают, старые угасают.","SELECT A SIGNAL":"ВЫБЕРИ СИГНАЛ","GRID":"КООРДИНАТЫ","DIFFICULTY":"СЛОЖНОСТЬ","HOSTILE FORECAST":"ПРОГНОЗ ВРАГОВ","WARDEN":"СТРАЖ","CONDITIONS":"УСЛОВИЯ","REWARDS":"НАГРАДЫ","EXPIRES":"ИСТЕКАЕТ","DEPLOY TO FLOOR":"ВЫСАДКА НА ЭТАЖ","ABYSSAL":"БЕЗДНА","HADAL":"ХАДАЛ","SUNLESS":"БЕССОЛНЕЧНЫЙ","NIGHTMARE":"КОШМАР","FAINT":"СЛАБЫЙ","CLEAR":"ЧЁТКИЙ","STRONG":"СИЛЬНЫЙ","LEGENDARY":"ЛЕГЕНДАРНЫЙ","THICK HIDE":"ТОЛСТАЯ ШКУРА","SHARP TEETH":"ОСТРЫЕ ЗУБЫ","RIPTIDE":"ОТБОЙНОЕ ТЕЧЕНИЕ","SWARM TIDE":"ПРИЛИВ РОЯ","APEX PACK":"ВЫСШАЯ СТАЯ","IRON WARDEN":"ЖЕЛЕЗНЫЙ СТРАЖ","HUNGRY DARK":"ГОЛОДНАЯ ТЬМА","RICH VEIN":"БОГАТАЯ ЖИЛА","DEEP GLOW":"ГЛУБИННОЕ СВЕЧЕНИЕ","UNIQUE":"УНИКАЛЬНЫЙ","GLINT":"БЛИК","PEARL":"ЖЕМЧУГ","ECHO":"ЭХО","GOAL":"ЦЕЛЬ","PEARL RECOVERED":"ЖЕМЧУГ НАЙДЕН","SIGNAL CLEARED":"СИГНАЛ ЗАЧИЩЕН","Credits. The everyday coin of the deep.":"Кредиты. Повседневная монета бездны.","Bioluminescent motes. Earned every descent; brighter floors pay more.":"Биолюминесцентные искры. Даются за каждый спуск; яркие этажи платят больше.","The deep gives these up rarely. Wardens and cleared floors.":"Бездна отдаёт их редко. Стражи и зачищенные этажи.","Only a cleared UNIQUE signal leaves one behind.":"Только зачищенный УНИКАЛЬНЫЙ сигнал оставляет одно.","THE CHAMBER SEALS":"КАМЕРА ЗАПЕЧАТАНА","five minutes. it is watching.":"пять минут. она наблюдает.","TRIAL COMPLETE":"ИСПЫТАНИЕ ПРОЙДЕНО","THE CHAMBER KEEPS YOU":"КАМЕРА ОСТАВИЛА ТЕБЯ","SCORE":"СЧЁТ","BEST":"РЕКОРД","the sealed chambers":"запечатанные камеры","It studies you in stages.":"Она изучает тебя поэтапно.","OBSERVATION":"НАБЛЮДЕНИЕ","CALIBRATION":"КАЛИБРОВКА","Clear the previous chamber first.":"Сначала зачисти предыдущую камеру.","NEXT CHAMBER UNLOCKED":"СЛЕДУЮЩАЯ КАМЕРА ОТКРЫТА","LEVEL UP":"НОВЫЙ УРОВЕНЬ","CHOOSE YOUR REWARD":"ВЫБЕРИ НАГРАДУ","WARDEN BOON":"ДАР СМОТРИТЕЛЯ","GET TO SAFETY":"УХОДИ В БЕЗОПАСНОСТЬ","SELECT YOUR DIVER":"ВЫБЕРИ ДАЙВЕРА","Tap a diver to begin the descent.":"Нажми на дайвера, чтобы начать погружение.","Choose an augment":"Выбери усиление","Reroll":"Переброс","PAUSED":"ПАУЗА","Resume":"Продолжить","Abandon Run":"Покинуть забег","LIGHTS OUT":"СВЕТ ПОГАС","Survived":"Продержался","Level":"Уровень","Kills":"Убийства","Best Time":"Лучшее время","Descend Again":"Погрузиться снова","Run Details":"Детали забега","Main Menu":"Главное меню","WARDEN FELLED":"СМОТРИТЕЛЬ ПОВЕРЖЕН","Claim a permanent boon":"Забери постоянный дар","SUPPLY CACHE":"ТАЙНИК ПРИПАСОВ","A reward from the deep":"Награда из глубин","Claim":"Забрать","VICTORY":"ПОБЕДА","THE ABYSS YIELDS":"БЕЗДНА УСТУПАЕТ","Enter the Corruption":"Войти в Скверну","Back":"Назад","OK":"ОК","RUN ARCHIVE":"АРХИВ ЗАБЕГОВ","LEADERBOARD":"ТАБЛИЦА ЛИДЕРОВ","global rankings":"мировой рейтинг","OPTIONS":"НАСТРОЙКИ","system":"система","SOCIAL":"ДРУЗЬЯ","dive network":"сеть дайверов","Invites":"Приглашения","Add Friend":"Добавить друга","OPERATOR":"ОПЕРАТОР","the one behind the diver":"тот, кто за дайвером","CAPTAIN":"КАПИТАН","account ascension":"восхождение аккаунта","COSMETICS":"КОСМЕТИКА","deep couture":"мода глубин","CREDITS":"ТИТРЫ","field manual":"полевой устав","THE DEEP, EXPLAINED":"БЕЗДНА, ОБЪЯСНЁННАЯ","NEW":"НОВОЕ","WEAPON":"ОРУЖИЕ","PASSIVE":"ПАССИВКА","EVOLVE":"ЭВОЛЮЦИЯ","INFUSE":"СТИХИЯ","RECOVER":"РЕМОНТ","SALVAGE":"ДОБЫЧА","Instant":"Мгновенно","Evolution":"Эволюция","Locks Element (permanent)":"Закрепляет стихию (навсегда)","DEFLECTOR ONLINE":"ДЕФЛЕКТОР ВКЛЮЧЁН","DEFLECTOR OVERLOADED":"ДЕФЛЕКТОР ПЕРЕГРУЖЕН","TRAPPED":"В ЛОВУШКЕ","NEW FRIEND REQUEST · check Social":"НОВАЯ ЗАЯВКА В ДРУЗЬЯ · смотри Друзья","Repair Kit":"Ремкомплект","Credit Cache":"Тайник кредитов","Resume Run":"Продолжить забег"}
 };
 function t(s){if(LANG==='en')return s;const d=I18N[LANG];return (d&&d[s])||s;}
 function setLang(l){if(!I18N[l]&&l!=='en')return;LANG=l;try{window.storage.set('abyss_lang',l);}catch(e){}applyLang();}
@@ -4292,7 +4505,7 @@ function applyLang(){
 }
 // Walk curated UI elements; translate each text node in place. Original English is cached on
 // the node (_raw) so switching languages - including back to English - is lossless.
-const I18N_SEL='.nav-link,.nav-sub,#startbtn,.mribbon b,.rs-name,.rs-sub,.rs-badge,.mtile .mt b,.mtile .mt>span,.msub,.lore-txt,.screen .btn,.screen h1,.screen h2,.screen .logo,.studiomark,.lvl-title,.lvl-sub,.go-title,.vic-title,.stat .l,.ptitle,.poptitle,.popsub,.tlabel,.st-rez,.vline,#dodgebtn,.controls-note,#menuarm .ma-row b,#menuarm .ma-row span,.nl-t';
+const I18N_SEL='.nav-link,.nav-sub,#startbtn,.mribbon b,.rs-name,.rs-sub,.rs-badge,.sn-lgn,.mtile .mt b,.mtile .mt>span,.msub,.lore-txt,.screen .btn,.screen h1,.screen h2,.screen .logo,.studiomark,.lvl-title,.lvl-sub,.go-title,.vic-title,.stat .l,.ptitle,.poptitle,.popsub,.tlabel,.st-rez,.vline,#dodgebtn,.controls-note,#menuarm .ma-row b,#menuarm .ma-row span,.nl-t';
 function translateStatic(){
  try{
   document.querySelectorAll(I18N_SEL).forEach(el=>{
@@ -4744,6 +4957,277 @@ function openProfile(){hideAllScreens();state='profile';
  const cvw=document.getElementById('capView');if(cvw)cvw.onclick=()=>openCaptain();
  if(netId()&&Date.now()-NET.lastSync>15000)netSync();
  document.getElementById('profile').classList.remove('hidden');try{trDyn(document.getElementById('profile'));}catch(e){}}
+/* ===== V16 SONAR CHART: seeded floor contracts =====
+   Every signal is a floor born from a 32-bit seed; the GRID code IS the seed, so the
+   same coordinate always regenerates the same floor. Floors expire off the scope like
+   contracts. Difficulty floor: our easiest signal is harder than Free Descent. */
+function mulb32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const SN_TIERS=[
+ {tn:'ABYSSAL',  tc:'#49c7ff',hp:1.35,dmg:1.25,sp:1.15,loot:1.5,xp:1.3, d0:21000},
+ {tn:'HADAL',    tc:'#8a9bff',hp:1.75,dmg:1.50,sp:1.30,loot:1.9,xp:1.5, d0:26000},
+ {tn:'SUNLESS',  tc:'#b06bff',hp:2.30,dmg:1.85,sp:1.50,loot:2.4,xp:1.75,d0:31000},
+ {tn:'NIGHTMARE',tc:'#ff5a6e',hp:3.00,dmg:2.30,sp:1.75,loot:3.1,xp:2.1, d0:37000}];
+const SN_RARE=[
+ {rn:'FAINT',    rc:'#8aa6da',lb:1.0, mc:1,tt:1.00,xb:1.00},
+ {rn:'CLEAR',    rc:'#49c7ff',lb:1.15,mc:2,tt:0.92,xb:1.06},
+ {rn:'STRONG',   rc:'#b06bff',lb:1.35,mc:3,tt:0.84,xb:1.14},
+ {rn:'LEGENDARY',rc:'#ffc24b',lb:1.8, mc:4,tt:0.72,xb:1.25},
+ {rn:'UNIQUE',   rc:'#ff7a3c',lb:2.6, mc:5,tt:0.58,xb:1.60}];
+// UNIQUE difficulty block: applied on top of tier, before conditions stack.
+const SN_UNIQ={hp:1.5,dmg:1.35,spawn:1.25};
+const SN_MUTS=[
+ {k:'hp',   n:'THICK HIDE',  lo:0.18,hi:0.45},
+ {k:'dmg',  n:'SHARP TEETH', lo:0.15,hi:0.40},
+ {k:'spd',  n:'RIPTIDE',     lo:0.10,hi:0.28},
+ {k:'spawn',n:'SWARM TIDE',  lo:0.12,hi:0.35},
+ {k:'elite',n:'APEX PACK',   lo:0.40,hi:1.20},
+ {k:'bossHp',n:'IRON WARDEN',lo:0.25,hi:0.70},
+ {k:'bossT',n:'HUNGRY DARK', lo:0.20,hi:0.45},
+ {k:'loot', n:'RICH VEIN',   lo:0.25,hi:0.70},
+ {k:'xp',   n:'DEEP GLOW',   lo:0.20,hi:0.55}];
+const SN_A=['SILENT','WIDOW\'S','BROKEN','HOLLOW','DROWNED','PALE','BLEEDING','SUNKEN','STARVED','HUMMING'];
+const SN_B=['TRENCH','SHELF','VAULT','GARDEN','THROAT','CRADLE','SPIRE','FIELD','MAW','CHOIR'];
+const SN_SPECIES=['tri','fastball','sqM','boulder','bigball','runner','swarm'];
+function snCoord(seed){const h=(seed>>>0).toString(16).toUpperCase().padStart(8,'0');return 'DV-'+h.slice(0,4)+'-'+h.slice(4);}
+function genFloor(seed){seed=seed>>>0;const R=mulb32(seed);
+ let r=R(),ti=r<0.42?0:(r<0.72?1:(r<0.91?2:3));const T=SN_TIERS[ti];
+ r=R();const ri=r<0.46?0:(r<0.73?1:(r<0.88?2:(r<0.97?3:4)));const RA=SN_RARE[ri];
+ const jit=()=>0.92+R()*0.16;
+ const f={seed,coord:snCoord(seed),tier:ti,rar:ri,tn:T.tn,tc:T.tc,rn:RA.rn,rc:RA.rc,
+  name:SN_A[(R()*SN_A.length)|0]+' '+SN_B[(R()*SN_B.length)|0],
+  depth:(T.d0+R()*3800)|0,
+  hp:T.hp*jit(),dmg:T.dmg*jit(),spawn:T.sp*jit(),loot:T.loot*RA.lb,xp:T.xp*RA.xb,
+  spd:1,elite:1,bossHp:1,bossT:1,muts:[],species:[],uniq:ri===4};
+ if(f.uniq){f.hp*=SN_UNIQ.hp;f.dmg*=SN_UNIQ.dmg;f.spawn*=SN_UNIQ.spawn;}
+ const sp=SN_SPECIES.slice();for(let i=0;i<3;i++){f.species.push(sp.splice((R()*sp.length)|0,1)[0]);}
+ const mp=SN_MUTS.slice();
+ for(let i=0;i<RA.mc;i++){const m=mp.splice((R()*mp.length)|0,1)[0];const v=m.lo+R()*(m.hi-m.lo);
+  if(m.k==='bossT')f.bossT*=Math.max(0.4,1-v);else f[m.k]=(f[m.k]||1)*(1+v);
+  f.muts.push({n:m.n,txt:(m.k==='bossT'?'-':'+')+Math.round(v*100)+'%'});}
+ f.wardTxt='+'+Math.round((f.bossHp*f.hp-1)*100)+'% HP';
+ f.ttl=Math.max(38,((60+R()*70)*RA.tt)|0);f.ang=R()*TAU;f.rf=0.86-ti*0.16+R()*0.09;
+ // groundwork for the currency system: a deterministic worth score per floor
+ f.bounty=Math.round(100*T.loot*RA.lb*(1+f.muts.length*0.15)*(f.uniq?1.6:1));
+ return f;}
+function snAdd(){const f=genFloor((Date.now()^((Math.random()*0xffffffff)|0))>>>0);f.born=Date.now();f.ping=0;
+ // visual-only nudge so signals never stack on the scope (identity lives in the seed)
+ for(let k=0;k<9;k++){let clash=false;for(const o of SON.list){let da=Math.abs(((f.ang-o.ang)%TAU+TAU)%TAU);if(da>Math.PI)da=TAU-da;if(da<0.44&&Math.abs(f.rf-o.rf)<0.12){clash=true;break;}}if(!clash)break;f.ang=(f.ang+0.71)%TAU;}
+ SON.list.push(f);SON.last=Date.now();return f;}
+function snEnsure(){const now=Date.now();
+ for(let i=SON.list.length-1;i>=0;i--){const f=SON.list[i];if(now>f.born+f.ttl*1000){SON.list.splice(i,1);if(SON.sel===f){SON.sel=null;snCardRender();}}}
+ if(SON.list.length<5)snAdd();
+ else if(SON.list.length<9&&now-SON.last>9000+(SON.list.length*900))snAdd();}
+function openSonar(){hideAllScreens();document.getElementById('sonar').classList.remove('hidden');
+ SON.sel=null;snEnsure();while(SON.list.length<6)snAdd();snCardRender();renderWallet(false);
+ try{trDyn(document.getElementById('sonar'));}catch(e){}}
+function snCardRender(){const C=document.getElementById('sonarcard');if(!C)return;const f=SON.sel;
+ if(!f){C.style.setProperty('--fc','#49c7ff');C.innerHTML='<div class="sn-empty">'+t('SELECT A SIGNAL')+'</div>';return;}
+ C.style.setProperty('--fc',f.rc);
+ let h='<div><div class="sn-name">'+f.name+'</div><div class="sn-coord">'+t('GRID')+' '+f.coord+' \u00b7 '+t('DEPTH')+' '+f.depth.toLocaleString()+'m</div></div>';
+ h+='<div class="sn-badges"><span class="sn-b" style="--bc:'+f.tc+'">'+t(f.tn)+'</span><span class="sn-b" style="--bc:'+f.rc+'">'+t(f.rn)+'</span></div>';
+ h+='<div class="sn-l">'+t('HOSTILE FORECAST')+'</div><div class="sn-chips">'+f.species.map(id=>{const d=ETYPES[id];const g=d.shape==='tri'?'\u25b2':(d.shape==='square'?'\u25a0':'\u25cf');return '<span class="sn-e" style="--ec:'+d.color+'">'+g+' '+id.toUpperCase()+'</span>';}).join('')+'<span class="sn-e" style="--ec:#ffae3c">\u2b1f '+t('WARDEN')+' '+f.wardTxt+'</span></div>';
+ h+='<div class="sn-l">'+t('CONDITIONS')+'</div><div>'+ (f.muts.length?f.muts.map(m=>'<div class="sn-mut"><b>'+t(m.n)+'</b><span>'+m.txt+'</span></div>').join(''):'<div class="sn-mut"><b>-</b></div>')+'</div>';
+ h+='<div class="sn-l">'+t('REWARDS')+'</div><div class="sn-rw"><i>+'+Math.round((f.loot-1)*100)+'% '+t('CR')+'</i><em>+'+Math.round((f.xp-1)*100)+'% '+t('REZ')+'</em></div>';
+ h+='<div class="sn-l">'+t('GOAL')+'</div><div class="sn-goal">LV '+WALLET_TUNE.clearLv+(f.uniq?' \u00b7 +'+WALLET_TUNE.echoAmt+' \u224B '+t('ECHO'):'')+'</div>';
+ h+='<div class="sn-exp" id="snexp"></div>';
+ h+='<button id="sndeploy">'+t('DEPLOY TO FLOOR')+'</button>';
+ C.innerHTML=h;
+ document.getElementById('sndeploy').onclick=()=>{PERC=false;FLOOR={name:f.name,coord:f.coord,tn:f.tn,rn:f.rn,tc:f.tc,rar:f.rar,hp:f.hp,dmg:f.dmg,spawn:f.spawn,loot:f.loot,xp:f.xp,spd:f.spd,elite:f.elite,bossHp:f.bossHp,bossT:f.bossT,uniq:!!f.uniq,bounty:f.bounty,species:f.species.slice()};toCharSelect();};
+ try{trDyn(C);}catch(e){}}
+function sonarFX(dt){const sc=document.getElementById('sonar');if(!sc||sc.classList.contains('hidden'))return;
+ const cv=document.getElementById('sonarcv');if(!cv)return;
+ if(cv.width!==cv.clientWidth*DPR){cv.width=cv.clientWidth*DPR;cv.height=cv.clientHeight*DPR;}
+ const g=cv.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);
+ const s=cv.clientWidth,cx=s/2,cy=s/2,rad=s/2-8;
+ g.clearRect(0,0,s,s);
+ snEnsure();SON.t+=dt;SON.sweep=(SON.sweep+dt*0.85)%TAU;
+ // grid: rings, cross, ticks
+ g.strokeStyle='rgba(25,227,255,.16)';g.lineWidth=1;
+ for(let k=1;k<=4;k++){g.beginPath();g.arc(cx,cy,rad*k/4,0,TAU);g.stroke();}
+ g.beginPath();g.moveTo(cx-rad,cy);g.lineTo(cx+rad,cy);g.moveTo(cx,cy-rad);g.lineTo(cx,cy+rad);g.stroke();
+ g.strokeStyle='rgba(25,227,255,.28)';
+ for(let k=0;k<24;k++){const a=k/24*TAU;g.beginPath();g.moveTo(cx+Math.cos(a)*(rad-5),cy+Math.sin(a)*(rad-5));g.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);g.stroke();}
+ // sweep: bright leading line, fading wake
+ for(let k=17;k>=0;k--){const a=SON.sweep-k*0.045;g.strokeStyle='rgba(25,227,255,'+(0.02+0.24*(1-k/18)).toFixed(3)+')';g.lineWidth=k?2:2.6;
+  g.beginPath();g.moveTo(cx,cy);g.lineTo(cx+Math.cos(a)*rad,cy+Math.sin(a)*rad);g.stroke();}
+ // signals
+ const now=Date.now();
+ for(const f of SON.list){const fx2=cx+Math.cos(f.ang)*rad*f.rf,fy=cy+Math.sin(f.ang)*rad*f.rf;f._x=fx2;f._y=fy;
+  let da=((f.ang-SON.sweep)%TAU+TAU)%TAU;if(da>Math.PI)da=TAU-da;
+  if(da<0.1)f.ping=1;
+  const rem=1-(now-f.born)/(f.ttl*1000),dying=rem<0.14&&((SON.t*3|0)%2===0);
+  const dr=4.5+f.tier*1.2+(f.rar>=3?1.4:0)+(f.uniq?2:0);
+  if(f.ping>0){g.globalAlpha=f.ping*0.5;g.strokeStyle=f.rc;g.lineWidth=1.5;g.beginPath();g.arc(fx2,fy,dr+(1-f.ping)*22,0,TAU);g.stroke();
+   if(f.uniq){g.globalAlpha=f.ping*0.35;g.beginPath();g.arc(fx2,fy,dr+(1-f.ping)*34,0,TAU);g.stroke();}
+   f.ping=Math.max(0,f.ping-dt*1.1);}
+  if(f.uniq){const ha=SON.t*1.4;g.globalAlpha=dying?0.3:0.8;g.strokeStyle=f.rc;g.lineWidth=1.6;
+   for(let q=0;q<3;q++){g.beginPath();g.arc(fx2,fy,dr+6.5,ha+q*(TAU/3),ha+q*(TAU/3)+0.9);g.stroke();}
+   const st=0.6+0.4*Math.sin(SON.t*5);g.globalAlpha=st*(dying?0.4:0.9);g.lineWidth=1.3;
+   g.beginPath();g.moveTo(fx2-dr-11,fy);g.lineTo(fx2-dr-4,fy);g.moveTo(fx2+dr+4,fy);g.lineTo(fx2+dr+11,fy);
+   g.moveTo(fx2,fy-dr-11);g.lineTo(fx2,fy-dr-4);g.moveTo(fx2,fy+dr+4);g.lineTo(fx2,fy+dr+11);g.stroke();}
+  g.globalAlpha=dying?0.35:0.95;g.shadowColor=f.rc;g.shadowBlur=f.uniq?16:(f.rar>=3?13:10);g.fillStyle=f.rc;
+  g.beginPath();g.arc(fx2,fy,dr,0,TAU);g.fill();g.shadowBlur=0;
+  g.globalAlpha=0.8;g.strokeStyle=f.rc;g.lineWidth=1.6;
+  g.beginPath();g.arc(fx2,fy,dr+3.5,-Math.PI/2,-Math.PI/2+TAU*Math.max(0,rem));g.stroke();
+  if(SON.sel===f){g.globalAlpha=0.9;g.setLineDash([4,4]);g.lineDashOffset=-SON.t*24;g.strokeStyle='#eafff8';g.beginPath();g.arc(fx2,fy,dr+8,0,TAU);g.stroke();g.setLineDash([]);}
+  g.globalAlpha=1;}
+ // countdown on the open card
+ if(SON.sel){const el=document.getElementById('snexp');if(el){const remS=Math.max(0,Math.ceil((SON.sel.born+SON.sel.ttl*1000-now)/1000));el.textContent=t('EXPIRES')+' '+Math.floor(remS/60)+':'+String(remS%60).padStart(2,'0');}}
+}
+document.getElementById('sonarcv').onclick=(ev)=>{const cv=document.getElementById('sonarcv'),r=cv.getBoundingClientRect();
+ const px=ev.clientX-r.left,py=ev.clientY-r.top;let best=null,bd=26*26;
+ for(const f of SON.list){if(f._x===undefined)continue;const d=(f._x-px)*(f._x-px)+(f._y-py)*(f._y-py);if(d<bd){bd=d;best=f;}}
+ if(best){SON.sel=best;snCardRender();sfx('pickup');hap('impact','light');}};
+document.getElementById('sonarback').onclick=()=>{hideAllScreens();document.getElementById('runselect').classList.remove('hidden');};
+/* ===== V20 SUBLEVEL CHART ===== */
+const PM_POS=[[50,8],[26,26],[68,42],[30,58],[66,73],[34,88],[58,97]];
+let pmSel=0;
+function openPercMap(){hideAllScreens();document.getElementById('percmap').classList.remove('hidden');
+ pmSel=Math.min(percProg.u,PERC_LEVELS.length-1);buildPercMap();pmCardRender();
+ try{trDyn(document.getElementById('percmap'));}catch(e){}}
+function buildPercMap(){const host=document.getElementById('pmnodes');if(!host)return;
+ const total=Math.min(PM_POS.length,PERC_LEVELS.length+PERC_GHOSTS);let h='';
+ for(let i=0;i<total;i++){const [x,y]=PM_POS[i];const real=i<PERC_LEVELS.length;
+  const st=!real?'ghost':(percProg.c[i]?'done':(i<=percProg.u?'open':'locked'));
+  const best=real&&(percProg.b[i]||0)>0?'<span class="pm-best">'+t('BEST')+' '+(percProg.b[i]||0).toLocaleString()+'</span>':'';
+  const lock=(st==='locked'||st==='ghost')?'<span class="pm-lock">\uD83D\uDD12</span>':'';
+  h+='<button class="pm-node '+st+(i===pmSel&&st!=='ghost'&&st!=='locked'?' sel':'')+'" data-i="'+i+'" style="left:'+x+'%;top:'+(y/106*100)+'%;animation-delay:'+(0.12+i*0.07)+'s">'+(PERC_ROMAN[i]||(i+1))+lock+best+'</button>';}
+ host.innerHTML=h;
+ host.querySelectorAll('.pm-node').forEach(nd=>{nd.onclick=()=>{pmTap(parseInt(nd.dataset.i,10));};});}
+function pmTap(i){const real=i<PERC_LEVELS.length;
+ if(!real){showPopup(t('PERCEPTION'),t('The chamber is still being sealed. When it opens, nothing inside will be familiar.'),'\u2299','#8a9bff');return;}
+ if(i>percProg.u){showPopup(t('PERCEPTION'),t('Clear the previous chamber first.'),'\u2299','#8a9bff');return;}
+ pmSel=i;buildPercMap();pmCardRender();sfx('pickup');hap('impact','light');}
+function pmCardRender(){const C=document.getElementById('pmcard');if(!C)return;const i=pmSel,L=PERC_LEVELS[i];
+ if(!L){C.innerHTML='';return;}
+ const cfg=Object.assign({},PERC_TUNE,L.cfg||{});
+ let h='<div><div class="sn-name">'+t(L.name)+' \u00b7 '+(PERC_ROMAN[i]||'')+'</div>';
+ h+='<div class="pm-micro">SUBLEVEL 0'+(i+1)+' \u00b7 '+cfg.dur+'s \u00b7 \u2299 x'+cfg.perceptCap+'</div></div>';
+ h+='<div class="sn-badges"><span class="sn-b" style="--bc:#8a9bff">\u2299 5:00</span><span class="sn-b" style="--bc:#aeb9ff">x'+cfg.rampLo.toFixed(1)+' \u2192 x'+cfg.rampHi.toFixed(1)+'</span>'+((cfg.hpMul||1)>1?'<span class="sn-b" style="--bc:#ffb08a">+'+Math.round(((cfg.hpMul||1)-1)*100)+'% HP</span>':'')+'</div>';
+ h+='<div class="sn-l">'+t('BEST')+'</div><div class="sn-rw"><em>'+((percProg.b[i]||0).toLocaleString())+'</em></div>';
+ h+='<div class="sn-l">'+t('GOAL')+'</div><div class="sn-goal">'+t('SCORE')+' \u00b7 5:00</div>';
+ h+='<button id="pmdeploy">'+t('DEPLOY')+'</button>';
+ C.innerHTML=h;
+ const d=document.getElementById('pmdeploy');if(d)d.onclick=()=>{percDeploy(i);};
+ try{trDyn(C);}catch(e){}}
+function percDeploy(i){if(i>=PERC_LEVELS.length||i>percProg.u)return;
+ percLvl=i;FLOOR=null;PERC=true;toCharSelect();}
+document.getElementById('pmback').onclick=()=>{hideAllScreens();document.getElementById('runselect').classList.remove('hidden');};
+/* ===== V19 PERCEPTION SYSTEM ===== */
+function percSize(){PERC_CH.w=Math.max(560,(W/(VIEW||1))*0.92);PERC_CH.h=Math.max(560,(H/(VIEW||1))*0.92);}
+function percWallPoint(){percSize();const w=PERC_CH.w/2-PERC_RUN.wallInset,h=PERC_CH.h/2-PERC_RUN.wallInset,s=(Math.random()*4)|0,u=Math.random()*2-1;
+ return s===0?{x:u*w,y:-h}:s===1?{x:u*w,y:h}:s===2?{x:-w,y:u*h}:{x:w,y:u*h};}
+function percClamp(o,pad){const w=PERC_CH.w/2-pad,h=PERC_CH.h/2-pad;o.x=clamp(o.x,-w,w);o.y=clamp(o.y,-h,h);}
+let _pbEl=null;
+function updatePerception(dt){if(!PERC||runOver)return;percSize();
+ if(!_percHello){_percHello=true;gameAlert('THE CHAMBER SEALS','#8a9bff','five minutes. it is watching.');}
+ percT=Math.max(0,percT-dt);
+ percClamp(player,player.r+6);
+ // the percepts: ghosts of your own hull. they study, then they strike.
+ let pc=0;for(const e of enemies)if(e.percept&&!e._dead)pc++;
+ percSpawnT-=dt;
+ if(percSpawnT<=0&&pc<PERC_RUN.perceptCap&&percT>PERC_RUN.perceptHold){percSpawnT=PERC_RUN.perceptEvery;spawnEnemy('percept');sfx('shield');spawnText(player.x,player.y-player.r-34,'IT SEES YOU','#8a9bff',false);}
+ for(const e of enemies){if(e._dead)continue;
+  if(e.mat>0)e.mat-=dt;
+  if(!e.percept){percClamp(e,e.r);continue;}
+  e.pph+=dt;
+  if(e.pst===0){ // study: hold the mirror of your position across the chamber's heart
+   const tx=-player.x,ty=-player.y,dx=tx-e.x,dy=ty-e.y,d=Math.hypot(dx,dy)||1,sp=PERC_RUN.studySpd*Math.min(1,d/60);
+   e.x+=dx/d*sp*dt;e.y+=dy/d*sp*dt;
+   if(e.pph>=PERC_RUN.studyT){e.pst=1;e.pph=0;e._sx=(player.x-e.x);e._sy=(player.y-e.y);const sd=Math.hypot(e._sx,e._sy)||1;e._sx/=sd;e._sy/=sd;sfx('shing');}
+  }else{ // strike: a straight lunge along the line it memorized
+   e.x+=e._sx*PERC_RUN.strikeSpd*dt;e.y+=e._sy*PERC_RUN.strikeSpd*dt;
+   if(QX&&QX.trails&&particles.length<QX.maxParticles)particles.push({x:e.x,y:e.y,vx:rand(-14,14),vy:rand(-14,14),life:0.28,color:'#8a9bff',r:2});
+   if(e.pph>=PERC_RUN.strikeT){e.pst=0;e.pph=0;}
+  }
+  percClamp(e,e.r);
+ }
+ if(!_pbEl)_pbEl=document.getElementById('percbar');
+ if(_pbEl){const s=Math.ceil(percT),mm=(s/60)|0,ss=s%60;
+  _pbEl.textContent='\u2299 '+(PERC_ROMAN[percLvl]||'')+' \u00b7 '+mm+':'+String(ss).padStart(2,'0')+' \u00b7 '+Math.round(percScore).toLocaleString();
+  _pbEl.classList.toggle('pcrit',percT<=30&&percT>0);}
+ if(percT<=0)percEnd();
+}
+function percEnd(){if(_percDone||runOver)return;_percDone=true;gameOver();}
+function drawChamber(){if(!PERC)return;percSize();const w=PERC_CH.w/2,h=PERC_CH.h/2;
+ ctx.save();ctx.lineJoin='round';
+ ctx.strokeStyle='rgba(138,155,255,0.85)';if(QX&&QX.glow){ctx.shadowColor='#8a9bff';ctx.shadowBlur=18;}
+ ctx.lineWidth=3;ctx.strokeRect(-w,-h,w*2,h*2);
+ ctx.shadowBlur=0;ctx.strokeStyle='rgba(138,155,255,0.22)';ctx.lineWidth=10;ctx.strokeRect(-w-8,-h-8,w*2+16,h*2+16);
+ ctx.strokeStyle='#cdd6ff';ctx.lineWidth=4;const c=26;
+ for(const [cx,cy,sx,sy] of [[-w,-h,1,1],[w,-h,-1,1],[-w,h,1,-1],[w,h,-1,-1]]){
+  ctx.beginPath();ctx.moveTo(cx+sx*c,cy);ctx.lineTo(cx,cy);ctx.lineTo(cx,cy+sy*c);ctx.stroke();}
+ const pu=0.10+0.05*Math.sin(time*2);ctx.globalAlpha=pu;ctx.fillStyle='#8a9bff';
+ ctx.fillRect(-w,-h,w*2,h*2);ctx.restore();}
+function drawPercept(e){
+ const cc=(player&&player.char&&player.char.color)||'#8a9bff';
+ const matA=e.mat>0?1-(e.mat/0.7):1;
+ ctx.translate(e.x,e.y);
+ ctx.globalAlpha=(0.30+0.25*Math.sin(time*3+e.r))*matA;
+ ctx.fillStyle=cc;ctx.beginPath();ctx.arc(0,0,e.r,0,TAU);ctx.fill();
+ ctx.globalAlpha=(e.pst===1?0.95:0.6)*matA;
+ ctx.strokeStyle=e.pst===1?'#e8ecff':cc;if(QX&&QX.glow){ctx.shadowColor=cc;ctx.shadowBlur=e.pst===1?18:10;}
+ ctx.lineWidth=2.6;ctx.beginPath();ctx.arc(0,0,e.r,0,TAU);ctx.stroke();
+ ctx.shadowBlur=0;
+ // the scan ring: it is reading you
+ ctx.globalAlpha=0.5*matA;ctx.setLineDash([5,7]);ctx.lineDashOffset=-time*30;ctx.lineWidth=1.5;
+ ctx.beginPath();ctx.arc(0,0,e.r+6,0,TAU);ctx.stroke();ctx.setLineDash([]);
+ // the eye: always on the diver
+ const ea=Math.atan2(player.y-e.y,player.x-e.x);
+ ctx.globalAlpha=matA;ctx.fillStyle=e.pst===1?'#ffffff':'#cdd6ff';
+ ctx.beginPath();ctx.arc(Math.cos(ea)*e.r*0.42,Math.sin(ea)*e.r*0.42,e.pst===1?4:3,0,TAU);ctx.fill();
+ if(e.hitFlash>0){ctx.globalAlpha=Math.min(1,e.hitFlash*6);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,0,e.r,0,TAU);ctx.fill();}
+}
+/* ===== V18 WALLET SYSTEM ===== */
+function saveWallet(){try{window.storage.set('aw_wallet_v1',JSON.stringify(WBAL));}catch(e){}}
+function loadWallet(){return window.storage.get('aw_wallet_v1').then(r=>{
+ if(r&&r.value){try{const o=JSON.parse(r.value);WBAL={g:Math.max(0,o.g|0),p:Math.max(0,o.p|0),e:Math.max(0,o.e|0)};}catch(e){}}
+ renderWallet(false);}).catch(()=>{});}
+function grantCurrency(k,n){n=Math.max(0,Math.round(n));if(!n||!(k in WBAL))return 0;
+ WBAL[k]+=n;runPay[k]+=n;saveWallet();return n;}
+function spendCurrency(k,n){n=Math.max(0,Math.round(n));if(!(k in WBAL)||WBAL[k]<n)return false;
+ WBAL[k]-=n;saveWallet();renderWallet(true);return true;}
+// ECHO hard gate: there is no code path to an Echo except through a live UNIQUE floor.
+function grantEcho(n){if(!(FLOOR&&FLOOR.uniq===true))return 0;return grantCurrency('e',n);}
+function settleFloorClear(){if(!FLOOR||FLOOR._cleared)return;FLOOR._cleared=true;
+ const ri=Math.max(0,Math.min(4,FLOOR.rar|0));let pearls=0;
+ if(Math.random()<WALLET_TUNE.pClear[ri])pearls++;
+ if(Math.random()<WALLET_TUNE.pClearX[ri])pearls++;
+ if(pearls)grantCurrency('p',pearls);
+ if(FLOOR.uniq){const n=grantEcho(WALLET_TUNE.echoAmt);
+  gameAlert('SIGNAL CLEARED','#ff7a3c','+'+n+' '+t('ECHO')+(pearls?' \u00b7 +'+pearls+' '+t('PEARL'):''));sfx('evolve');hap('notify','success');}
+ else gameAlert('SIGNAL CLEARED',FLOOR.tc,pearls?('+'+pearls+' '+t('PEARL')):('grid '+FLOOR.coord));}
+function settleRun(win){if(_settledRun)return;_settledRun=true;
+ let gl=Math.round(player.level*WALLET_TUNE.gLv+kills*WALLET_TUNE.gKill+(time/60)*WALLET_TUNE.gMin+(win?WALLET_TUNE.gVictory:0));
+ if(FLOOR)gl=Math.round(gl*Math.max(WALLET_TUNE.gFloorMin,FLOOR.bounty/WALLET_TUNE.gFloorDiv));
+ grantCurrency('g',gl);
+ const el=document.getElementById(win?'vy-pay':'go-pay');
+ if(el){let h='<span class="pay-c" style="--pc:'+CUR.g.c+'">+'+runPay.g.toLocaleString()+' '+CUR.g.ic+' '+t('GLINT')+'</span>';
+  if(runPay.p)h+='<span class="pay-c" style="--pc:'+CUR.p.c+'">+'+runPay.p+' '+CUR.p.ic+' '+t('PEARL')+'</span>';
+  if(runPay.e)h+='<span class="pay-c" style="--pc:'+CUR.e.c+'">+'+runPay.e+' '+CUR.e.ic+' '+t('ECHO')+'</span>';
+  el.innerHTML=h;}
+ renderWallet(false);}
+let _wtw=null,_wshow={cr:0,g:0,p:0,e:0};
+function renderWallet(anim){const els=document.querySelectorAll('.wallet');if(!els.length)return;
+ const vals={cr:gold|0,g:WBAL.g,p:WBAL.p,e:WBAL.e};
+ els.forEach(w=>{if(!w._built){w._built=true;
+  w.innerHTML=['cr','g','p','e'].map(k=>'<button class="wl-chip" data-k="'+k+'" style="--wc:'+CUR[k].c+'"><span class="wl-ic">'+CUR[k].ic+'</span><span class="wl-v" data-k="'+k+'">0</span></button>').join('');
+  w.querySelectorAll('.wl-chip').forEach(ch=>{ch.onclick=()=>{const k=ch.dataset.k;
+   showPopup(k==='cr'?t('CR'):t(CUR[k].n),t(CUR[k].d),CUR[k].ic,CUR[k].c);};});}});
+ if(_wtw){clearInterval(_wtw);_wtw=null;}
+ const setAll=()=>{document.querySelectorAll('.wl-v').forEach(v=>{v.textContent=Math.round(_wshow[v.dataset.k]).toLocaleString();});};
+ if(!anim){_wshow=Object.assign({},vals);setAll();return;}
+ const start=Object.assign({},_wshow),t0=Date.now(),dur=800;
+ _wtw=setInterval(()=>{const f=Math.min(1,(Date.now()-t0)/dur),ease=1-Math.pow(1-f,3);
+  for(const k in vals)_wshow[k]=start[k]+(vals[k]-start[k])*ease;setAll();
+  if(f>=1){clearInterval(_wtw);_wtw=null;}},33);}
+loadWallet();
+function savePercProg(){try{window.storage.set('aw_perc_prog',JSON.stringify(percProg));}catch(e){}}
+window.storage.get('aw_perc_prog').then(r=>{
+ if(r&&r.value){try{const o=JSON.parse(r.value);percProg={u:Math.max(0,Math.min(PERC_LEVELS.length-1,o.u|0)),c:Array.isArray(o.c)?o.c:[],b:Array.isArray(o.b)?o.b:[]};}catch(e){}}
+ percBest=Math.max(0,...(percProg.b.length?percProg.b.map(v=>v||0):[0]));
+ if(!r)window.storage.get('aw_perc_best').then(r2=>{if(r2&&r2.value){percProg.b[0]=parseInt(r2.value,10)||0;percBest=percProg.b[0];savePercProg();}}).catch(()=>{});
+}).catch(()=>{});
 /* ===== MENU FX: THE WATER COLUMN (V14) =====
    God rays from a surface you cannot see, marine snow falling while
    bioluminescence rises, and something big keeping its distance. */
@@ -4753,7 +5237,7 @@ for(let i=0;i<34;i++)mfx.mote.push({x:Math.random(),y:Math.random(),s:rand(0.6,2
 for(let i=0;i<26;i++)mfx.snow.push({x:Math.random(),y:Math.random(),s:rand(0.4,1.3),v:rand(5,14),dr:rand(-6,6)});
 for(let i=0;i<3;i++)mfx.sil.push({x:Math.random(),y:rand(0.25,0.85),r:rand(70,150),v:rand(2,5),d:Math.random()<0.5?1:-1});
 for(let i=0;i<4;i++)mfx.rays.push({x:0.12+i*0.24+rand(-0.05,0.05),w:rand(0.05,0.11),ph:rand(0,TAU),sp:rand(0.10,0.2),a:rand(0.05,0.09)});
-function menuFX(dtm){waterFX('menufx','menu',dtm);waterFX('runfx','runselect',dtm);}
+function menuFX(dtm){waterFX('menufx','menu',dtm);waterFX('runfx','runselect',dtm);waterFX('percfx','percmap',dtm);}
 function waterFX(cid,sid,dtm){const mc=document.getElementById(cid);if(!mc)return;const scr=document.getElementById(sid);if(!scr||scr.classList.contains('hidden'))return;
  if(mc.width!==mc.clientWidth*DPR){mc.width=mc.clientWidth*DPR;mc.height=mc.clientHeight*DPR;}
  const g=mc.getContext('2d');g.setTransform(DPR,0,0,DPR,0,0);const mw=mc.clientWidth,mh=mc.clientHeight;g.clearRect(0,0,mw,mh);
@@ -5090,11 +5574,13 @@ function buildCharSelect(){const list=document.getElementById('charlist');list.i
   el.innerHTML=`<div class="glyph" style="color:${c.color};filter:drop-shadow(0 0 12px ${c.color})">${c.glyph}</div><h3>${t(c.name)}</h3><div class="role">${t(c.role)}</div><p>${t(c.desc)}</p><div class="perks">${t(c.perks)}</div>`;
   el.onclick=()=>{if(!AC)initAudio();startRun(c);};list.appendChild(el);});}
 function toMenu(){tgHideShare(); // TELEGRAM MINI APP
- const __bc=document.getElementById('buildcard');if(__bc)__bc.classList.add('hidden');state='menu';showHUD(false);hideAllScreens();showNavToggle();document.getElementById('menu').classList.remove('hidden');try{refreshMenuChip();}catch(e){}player=null;try{ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);}catch(e){}}
-function toRunSelect(){hideAllScreens();document.getElementById('runselect').classList.remove('hidden');try{trDyn(document.getElementById('runselect'));}catch(e){}}
-document.getElementById('rsFree').onclick=()=>{toCharSelect();};
-document.getElementById('rsChart').onclick=()=>{showPopup(t('SONAR CHART'),t('The chart room is still mapping the deep. Dive sites arrive in a future update.'),'\u25CE','#49c7ff');};
-document.getElementById('rsPerc').onclick=()=>{showPopup(t('PERCEPTION'),t('The chamber is still being sealed. When it opens, nothing inside will be familiar.'),'\u2299','#8a9bff');};
+ const __bc=document.getElementById('buildcard');if(__bc)__bc.classList.add('hidden');state='menu';FLOOR=null;PERC=false;const __pb=document.getElementById('percbar');if(__pb)__pb.classList.add('hidden');renderWallet(true);showHUD(false);hideAllScreens();showNavToggle();document.getElementById('menu').classList.remove('hidden');try{refreshMenuChip();}catch(e){}player=null;try{ctx.setTransform(DPR,0,0,DPR,0,0);ctx.clearRect(0,0,W,H);}catch(e){}}
+function toRunSelect(){hideAllScreens();document.getElementById('runselect').classList.remove('hidden');
+ const _pbl=document.getElementById('percBestLine');if(_pbl)_pbl.textContent=percBest>0?(t('BEST')+' '+percBest.toLocaleString()):'';
+ try{trDyn(document.getElementById('runselect'));}catch(e){}}
+document.getElementById('rsFree').onclick=()=>{FLOOR=null;PERC=false;toCharSelect();};
+document.getElementById('rsChart').onclick=()=>{openSonar();};
+document.getElementById('rsPerc').onclick=()=>{openPercMap();};
 document.getElementById('rsback').onclick=toMenu;
 function toCharSelect(){hideAllScreens();buildCharSelect();document.getElementById('charselect').classList.remove('hidden');}
 document.getElementById('startbtn').onclick=()=>{if(!AC)initAudio();toRunSelect();};
