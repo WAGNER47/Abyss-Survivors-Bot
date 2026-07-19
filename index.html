@@ -703,7 +703,7 @@
   .cap-navlv{font-family:var(--disp);font-weight:800;font-size:11px;color:var(--gold);margin-left:auto;letter-spacing:.05em;text-shadow:0 0 10px rgba(255,194,75,.5)}
   /* ===== COSMETICS (v7.4 Deep Couture) ===== */
   #cosmetics .logo{background:linear-gradient(115deg,#6cffd0 6%,#9b6dff 94%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(108,255,208,.35)}
-  #cosmetics{justify-content:flex-start;padding:calc(72px + var(--ins-top,0px)) calc(14px + var(--ins-right,0px)) calc(16px + var(--ins-bottom,0px)) calc(14px + var(--ins-left,0px))}
+  #cosmetics{justify-content:flex-start;padding:calc(10px + var(--ins-top,0px)) calc(14px + var(--ins-right,0px)) calc(16px + var(--ins-bottom,0px)) calc(14px + var(--ins-left,0px))}
   #walletCos{flex-wrap:wrap;justify-content:center;row-gap:6px;max-width:100%}
   #cosmetics .studiomark{margin-bottom:5px}
   #cosmetics .logo{margin-bottom:9px}
@@ -1070,6 +1070,12 @@
   .lore-panel-cap{font-family:var(--ui);font-size:13px;line-height:1.7;color:#c9d4e8;padding:14px 16px}
   @keyframes loreShimmer{0%,100%{transform:translateX(-120%)}55%,72%{transform:translateX(120%)}}
   @keyframes loreSpin{to{transform:rotate(360deg)}}
+  /* ===== V33 GLOBAL DECK LAYER: bar everywhere, content always above it ===== */
+  .screen{overflow-x:hidden}
+  #sonar,#percmap{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;justify-content:flex-start;justify-content:safe center}
+  #profile,#codex,#lore,#options,#captain,#archive,#leaderboard,#social,#credits,#rundetail{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+  #sonar,#percmap,#cosmetics,#profile,#codex,#lore,#options,#captain,#archive,#leaderboard,#social,#credits,#rundetail{padding-bottom:calc(132px + var(--ins-bottom,0px))}
+  @media (max-height:820px){.cos-preview{height:clamp(140px,20vh,200px)}}
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -4317,7 +4323,7 @@ function grantChest(){
 function doPause(){if(state!=='playing')return;state='paused';document.getElementById('pause').classList.remove('hidden');}
 function doResume(){if(state!=='paused')return;state='playing';document.getElementById('pause').classList.add('hidden');lastT=performance.now();}
 function _deckVis(){const d=document.getElementById('deckbar');if(!d)return;const m=document.getElementById('menu');const onMenu=m&&!m.classList.contains('hidden');d.style.display=onMenu?'':'none';}
-function hideAllScreens(){['menu','runselect','sonar','percmap','skilltree','dnalab','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics','lore'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';}
+function hideAllScreens(){['menu','runselect','sonar','percmap','skilltree','dnalab','charselect','levelup','pause','gameover','boon','chest','victory','archive','rundetail','credits','codex','profile','social','options','leaderboard','captain','cosmetics','lore'].forEach(id=>{const el=document.getElementById(id);if(el)el.classList.add('hidden');});if(window._closeNav)window._closeNav();const nt=document.getElementById('navToggle');if(nt)nt.style.display='none';try{_deckVis();}catch(e){}}
 function showNavToggle(){const nt=document.getElementById('navToggle');if(nt)nt.style.display='flex';}
 
 function runStats(){return{time,level:player.level,kills,dodges:rs?rs.dodges:0,reacts:rs?rs.reacts:{},taken:rs?Math.round(rs.taken):0,peak:rs?Math.round(rs.peak):0,gold,char:chosenChar.name,
@@ -5439,13 +5445,20 @@ function pillTo(f,instant){var items=deckItems(),p=deckPill();if(!p||!items.leng
  if(instant){void p.offsetWidth;p.style.transition='';}}
 function deckMark(ix){deckItems().forEach(function(b,i){b.classList.toggle('deck-on',i===ix);});}
 /* single source of hub hygiene: bar visibility, active pill, leftover swipe state */
-_deckVis=function(){var d=document.getElementById('deckbar');if(!d)return;
- var ix=hubVisibleIx();var wasShown=d.style.display!=='none';
- d.style.display=ix>=0?'':'none';
- for(var i=0;i<HUB.length;i++){var e=hubEl(i);if(!e)continue;
-  e.style.transform='';e.classList.remove('hubdrag','hubslide');
-  if(i!==ix)e.classList.remove('snapin');}
- if(ix>=0){HUBV.ix=ix;deckMark(ix);pillTo(ix,!wasShown);}};
+var DECK_SCREENS=['menu','skilltree','dnalab','sonar','percmap','cosmetics','profile','codex','lore','options','captain','archive','leaderboard','social','credits','rundetail'];
+function _deckApply(final){var d=document.getElementById('deckbar');if(!d)return;
+ var vis=null;
+ for(var i=0;i<DECK_SCREENS.length;i++){var e=document.getElementById(DECK_SCREENS[i]);
+  if(e&&!e.classList.contains('hidden')){vis=DECK_SCREENS[i];break;}}
+ var wasShown=d.style.display!=='none';
+ if(vis){d.style.display='';
+  var hubIx=HUB.indexOf(vis),mark=hubIx>=0?hubIx:0; /* sub-screens light MENU */
+  for(var j=0;j<HUB.length;j++){var h=hubEl(j);if(!h)continue;
+   h.style.transform='';h.classList.remove('hubdrag','hubslide');
+   if(HUB[j]!==vis)h.classList.remove('snapin');}
+  HUBV.ix=mark;deckMark(mark);pillTo(mark,!wasShown);}
+ else if(final){d.style.display='none';}}
+_deckVis=function(){_deckApply(false);try{requestAnimationFrame(function(){_deckApply(true);});}catch(e){_deckApply(true);}};
 function hubXf(i,px){var e=hubEl(i);if(!e)return;
  e.classList.add('hubdrag');e.classList.remove('hubslide');
  e.style.transform='translateX('+px+'px)';}
