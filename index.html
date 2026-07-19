@@ -934,7 +934,7 @@
   @media (max-width:600px){.sk-earnhint{font-size:8.5px}.sk-scope{height:min(46vh,380px)}}
   @media (prefers-reduced-motion:reduce){.skwrap{animation:none!important}}
   /* ===== V31 DNA LAB: the genome vault ===== */
-  #dnalab,#skilltree{justify-content:flex-start;justify-content:safe center;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-top:calc(72px + var(--ins-top,0px));padding-bottom:calc(150px + var(--ins-bottom,0px))}
+  #dnalab,#skilltree{justify-content:flex-start;justify-content:safe center;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-top:calc(24px + var(--ins-top,0px));padding-bottom:calc(150px + var(--ins-bottom,0px))}
   .dnwrap{position:relative;z-index:2;width:min(600px,94vw);margin-top:12px;display:flex;flex-direction:column;gap:11px;animation:mSurface .7s cubic-bezier(.2,1,.3,1) .12s both}
   .dn-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
   .dn-glint{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:20px;border:1px solid rgba(143,245,234,.42);background:linear-gradient(160deg,rgba(10,44,44,.7),rgba(6,16,30,.8));font-family:var(--disp);font-size:13px;color:#8ff5ea;box-shadow:0 0 18px -8px rgba(143,245,234,.7),inset 0 1px 0 rgba(255,255,255,.08)}
@@ -1076,6 +1076,38 @@
   #profile,#codex,#lore,#options,#captain,#archive,#leaderboard,#social,#credits,#rundetail{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y}
   #sonar,#percmap,#cosmetics,#profile,#codex,#lore,#options,#captain,#archive,#leaderboard,#social,#credits,#rundetail{padding-bottom:calc(132px + var(--ins-bottom,0px))}
   @media (max-height:820px){.cos-preview{height:clamp(140px,20vh,200px)}}
+  /* ===== V34 FIT PASS: hub screens sized to one phone viewport, centered ===== */
+  @media (max-height:940px){
+    .skwrap{margin-top:4px;gap:8px}
+    #skilltree .studiomark{margin-bottom:2px}
+    #skilltree .logo{font-size:clamp(24px,4.6vh,34px);margin-bottom:4px}
+    #skilltree .sn-hint{font-size:9px;margin-top:2px}
+    .sk-pts{font-size:10px;padding:7px 12px}
+    .sk-scope{height:min(40vh,352px)}
+    .sk-lockpanel{padding:14px 16px}
+    .sk-lock-sub{margin-top:6px}
+    .sk-card{min-height:62px;padding:11px 13px;gap:11px}
+    .sk-card-ic{width:38px;height:38px;font-size:16px}
+    .dnwrap{margin-top:4px;gap:8px}
+    #dnalab .studiomark{margin-bottom:2px}
+    #dnalab .logo{font-size:clamp(24px,4.6vh,34px);margin-bottom:3px}
+    #dnalab .sn-hint{font-size:9px}
+    .dn-chip{width:54px;padding:7px 3px 5px}
+    .dn-chip .g{font-size:18px}
+    .dn-rail{gap:6px;padding:2px 2px 4px}
+    .dn-lab{grid-template-columns:112px 1fr;padding:11px;gap:11px}
+    .dn-tank{width:112px;height:148px;border-radius:56px}
+    .dn-name{font-size:15px}
+    .dn-type{min-height:44px;font-size:10.3px;line-height:1.55}
+    .dn-card{padding:10px 12px;gap:10px}
+    .dn-sig{width:34px;height:34px;font-size:15px}
+    .dn-nm{font-size:11px}
+    .dn-fl{font-size:9px}
+    .dn-fx{font-size:9.5px}
+    .dn-buy{padding:8px 12px;font-size:9px}
+    .dn-tog{padding:7px 11px;font-size:9px}
+    .dn-hint{font-size:8px}
+  }
 </style>
   <!-- TELEGRAM MINI APP: SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
