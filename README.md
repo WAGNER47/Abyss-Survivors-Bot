@@ -7,7 +7,7 @@
 ![Live](https://img.shields.io/badge/LIVE_IN_THE_DEEP-6cffb0?style=for-the-badge&labelColor=0b0f21)
 ![Players](https://img.shields.io/badge/27K_DAILY_DIVERS-3cc8ff?style=for-the-badge&labelColor=0b0f21)
 ![Platform](https://img.shields.io/badge/TELEGRAM_%2F_WEB-b06bff?style=for-the-badge&labelColor=0b0f21)
-![Studio](https://img.shields.io/badge/VEIL_%26_WIRE-ff9b3c?style=for-the-badge&labelColor=0b0f21)
+![Studio](https://img.shields.io/badge/GATEHOUSE_INTERACTIVE-ff9b3c?style=for-the-badge&labelColor=0b0f21)
 
 <br/>
 
@@ -43,6 +43,6 @@ Saves go to localStorage and sync to Telegram CloudStorage, so a player's progre
 
 ## Credits
 
-Design and development by Ramtin Mohammadi at Veil & Wire Studio.
+Design and development by Ramtin Mohammadi at Gatehouse Interactive.
 
-© 2026 Veil & Wire Studio. All rights reserved. You can play the game and share the links. Please don't copy or reuse the code or art without permission.
+© 2026 Gatehouse Interactive. All rights reserved. You can play the game and share the links. Please don't copy or reuse the code or art without permission.

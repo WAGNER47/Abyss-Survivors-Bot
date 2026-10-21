@@ -4,7 +4,7 @@
 //  2) the Reflection gate fight across the full realistic DPS range
 //  3) a maximum-sustain "god build" running the descent - MUST die by level 200
 const fs = require('fs');
-const html = fs.readFileSync(process.argv[2] || '/home/claude/veilwire/live-v10.html', 'utf8');
+const html = fs.readFileSync(process.argv[2] || 'dist/index.html', 'utf8');
 
 // ---- extract the real shipped functions ----
 const mCurve = html.match(/function corrMulFor\(lv\)\{[\s\S]*?return a\*Math\.pow\(CORR_G2,Math\.min\(lv,TIER2_END\)-TIER1_END\);\}/);

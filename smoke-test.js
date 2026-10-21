@@ -4,7 +4,7 @@
 const fs = require('fs');
 const vm = require('vm');
 
-const html = fs.readFileSync(process.argv[2] || '/home/claude/veilwire/live-v9-fix.html', 'utf8');
+const html = fs.readFileSync(process.argv[2] || 'dist/index.html', 'utf8');
 const m = html.match(/<script>([\s\S]*?)<\/script>/);
 if (!m) { console.error('no script block'); process.exit(1); }
 
