@@ -1,7 +1,7 @@
 "use strict";
 /* =========================================================================
    ABYSS // SURVIVORS
-   A neon deep sea roguelite survivor by veil & wire studio.
+   A neon deep sea roguelite survivor by Gatehouse Interactive.
    ========================================================================= */
 const cv=document.getElementById('game');
 const ctx=cv.getContext('2d');
