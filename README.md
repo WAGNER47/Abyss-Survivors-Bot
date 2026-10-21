@@ -11,54 +11,38 @@
 
 <br/>
 
-### **You are a light. The deep wants to swallow it.**
+**A neon deep-sea survivor roguelite. Drag to move, your guns fire on their own, tap to dodge.**
 
-A neon deep-sea roguelite survivor game,
-Descend through 100 levels of geometric horror. Build your diver. Meet what waits below.
-
-<br/>
-
-## [ ⬇ DESCEND NOW ](https://t.me/AbyssSurvivorsbot)
-
-<br/>
+### [Play on Telegram](https://t.me/AbyssSurvivorsbot) · [Play on the web](https://abyss-survivors-v21-telegram-sdk.vercel.app)
 
 </div>
 
 ---
 
-<div align="center">
+## The game
 
-`⚔ DIVERS`&nbsp;&nbsp;·&nbsp;&nbsp;`✦ WEAPONS`&nbsp;&nbsp;·&nbsp;&nbsp;`☄ ELEMENTS`&nbsp;&nbsp;·&nbsp;&nbsp;`♛ WARDENS`&nbsp;&nbsp;·&nbsp;&nbsp;`◆ THE CORRUPTION`
+You dive through 100 levels of a trench that gets stranger the deeper you go. Pick a diver, stack weapons and passives, and hit one enemy with two elements to trigger a reaction. Every fifth level a Warden descends. Kill it and you claim a Boon, a permanent upgrade for the run. The Reflection waits at level 100. Past that point the Corruption keeps scaling until it kills you.
 
-</div>
+- Divers include Salvager, Angler, Strongarm, Lamprey and Remora, each with an innate ability
+- Six languages: English, Farsi, Chinese, Hindi, Spanish and Russian
+- Friends list, online presence and run stats tied to your Telegram account
+- Five graphics presets, from Potato to Ultra, for older phones
 
-<br/>
+## How it's built
 
-> Mix two elements on the same enemy and the deep answers.
-> Face half-screen titans that walk beside you for entire levels.
-> Reach level 100, then decide whether to keep going.
+The game ships as one HTML file with no framework. The deployed build is `index.html` in this repo.
 
-<br/>
+- `src/` holds the source in 50+ numbered parts. The number sets the load order.
+- `node build.js --check` joins the parts into `dist/index.html` and syntax-checks the script.
+- `node smoke-test.js dist/index.html` runs the whole game in Node with a stubbed browser and steps through frames. It catches load-order crashes that a syntax check misses.
+- `node sim-endgame-v10.js dist/index.html` pulls the difficulty formulas out of the build and simulates levels 100 to 200. A release has to pass this: a maximum-sustain build must still die by level 200.
+- `api/social.js` and `api/webhook.js` run as Vercel functions. They verify Telegram login data on the server with HMAC-SHA256, rate-limit each action through Upstash Redis, and read every secret from environment variables.
+- `node test-social-v8.js` tests the backend against a mocked Redis with signed test Telegram data.
 
-<div align="center">
+Saves go to localStorage and sync to Telegram CloudStorage, so a player's progress follows them across devices.
 
-**Play** — open in Telegram, or drop in from the web. Drag to move, guns auto fire, tap to dodge.
+## Credits
 
-<br/>
+Design and development by Ramtin Mohammadi at Veil & Wire Studio.
 
-```
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-▓                                          ▓
-▓   your light will never go out           ▓
-▓   now go make it burn                    ▓
-▓                                          ▓
-▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-```
-
-<br/>
-
-**Veil & Wire Studio**
-
-<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:0b0f21,100:120a2e&height=90&section=footer"/>
-
-</div>
+© 2026 Veil & Wire Studio. All rights reserved. You can play the game and share the links. Please don't copy or reuse the code or art without permission.
