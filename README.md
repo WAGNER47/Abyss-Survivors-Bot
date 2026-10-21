@@ -8,7 +8,7 @@
 ![Status](https://img.shields.io/badge/STATUS-LIVE%20IN%20THE%20DEEP-6cffb0?style=for-the-badge&labelColor=0b0f21)
 ![Version](https://img.shields.io/badge/VERSION-3.0-b06bff?style=for-the-badge&labelColor=0b0f21)
 ![Platform](https://img.shields.io/badge/PLATFORM-TELEGRAM%20%2F%20WEB-3cc8ff?style=for-the-badge&labelColor=0b0f21)
-![Studio](https://img.shields.io/badge/VEIL%20%26%20WIRE-STUDIO-ff9b3c?style=for-the-badge&labelColor=0b0f21)
+![Studio](https://img.shields.io/badge/GATEHOUSE-INTERACTIVE-ff9b3c?style=for-the-badge&labelColor=0b0f21)
 
 <br/>
 
@@ -39,7 +39,7 @@ Survive infinite geometric horrors across 100 levels. Build your diver with weap
 
 > *"Let me see the real you. Level your way to 100, then surprise me with your final decision."*
 
-Built by **Veil & Wire Studio**
+Built by **Gatehouse Interactive**
 
 ---
 
@@ -125,7 +125,7 @@ Beat level 100. Then keep going.
 
 ## ◈ Studio
 
-**Veil & Wire Studio**
+**Gatehouse Interactive**
 
 Ramtin · Creator, Designer, Developer
 
